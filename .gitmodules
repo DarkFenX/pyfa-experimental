@@ -1,0 +1,3 @@
+[submodule "eos"]
+	path = eos
+	url = git@github.com:DarkFenX/Eos.git
