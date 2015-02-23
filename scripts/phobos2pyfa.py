@@ -36,7 +36,7 @@ import data.eve_data
 
 
 # Format:
-# {JSON file name: (SQLAlchemy entity, {source field name: target column name})}
+# {JSON file name: (SQLAlchemy entity, {target column name: source field name})}
 tables = {
     'dgmattribs': (
         data.eve_data.DgmAttribute,
@@ -56,7 +56,7 @@ tables = {
     ),
     'invtypes': (
         data.eve_data.InvType,
-        {'typeName_en-us': 'clsname'}
+        {'typeName': 'typeName_en-us'}
     )
 }
 
@@ -84,20 +84,25 @@ def write_table(edb_session, json_name, table_data):
     cls, replacements = tables[json_name]
     # Compose map which will help us to handle differences between SQL Alchemy
     # attribute names and actual SQL column names. Format:
-    # {column name: attribute name to access it}
+    # {object attribute name: (column, names)}
     alche_map = {}
     for attr in sqlalchemy.inspect(cls).attrs:
         # We're not interested in anything but column descriptors
         if not isinstance(attr, sqlalchemy.orm.ColumnProperty):
             continue
-        for column in attr.columns:
-            alche_map[column.name] = attr.key
+        alche_map[attr.key] = tuple(sorted(c.name for c in attr.columns))
     for row in table_data:
         instance = cls()
-        for src_field_name, value in row.items():
-            tgt_column_name = replacements.get(src_field_name, src_field_name)
-            tgt_attr_name = alche_map.get(tgt_column_name, tgt_column_name)
-            setattr(instance, tgt_attr_name, value)
+        for tgt_attr_name, tgt_column_names in alche_map.items():
+            # As SQL Alchemy mapper format implies there might be multiple
+            # columns behind single descriptor, go through names for all
+            # candidates and check if there's any relevant data in
+            # a row (taking replacement map into consideration)
+            for tgt_column_name in tgt_column_names:
+                src_field_name = replacements.get(tgt_column_name, tgt_column_name)
+                if src_field_name in row:
+                    setattr(instance, tgt_attr_name, row[src_field_name])
+                    break
         edb_session.add(instance)
 
 
