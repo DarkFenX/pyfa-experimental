@@ -28,7 +28,7 @@ class InvGroup(EveBase):
     __tablename__ = 'invgroups'
 
     id = Column('groupID', Integer, primary_key=True)
-    category_id = Column('categoryID', Integer)
+    category_id = Column('categoryID', Integer, nullable=False)
 
     def __repr__(self):
         return '<InvGroup(id={})>'.format(self.id)

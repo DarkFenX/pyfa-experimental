@@ -31,8 +31,8 @@ class DgmAttribute(EveBase):
     id = Column('attributeID', Integer, primary_key=True)
     name = Column('attributeName', String)
     default_value = Column('defaultValue', Float)
-    high_is_good = Column('highIsGood', Boolean)
-    stackable = Column(Boolean)
+    high_is_good = Column('highIsGood', Boolean, nullable=False)
+    stackable = Column(Boolean, nullable=False)
 
     _max_attribute_id = Column('maxAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
     max_attribute = relationship('DgmAttribute')

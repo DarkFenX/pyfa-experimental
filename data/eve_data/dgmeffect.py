@@ -30,9 +30,9 @@ class DgmEffect(EveBase):
 
     id = Column('effectID', Integer, primary_key=True)
     name = Column('effectName', String)
-    category = Column('effectCategory', Integer)
-    is_offensive = Column('isOffensive', Boolean)
-    is_assistance = Column('isAssistance', Boolean)
+    category = Column('effectCategory', Integer, nullable=False)
+    is_offensive = Column('isOffensive', Boolean, nullable=False)
+    is_assistance = Column('isAssistance', Boolean, nullable=False)
     modifier_info = Column('modifierInfo', String)
 
     _pre_expression_id = Column('preExpression', Integer, ForeignKey('dgmexpressions.expressionID'))

@@ -30,10 +30,10 @@ class InvType(EveBase):
 
     id = Column('typeID', Integer, primary_key=True)
     name = Column('typeName', String)
-    radius = Column(Float)
-    mass = Column(Float)
-    volume = Column(Float)
-    capacity = Column(Float)
+    radius = Column(Float, nullable=False)
+    mass = Column(Float, nullable=False)
+    volume = Column(Float, nullable=False)
+    capacity = Column(Float, nullable=False)
 
     _group_id = Column('groupID', Integer, ForeignKey('invgroups.groupID'))
     group = relationship('InvGroup')

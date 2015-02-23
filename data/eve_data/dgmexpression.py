@@ -18,7 +18,8 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from .base import EveBase
 
@@ -28,13 +29,24 @@ class DgmExpression(EveBase):
     __tablename__ = 'dgmexpressions'
 
     id = Column('expressionID', Integer, primary_key=True)
-    operand_id = Column('operandID', Integer)
-    arg1 = Column(Integer)
-    arg2 = Column(Integer)
+    operand_id = Column('operandID', Integer, nullable=False)
+
+    _arg1_id = Column('arg1', Integer, ForeignKey('dgmexpressions.expressionID'))
+    arg1 = relationship('DgmExpression', foreign_keys=_arg1_id)
+
+    _arg2_id = Column('arg2', Integer, ForeignKey('dgmexpressions.expressionID'))
+    arg2 = relationship('DgmExpression', foreign_keys=_arg2_id)
+
     expression_value = Column('expressionValue', String)
-    expression_type_id = Column('expressionTypeID', String)
-    expression_group_id = Column('expressionGroupID', String)
-    expression_attribute_id = Column('expressionAttributeID', String)
+
+    _expression_type_id = Column('expressionTypeID', Integer, ForeignKey('invtypes.typeID'))
+    expression_type = relationship('InvType')
+
+    _expression_group_id = Column('expressionGroupID', Integer, ForeignKey('invgroups.groupID'))
+    expression_group = relationship('InvGroup')
+
+    _expression_attribute_id = Column('expressionAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
+    expression_attribute = relationship('DgmAttribute')
 
     def __repr__(self):
         return '<DgmExpression(id={})>'.format(self.id)

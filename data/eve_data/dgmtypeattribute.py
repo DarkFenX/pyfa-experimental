@@ -33,7 +33,7 @@ class DgmTypeAttribute(EveBase):
     __tablename__ = 'dgmtypeattribs'
 
     type_id = Column('typeID', Integer, ForeignKey('invtypes.typeID'), primary_key=True)
-    value = Column('value', Float)
+    value = Column('value', Float, nullable=False)
 
     attribute_id = Column('attributeID', Integer, ForeignKey('dgmattribs.attributeID'), primary_key=True)
     attribute = relationship('DgmAttribute')
