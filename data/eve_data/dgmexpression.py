@@ -18,24 +18,23 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, Float, Boolean, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
 
 from .base import EveBase
 
 
-class DgmAttribute(EveBase):
+class DgmExpression(EveBase):
 
-    __tablename__ = 'dgmattribs'
+    __tablename__ = 'dgmexpressions'
 
-    id = Column('attributeID', Integer, primary_key=True)
-    name = Column('attributeName', String)
-    default_value = Column('defaultValue', Float)
-    high_is_good = Column('highIsGood', Boolean)
-    stackable = Column(Boolean)
-
-    _max_attribute_id = Column('maxAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    max_attribute = relationship('DgmAttribute')
+    id = Column('expressionID', Integer, primary_key=True)
+    operand_id = Column('operandID', Integer)
+    arg1 = Column(Integer)
+    arg2 = Column(Integer)
+    expression_value = Column('expressionValue', String)
+    expression_type_id = Column('expressionTypeID', String)
+    expression_group_id = Column('expressionGroupID', String)
+    expression_attribute_id = Column('expressionAttributeID', String)
 
     def __repr__(self):
-        return '<DgmAttribute(id={})>'.format(self.id)
+        return '<DgmExpression(id={})>'.format(self.id)

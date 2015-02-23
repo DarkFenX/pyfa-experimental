@@ -27,8 +27,8 @@ class PhbMetaData(EveBase):
 
     __tablename__ = 'phbmetadata'
 
-    field_name = Column('field_name', String, primary_key=True)
-    field_value = Column('field_value', String)
+    field_name = Column(String, primary_key=True)
+    field_value = Column(String)
 
     def __repr__(self):
         return '<PhbMetaData(field_name={})>'.format(self.field_name)

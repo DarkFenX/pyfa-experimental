@@ -18,7 +18,7 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, Float, String
 from sqlalchemy.orm import relationship
 
 from .base import EveBase
@@ -28,8 +28,15 @@ class InvType(EveBase):
 
     __tablename__ = 'invtypes'
 
-    type_id = Column('typeID', Integer, primary_key=True)
-    type_name = Column('typeName', String)
+    id = Column('typeID', Integer, primary_key=True)
+    name = Column('typeName', String)
+    radius = Column(Float)
+    mass = Column(Float)
+    volume = Column(Float)
+    capacity = Column(Float)
+
+    _group_id = Column('groupID', Integer, ForeignKey('invgroups.groupID'))
+    group = relationship('InvGroup')
 
     _attrib_associations = relationship('DgmTypeAttribute')
     _effect_associations = relationship('DgmTypeEffect')
@@ -53,4 +60,4 @@ class InvType(EveBase):
         return effect_map
 
     def __repr__(self):
-        return '<InvType(type_id={})>'.format(self.type_id)
+        return '<InvType(id={})>'.format(self.id)

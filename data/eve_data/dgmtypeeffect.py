@@ -33,9 +33,9 @@ class DgmTypeEffect(EveBase):
     __tablename__ = 'dgmtypeeffects'
 
     type_id = Column('typeID', Integer, ForeignKey('invtypes.typeID'), primary_key=True)
-    effect_id = Column('effectID', Integer, ForeignKey('dgmeffects.effectID'), primary_key=True)
     is_default = Column('isDefault', Boolean)
 
+    effect_id = Column('effectID', Integer, ForeignKey('dgmeffects.effectID'), primary_key=True)
     effect = relationship('DgmEffect')
 
     def __repr__(self):

@@ -54,6 +54,14 @@ tables = {
         data.eve_data.DgmTypeEffect,
         {}
     ),
+    'dgmexpressions': (
+        data.eve_data.DgmExpression,
+        {}
+    ),
+    'invgroups': (
+        data.eve_data.InvGroup,
+        {}
+    ),
     'invtypes': (
         data.eve_data.InvType,
         {'typeName': 'typeName_en-us'}

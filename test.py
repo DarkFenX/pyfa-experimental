@@ -14,15 +14,18 @@ config.eve_sources.add_source('tq', eve_dbpath_tq)
 session_evedata_tq = config.eve_sources['tq'].edb_session
 
 # (Re-)Initialize database for pyfa save data
-os.remove(pyfa_dbpath)
+if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
 config.set_pyfadb_path(pyfa_dbpath)
 session_pyfadata = config.pyfadb_session
 
-for i in session_evedata_tq.query(InvType):
-    print('---')
-    print(i.type_name)
-    print(i.attributes)
-    print(i.effects)
+for i in session_evedata_tq.query(DgmExpression).all():
+    #print('---')
+    if i.expression_type_id:
+        print(i.expression_type_id)
+    if i.expression_group_id:
+        print(i.expression_group_id)
+    if i.expression_attribute_id:
+        print(i.expression_attribute_id)
 
 #fit = Fit('tq', name='testfit')
 #fit.ship = Ship(132)

@@ -18,24 +18,17 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, Float, Boolean, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer
 
 from .base import EveBase
 
 
-class DgmAttribute(EveBase):
+class InvGroup(EveBase):
 
-    __tablename__ = 'dgmattribs'
+    __tablename__ = 'invgroups'
 
-    id = Column('attributeID', Integer, primary_key=True)
-    name = Column('attributeName', String)
-    default_value = Column('defaultValue', Float)
-    high_is_good = Column('highIsGood', Boolean)
-    stackable = Column(Boolean)
-
-    _max_attribute_id = Column('maxAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    max_attribute = relationship('DgmAttribute')
+    id = Column('groupID', Integer, primary_key=True)
+    category_id = Column('categoryID', Integer)
 
     def __repr__(self):
-        return '<DgmAttribute(id={})>'.format(self.id)
+        return '<InvGroup(id={})>'.format(self.id)
