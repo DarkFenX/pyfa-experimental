@@ -30,47 +30,33 @@ sys.path.append(os.path.realpath(os.path.join(script_dir, '..')))
 import argparse
 import json
 
+import sqlalchemy
+
 import data.eve_data
 
 
 # Format:
-# {JSON file name: (SQLAlchemy entity, {source field name: target field name})}
+# {JSON file name: (SQLAlchemy entity, {source field name: target column name})}
 tables = {
     'dgmattribs': (
         data.eve_data.DgmAttribute,
-        {
-            'attributeID': 'attribute_id',
-            'attributeName': 'attribute_name'
-        }
+        {}
     ),
     'dgmeffects': (
         data.eve_data.DgmEffect,
-        {
-            'effectID': 'effect_id',
-            'effectName': 'effect_name'
-        }
+        {}
     ),
     'dgmtypeattribs': (
         data.eve_data.DgmTypeAttribute,
-        {
-            'typeID': 'type_id',
-            'attributeID': 'attribute_id'
-        }
+        {}
     ),
     'dgmtypeeffects': (
         data.eve_data.DgmTypeEffect,
-        {
-            'typeID': 'type_id',
-            'effectID': 'effect_id',
-            'isDefault': 'is_default',
-        }
+        {}
     ),
     'invtypes': (
         data.eve_data.InvType,
-        {
-            'typeID': 'type_id',
-            'typeName_en-us': 'type_name'
-        }
+        {'typeName_en-us': 'clsname'}
     )
 }
 
@@ -91,16 +77,27 @@ def load_table(json_path, json_name):
     with open(os.path.join(json_path, '{}.json'.format(json_name))) as f:
         return json.load(f)
 
-
 def write_table(edb_session, json_name, table_data):
     """
     Generate objects using passed data and add them to database session.
     """
-    type_, replacements = tables[json_name]
+    cls, replacements = tables[json_name]
+    # Compose map which will help us to handle differences between SQL Alchemy
+    # attribute names and actual SQL column names. Format:
+    # {column name: attribute name to access it}
+    alche_map = {}
+    for attr in sqlalchemy.inspect(cls).attrs:
+        # We're not interested in anything but column descriptors
+        if not isinstance(attr, sqlalchemy.orm.ColumnProperty):
+            continue
+        for column in attr.columns:
+            alche_map[column.name] = attr.key
     for row in table_data:
-        instance = type_()
-        for src_name, value in row.items():
-            setattr(instance, replacements.get(src_name, src_name), value)
+        instance = cls()
+        for src_field_name, value in row.items():
+            tgt_column_name = replacements.get(src_field_name, src_field_name)
+            tgt_attr_name = alche_map.get(tgt_column_name, tgt_column_name)
+            setattr(instance, tgt_attr_name, value)
         edb_session.add(instance)
 
 
@@ -126,4 +123,3 @@ if __name__ == '__main__':
 
     print('committing')
     edb_session.commit()
-

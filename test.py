@@ -7,8 +7,7 @@ import config
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 eve_dbpath_tq = os.path.join(script_dir, 'staticdata', 'tranquility.db')
-pyfa_dbpath = os.path.join(script_dir, 'pyfadata.db')
-
+pyfa_dbpath = os.path.join(script_dir, 'staticdata', 'pyfadata.db')
 
 # Initialize database for tranquility
 config.eve_sources.add_source('tq', eve_dbpath_tq)
