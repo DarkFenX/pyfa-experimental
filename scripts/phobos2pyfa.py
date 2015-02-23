@@ -57,7 +57,11 @@ tables = {
     'invtypes': (
         data.eve_data.InvType,
         {'typeName': 'typeName_en-us'}
-    )
+    ),
+    'phbmetadata': (
+        data.eve_data.PhbMetaData,
+        {}
+    ),
 }
 
 
@@ -76,6 +80,7 @@ def load_table(json_path, json_name):
     """
     with open(os.path.join(json_path, '{}.json'.format(json_name))) as f:
         return json.load(f)
+
 
 def write_table(edb_session, json_name, table_data):
     """

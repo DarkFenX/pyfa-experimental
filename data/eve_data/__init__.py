@@ -25,6 +25,7 @@ from .base import EveBase
 from .dgmattribute import DgmAttribute
 from .dgmeffect import DgmEffect
 from .invtype import InvType
+from .phbmetadata import PhbMetaData
 # Just for initialization
 from .dgmtypeattribute import DgmTypeAttribute
 from .dgmtypeeffect import DgmTypeEffect
@@ -33,7 +34,8 @@ from .dgmtypeeffect import DgmTypeEffect
 __all__ = (
     'DgmAttribute',
     'DgmEffect',
-    'InvType'
+    'InvType',
+    'PhbMetaData'
 )
 
 
