@@ -54,6 +54,7 @@ class Fit(PyfaBase):
         if self.__source == new_source:
             return
         self.__source = new_source
+        self._efit.eos = new_source.eos
 
     @property
     def ship(self):
