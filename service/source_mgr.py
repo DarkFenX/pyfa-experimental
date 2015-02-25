@@ -24,7 +24,7 @@ from data.eve_data import make_evedata_session
 from eos import Eos, SQLiteDataHandler, JsonCacheHandler, TextLogger
 
 
-Source = namedtuple('Source', ('edb_session', 'eos_instance'))
+Source = namedtuple('Source', ('alias', 'edb', 'eos'))
 
 
 class SourceManager:
@@ -72,17 +72,18 @@ class SourceManager:
         cache_handler = JsonCacheHandler('staticdata/eos_cache/{}.json.bz2'.format(alias), logger)
         eos_instance = Eos(data_handler, cache_handler, logger)
         # Finally, add record to list of sources
-        self._sources[alias] = Source(edb_session, eos_instance)
+        self._sources[alias] = Source(alias=alias, edb=edb_session, eos=eos_instance)
 
     def __getitem__(self, src_alias):
         """
-        Using source alias, return source which is named tuple.
+        Using source alias, return source data.
 
         Required arguments:
         src_alias -- alias of source to return
 
         Return value:
-        (edb_session, eos_instance) named tuple with SQL Alchemy
-        database session and Eos instance for the requested source
+        (alias, edb, eos) named tuple with alias,
+        SQL Alchemy database session and Eos instance for requested
+        source
         """
         return self._sources[src_alias]

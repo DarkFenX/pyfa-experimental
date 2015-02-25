@@ -20,49 +20,54 @@
 
 from sqlalchemy import Column, Integer, String
 
+from eos import Fit as EFit
+from service.source_mgr import SourceManager, Source
 from .base import PyfaBase
 
 
 class Fit(PyfaBase):
 
-    # Database-related section
     __tablename__ = 'fits'
+
     id = Column('fit_id', Integer, primary_key=True)
     name = Column('fit_name', String, nullable=False)
     _ship_type_id = Column('ship_type_id', String, nullable=False)
 
     def __init__(self, source, name=None):
-        super().__init__()
-        self._source = source
-        self._ship = None
+        self.__source = None
+        self.__ship = None
+        self.source = source
         self.name = name
+        self._efit = EFit(self.source.eos)
 
-    def change_source(self, new_source):
-        """
-        Change source of the fit (e.g. if we have fit which is
-        using tranquility data and want to see it with singularity
-        data instead).
+    @property
+    def source(self):
+        return self.__source
 
-        Required arguments:
-        new_source -- alias of source to use
-        """
-        if self._source == new_source:
+    @source.setter
+    def source(self, new_source):
+        # Attempt to fetch source from source manager if passed object
+        # is not instance of source class
+        if not isinstance(new_source, Source):
+            src_mgr = SourceManager.getinst()
+            new_source = src_mgr[new_source]
+        if self.__source == new_source:
             return
-        self._source = new_source
+        self.__source = new_source
 
     @property
     def ship(self):
-        return self._ship
+        return self.__ship
 
     @ship.setter
     def ship(self, new_ship):
         self._ship_type_id = new_ship.eve_id
-        self._ship = new_ship
+        self.__ship = new_ship
 
     @ship.deleter
     def ship(self):
         self._ship_type_id = None
-        self._ship = None
+        self.__ship = None
 
     def __repr__(self):
         return '<Fit(id={})>'.format(self.id)

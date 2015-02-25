@@ -11,21 +11,14 @@ pyfa_dbpath = os.path.join(script_dir, 'userdata', 'pyfadata.db')
 
 # Initialize database for tranquility
 config.eve_sources.add_source('tq', eve_dbpath_tq)
-session_evedata_tq = config.eve_sources['tq'].edb_session
+session_evedata_tq = config.eve_sources['tq'].edb
 
 # (Re-)Initialize database for pyfa save data
 if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
 config.set_pyfadb_path(pyfa_dbpath)
 session_pyfadata = config.pyfadb_session
 
-for i in session_evedata_tq.query(DgmExpression).all():
-    #print('---')
-    if i.expression_type:
-        print(i.expression_type)
-    if i.expression_group:
-        print(i.expression_group)
-    if i.expression_attribute:
-        print(i.expression_attribute)
+fit = Fit('tq')
 
 #fit = Fit('tq', name='testfit')
 #fit.ship = Ship(132)
