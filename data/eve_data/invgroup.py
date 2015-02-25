@@ -18,7 +18,7 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, String
 
 from .base import EveBase
 
@@ -28,6 +28,7 @@ class InvGroup(EveBase):
     __tablename__ = 'invgroups'
 
     id = Column('groupID', Integer, primary_key=True)
+    name = Column('groupName', String)
     category_id = Column('categoryID', Integer, nullable=False)
 
     def __repr__(self):

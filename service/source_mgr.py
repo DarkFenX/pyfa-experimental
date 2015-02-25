@@ -21,6 +21,7 @@
 from collections import namedtuple
 
 from data.eve_data import make_evedata_session
+from eos import Eos, SQLiteDataHandler, JsonCacheHandler, TextLogger
 
 
 Source = namedtuple('Source', ('edb_session', 'eos_instance'))
@@ -42,8 +43,13 @@ class SourceManager:
         return cls._instance
 
     def add_source(self, alias, db_path):
+        # Database session
         edb_session = make_evedata_session(db_path)
-        self._sources[alias] = Source(edb_session, None)
+        logger = TextLogger('eos_{}'.format(alias), 'userdata/eos_logs/{}.log'.format(alias))
+        data_handler = SQLiteDataHandler(db_path)
+        cache_handler = JsonCacheHandler('staticdata/eos_cache/{}.json.bz2'.format(alias), logger)
+        eos_instance = Eos(data_handler, cache_handler, logger)
+        self._sources[alias] = Source(edb_session, eos_instance)
 
     def __getitem__(self, src_alias):
         return self._sources[src_alias]

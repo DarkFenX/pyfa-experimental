@@ -7,7 +7,7 @@ import config
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 eve_dbpath_tq = os.path.join(script_dir, 'staticdata', 'tranquility.db')
-pyfa_dbpath = os.path.join(script_dir, 'staticdata', 'pyfadata.db')
+pyfa_dbpath = os.path.join(script_dir, 'userdata', 'pyfadata.db')
 
 # Initialize database for tranquility
 config.eve_sources.add_source('tq', eve_dbpath_tq)
@@ -20,12 +20,12 @@ session_pyfadata = config.pyfadb_session
 
 for i in session_evedata_tq.query(DgmExpression).all():
     #print('---')
-    if i.expression_type_id:
-        print(i.expression_type_id)
-    if i.expression_group_id:
-        print(i.expression_group_id)
-    if i.expression_attribute_id:
-        print(i.expression_attribute_id)
+    if i.expression_type:
+        print(i.expression_type)
+    if i.expression_group:
+        print(i.expression_group)
+    if i.expression_attribute:
+        print(i.expression_attribute)
 
 #fit = Fit('tq', name='testfit')
 #fit.ship = Ship(132)
