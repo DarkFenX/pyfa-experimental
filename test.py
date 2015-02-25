@@ -1,6 +1,5 @@
 import os
 
-from data.eve_data import *
 from data.pyfa_data import *
 import config
 
@@ -19,17 +18,3 @@ config.set_pyfadb_path(pyfa_dbpath)
 session_pyfadata = config.pyfadb_session
 
 fit = Fit('tq')
-
-#fit = Fit('tq', name='testfit')
-#fit.ship = Ship(132)
-#fit = DFit(name='test fit')
-#mod1 = DModule(type_id=55, rack=0, position=2)
-#mod2 = DModule(type_id=66, rack=0, position=3)
-#mod3 = DModule(type_id=77, rack=2, position=0)
-
-#fit._modules.append(mod1)
-#fit._modules.append(mod2)
-#fit._modules.append(mod3)
-#session_pyfadata.add(fit)
-#session_pyfadata.commit()
-#print(fit.modules_high)
