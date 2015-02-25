@@ -28,6 +28,11 @@ Source = namedtuple('Source', ('edb_session', 'eos_instance'))
 
 
 class SourceManager:
+    """
+    Handle and access different sources in an easy way. Useful for cases
+    when you want to work with, for example, Tranquility and Singularity
+    data at the same time.
+    """
 
     _instance = None
 
@@ -38,18 +43,46 @@ class SourceManager:
 
     @classmethod
     def getinst(cls):
+        """
+        Return instance of source manager, if is not initialized yet -
+        initalize. Instance returned by this method is the same within
+        current python interpreter instance.
+        """
         if cls._instance is None:
             cls._instance = SourceManager()
         return cls._instance
 
     def add_source(self, alias, db_path):
+        """
+        Add source to source manager - this includes initializing
+        all facilities hidden behind name 'source'. After source
+        has been added, it is accessible with alias.
+
+        Required arguments:
+        alias -- alias under which source will be accessible. Also
+        controls several paths under which temporary data is stored
+        for the sources
+        db_path -- path to database with EVE data for this source
+        """
         # Database session
         edb_session = make_evedata_session(db_path)
+        # Eos instance
         logger = TextLogger('eos_{}'.format(alias), 'userdata/eos_logs/{}.log'.format(alias))
         data_handler = SQLiteDataHandler(db_path)
         cache_handler = JsonCacheHandler('staticdata/eos_cache/{}.json.bz2'.format(alias), logger)
         eos_instance = Eos(data_handler, cache_handler, logger)
+        # Finally, add record to list of sources
         self._sources[alias] = Source(edb_session, eos_instance)
 
     def __getitem__(self, src_alias):
+        """
+        Using source alias, return source which is named tuple.
+
+        Required arguments:
+        src_alias -- alias of source to return
+
+        Return value:
+        (edb_session, eos_instance) named tuple with SQL Alchemy
+        database session and Eos instance for the requested source
+        """
         return self._sources[src_alias]
