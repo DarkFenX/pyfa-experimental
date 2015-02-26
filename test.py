@@ -20,6 +20,7 @@ session_pyfadata = config.pyfadb_session
 fit = Fit('tq', name='test fit 1')
 fit.ship = Ship(11184)
 print(fit.ship.eve_name)
+print(fit.stats.agility_factor)
 print(dict(fit.ship.attributes))
 session_pyfadata.add(fit)
 session_pyfadata.commit()

@@ -79,3 +79,7 @@ class Fit(PyfaBase):
 
     def __repr__(self):
         return '<Fit(id={})>'.format(self.id)
+
+    @property
+    def stats(self):
+        return self._efit.stats
