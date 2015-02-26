@@ -55,6 +55,8 @@ class Fit(PyfaBase):
             return
         self.__source = new_source
         self._efit.eos = new_source.eos
+        if self.ship is not None:
+            self.ship.update_source()
 
     @property
     def ship(self):
@@ -64,6 +66,8 @@ class Fit(PyfaBase):
     def ship(self, new_ship):
         self._ship_type_id = new_ship.eve_id
         self.__ship = new_ship
+        new_ship._fit = self
+        new_ship._update_source()
 
     @ship.deleter
     def ship(self):

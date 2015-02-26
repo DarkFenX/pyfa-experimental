@@ -26,10 +26,10 @@ from .fit import Fit
 from .ship import Ship
 
 
-__all__ = (
+__all__ = [
     'Fit',
     'Ship'
-)
+]
 
 
 def make_pyfadata_session(db_path):

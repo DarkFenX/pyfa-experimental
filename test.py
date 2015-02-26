@@ -17,4 +17,8 @@ if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
 config.set_pyfadb_path(pyfa_dbpath)
 session_pyfadata = config.pyfadb_session
 
-fit = Fit('tq')
+fit = Fit('tq', name='test fit 1')
+fit.ship = Ship(11182)
+print(fit.ship._eve_item)
+session_pyfadata.add(fit)
+session_pyfadata.commit()

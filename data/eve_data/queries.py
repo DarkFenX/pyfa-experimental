@@ -18,29 +18,17 @@
 #===============================================================================
 
 
-from data.eve_data.queries import get_type
+from .invtype import InvType
 
 
-class Ship:
+def get_type(evedata_session, types):
+    """
+    types -- int or iterable of ints
+    """
+    type_ = evedata_session.query(InvType).get(types)
+    return type_
 
-    def __init__(self, type_id):
-        self.__fit = None
-        self.__type_id = type_id
-        self._eve_item = None
 
-    @property
-    def eve_id(self):
-        return self.__type_id
-
-    @property
-    def _fit(self):
-        return self.__fit
-
-    @_fit.setter
-    def _fit(self, new_fit):
-        self.__fit = new_fit
-        self._update_source()
-
-    def _update_source(self):
-        print('trying', self._fit.source.edb)
-        self._eve_item = get_type(self._fit.source.edb, self.eve_id)
+__all__ = [
+    'get_type'
+]

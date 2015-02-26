@@ -33,14 +33,14 @@ from .dgmtypeattribute import DgmTypeAttribute
 from .dgmtypeeffect import DgmTypeEffect
 
 
-__all__ = (
+__all__ = [
     'DgmAttribute',
     'DgmEffect',
     'DgmExpression',
     'InvGroup',
     'InvType',
     'PhbMetaData'
-)
+]
 
 
 def make_evedata_session(db_path):
