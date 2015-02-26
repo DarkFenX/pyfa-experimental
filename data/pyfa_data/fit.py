@@ -36,9 +36,9 @@ class Fit(PyfaBase):
     def __init__(self, source, name=None):
         self.__source = None
         self.__ship = None
+        self._efit = EFit()
         self.source = source
         self.name = name
-        self._efit = EFit(self.source.eos)
 
     @property
     def source(self):
