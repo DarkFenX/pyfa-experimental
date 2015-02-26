@@ -19,16 +19,26 @@
 
 
 from .invtype import InvType
+from .dgmattribute import DgmAttribute
 
 
-def get_type(evedata_session, types):
+def get_type(evedata_session, type_id):
     """
-    types -- int or iterable of ints
+    type_id -- int or (in future) iterable of ints
     """
-    type_ = evedata_session.query(InvType).get(types)
+    type_ = evedata_session.query(InvType).get(type_id)
     return type_
 
 
+def get_attribute(evedata_session, attribute_id):
+    """
+    attribute_id -- int or (in future) iterable of ints
+    """
+    attribute = evedata_session.query(DgmAttribute).get(attribute_id)
+    return attribute
+
+
 __all__ = [
-    'get_type'
+    'get_type',
+    'get_attribute'
 ]

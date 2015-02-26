@@ -72,6 +72,7 @@ class Fit(PyfaBase):
         self._ship_type_id = new_ship.eve_id
         # Internal
         self.__ship = new_ship
+        self._efit.ship = new_ship._eship
         # External
         new_ship._fit = self
         new_ship._update_source()

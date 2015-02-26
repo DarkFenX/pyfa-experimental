@@ -18,7 +18,8 @@
 #===============================================================================
 
 
-from data.eve_data.queries import get_type
+from data.eve_data.queries import get_type, get_attribute
+from eos import Ship as EShip
 
 
 class Ship:
@@ -27,6 +28,7 @@ class Ship:
         self.__type_id = type_id
         self.__fit = None
         self._eve_item = None
+        self._eship = EShip(type_id)
 
     @property
     def eve_id(self):
@@ -35,6 +37,10 @@ class Ship:
     @property
     def eve_name(self):
         return self._eve_item.name
+
+    @property
+    def attributes(self):
+        return self._eship.attributes
 
     @property
     def _fit(self):
