@@ -49,6 +49,10 @@ class Ship:
         return attr_map
 
     @property
+    def effects(self):
+        return list(self._eve_item.effects.keys())
+
+    @property
     def _fit(self):
         return self.__fit
 

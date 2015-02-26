@@ -20,6 +20,7 @@
 
 from .invtype import InvType
 from .dgmattribute import DgmAttribute
+from .dgmeffect import DgmEffect
 
 
 def get_type(evedata_session, type_id):
@@ -42,9 +43,21 @@ def get_attributes(evedata_session, attribute_ids):
     return attributes
 
 
+def get_effect(evedata_session, effect_id):
+    effect = evedata_session.query(DgmEffect).get(effect_id)
+    return effect
+
+
+def get_effects(evedata_session, effect_ids):
+    effects = evedata_session.query(DgmEffect).filter(DgmEffect.id.in_(effect_ids)).all()
+    return effects
+
+
 __all__ = [
     'get_type',
     'get_types',
     'get_attribute',
-    'get_attributes'
+    'get_attributes',
+    'get_effect',
+    'get_effects'
 ]
