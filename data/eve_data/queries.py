@@ -23,22 +23,28 @@ from .dgmattribute import DgmAttribute
 
 
 def get_type(evedata_session, type_id):
-    """
-    type_id -- int or (in future) iterable of ints
-    """
     type_ = evedata_session.query(InvType).get(type_id)
     return type_
 
 
+def get_types(evedata_session, type_ids):
+    types = evedata_session.query(InvType).filter(InvType.id.in_(type_ids)).all()
+    return types
+
+
 def get_attribute(evedata_session, attribute_id):
-    """
-    attribute_id -- int or (in future) iterable of ints
-    """
     attribute = evedata_session.query(DgmAttribute).get(attribute_id)
     return attribute
 
 
+def get_attributes(evedata_session, attribute_ids):
+    attributes = evedata_session.query(DgmAttribute).filter(DgmAttribute.id.in_(attribute_ids)).all()
+    return attributes
+
+
 __all__ = [
     'get_type',
-    'get_attribute'
+    'get_types',
+    'get_attribute',
+    'get_attributes'
 ]
