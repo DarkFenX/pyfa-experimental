@@ -55,8 +55,12 @@ class Fit(PyfaBase):
             return
         self.__source = new_source
         self._efit.eos = new_source.eos
-        if self.ship is not None:
-            self.ship.update_source()
+        # Update source-dependent data for all child objects
+        for child in (
+            self.ship,
+        ):
+            if child is not None:
+                child.update_source()
 
     @property
     def ship(self):
@@ -64,15 +68,13 @@ class Fit(PyfaBase):
 
     @ship.setter
     def ship(self, new_ship):
+        # DB
         self._ship_type_id = new_ship.eve_id
+        # Internal
         self.__ship = new_ship
+        # External
         new_ship._fit = self
         new_ship._update_source()
-
-    @ship.deleter
-    def ship(self):
-        self._ship_type_id = None
-        self.__ship = None
 
     def __repr__(self):
         return '<Fit(id={})>'.format(self.id)

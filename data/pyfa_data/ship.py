@@ -24,13 +24,17 @@ from data.eve_data.queries import get_type
 class Ship:
 
     def __init__(self, type_id):
-        self.__fit = None
         self.__type_id = type_id
+        self.__fit = None
         self._eve_item = None
 
     @property
     def eve_id(self):
         return self.__type_id
+
+    @property
+    def eve_name(self):
+        return self._eve_item.name
 
     @property
     def _fit(self):
@@ -42,5 +46,4 @@ class Ship:
         self._update_source()
 
     def _update_source(self):
-        print('trying', self._fit.source.edb)
         self._eve_item = get_type(self._fit.source.edb, self.eve_id)

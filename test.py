@@ -18,7 +18,7 @@ config.set_pyfadb_path(pyfa_dbpath)
 session_pyfadata = config.pyfadb_session
 
 fit = Fit('tq', name='test fit 1')
-fit.ship = Ship(11182)
-print(fit.ship._eve_item)
+fit.ship = Ship(11184)
+print(fit.ship.eve_name)
 session_pyfadata.add(fit)
 session_pyfadata.commit()
