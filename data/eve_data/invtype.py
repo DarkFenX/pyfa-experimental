@@ -43,8 +43,9 @@ class InvType(EveBase):
 
     @property
     def attributes(self):
-        # Format:
-        # {DgmAttribute: value}
+        """
+        Return attributes of type as {DgmAttribute: value} dictionary.
+        """
         attribute_map = {}
         for attrib_association in self._attrib_associations:
             attribute_map[attrib_association.attribute] = attrib_association.value
@@ -52,12 +53,10 @@ class InvType(EveBase):
 
     @property
     def effects(self):
-        # Format:
-        # {DgmEffect: is effect default for given type or not}
-        effect_map = {}
-        for effect_association in self._effect_associations:
-            effect_map[effect_association.effect] = effect_association.is_default
-        return effect_map
+        """
+        Return effects of type as DgmEffect list.
+        """
+        return [assoc.effect for assoc in self._effect_associations]
 
     def __repr__(self):
         return '<InvType(id={})>'.format(self.id)

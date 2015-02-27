@@ -50,7 +50,7 @@ class Ship:
 
     @property
     def effects(self):
-        return list(self._eve_item.effects.keys())
+        return list(self._eve_item.effects)
 
     @property
     def _fit(self):
