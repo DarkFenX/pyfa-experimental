@@ -50,8 +50,7 @@ class Fit(PyfaBase):
         # Attempt to fetch source from source manager if passed object
         # is not instance of source class
         if not isinstance(new_source, Source):
-            src_mgr = SourceManager.getinst()
-            new_source = src_mgr[new_source]
+            new_source = SourceManager.get_source(new_source)
         if self.__source == new_source:
             return
         self.__source = new_source

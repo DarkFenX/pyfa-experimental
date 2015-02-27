@@ -25,6 +25,9 @@ from .base import PyfaBase
 
 
 class PyfaDataManager:
+    """
+    Generates and holds access to pyfa database session (fits, characters, etc.)
+    """
 
     session = None
 

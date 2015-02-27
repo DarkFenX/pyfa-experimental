@@ -35,25 +35,12 @@ class SourceManager:
     data at the same time.
     """
 
-    _instance = None
-
-    def __init__(self):
-        # Format:
-        # {literal alias: Source(eve data database session, eos instance)}
-        self._sources = {}
+    # Format:
+    # {literal alias: Source(eve data database session, eos instance)}
+    _sources = {}
 
     @classmethod
-    def getinst(cls):
-        """
-        Return instance of source manager, if is not initialized yet -
-        initalize. Instance returned by this method is the same within
-        current python interpreter instance.
-        """
-        if cls._instance is None:
-            cls._instance = SourceManager()
-        return cls._instance
-
-    def add_source(self, alias, db_path):
+    def add_source(cls, alias, db_path):
         """
         Add source to source manager - this includes initializing
         all facilities hidden behind name 'source'. After source
@@ -73,14 +60,15 @@ class SourceManager:
         cache_handler = JsonCacheHandler('staticdata/eos_cache/{}.json.bz2'.format(alias), logger)
         eos_instance = Eos(data_handler, cache_handler, logger)
         # Finally, add record to list of sources
-        self._sources[alias] = Source(alias=alias, edb=edb_session, eos=eos_instance)
+        cls._sources[alias] = Source(alias=alias, edb=edb_session, eos=eos_instance)
 
-    def __getitem__(self, src_alias):
+    @classmethod
+    def get_source(cls, alias):
         """
         Using source alias, return source data.
 
         Required arguments:
-        src_alias -- alias of source to return
+        alias -- alias of source to return
 
         Return value:
         (alias, edb, eos) named tuple with alias,
@@ -88,6 +76,6 @@ class SourceManager:
         source
         """
         try:
-            return self._sources[src_alias]
+            return cls._sources[alias]
         except KeyError as e:
-            raise Un
+            raise UnknownSourceError
