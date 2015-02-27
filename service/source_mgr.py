@@ -22,6 +22,7 @@ from collections import namedtuple
 
 from data.eve_data import make_evedata_session
 from eos import Eos, SQLiteDataHandler, JsonCacheHandler, TextLogger
+from .exception import UnknownSourceError
 
 
 Source = namedtuple('Source', ('alias', 'edb', 'eos'))
@@ -86,4 +87,7 @@ class SourceManager:
         SQL Alchemy database session and Eos instance for requested
         source
         """
-        return self._sources[src_alias]
+        try:
+            return self._sources[src_alias]
+        except KeyError as e:
+            raise UnknownSourceError from e
