@@ -1,7 +1,7 @@
 import os
 
 from data.pyfa_data import *
-from data.pyfa_data import PydataManager
+from data.pyfa_data import PyfaDataManager
 from service import SourceManager
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,8 +15,8 @@ session_evedata_tq = src_mgr['tq'].edb
 
 # (Re-)Initialize database for pyfa save data
 if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
-PydataManager.set_pyfadb_path(pyfa_dbpath)
-session_pyfadata = PydataManager.session
+PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
+session_pyfadata = PyfaDataManager.session
 
 fit = Fit('tq', name='test fit 1')
 fit.ship = Ship(11184)

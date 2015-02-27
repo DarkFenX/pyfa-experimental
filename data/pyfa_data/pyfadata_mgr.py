@@ -24,7 +24,7 @@ from sqlalchemy.orm import sessionmaker
 from .base import PyfaBase
 
 
-class PydataManager:
+class PyfaDataManager:
 
     session = None
 
