@@ -30,12 +30,12 @@ class DgmAttribute(EveBase):
 
     id = Column('attributeID', Integer, primary_key=True)
     name = Column('attributeName', String)
-    default_value = Column('defaultValue', Float)
-    high_is_good = Column('highIsGood', Boolean, nullable=False)
-    stackable = Column(Boolean, nullable=False)
+    _default_value = Column('defaultValue', Float)
+    _high_is_good = Column('highIsGood', Boolean, nullable=False)
+    _stackable = Column('stackable', Boolean, nullable=False)
 
     _max_attribute_id = Column('maxAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    max_attribute = relationship('DgmAttribute')
+    _max_attribute = relationship('DgmAttribute')
 
     def __repr__(self):
         return '<DgmAttribute(id={})>'.format(self.id)

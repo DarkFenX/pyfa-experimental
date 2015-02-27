@@ -30,34 +30,34 @@ class DgmEffect(EveBase):
 
     id = Column('effectID', Integer, primary_key=True)
     name = Column('effectName', String)
-    category = Column('effectCategory', Integer, nullable=False)
-    is_offensive = Column('isOffensive', Boolean, nullable=False)
-    is_assistance = Column('isAssistance', Boolean, nullable=False)
-    modifier_info = Column('modifierInfo', String)
+    _category = Column('effectCategory', Integer, nullable=False)
+    _is_offensive = Column('isOffensive', Boolean, nullable=False)
+    _is_assistance = Column('isAssistance', Boolean, nullable=False)
+    _modifier_info = Column('modifierInfo', String)
 
     _pre_expression_id = Column('preExpression', Integer, ForeignKey('dgmexpressions.expressionID'))
-    pre_expression = relationship('DgmExpression', foreign_keys=_pre_expression_id)
+    _pre_expression = relationship('DgmExpression', foreign_keys=_pre_expression_id)
 
     _post_expression_id = Column('postExpression', Integer, ForeignKey('dgmexpressions.expressionID'))
-    post_expression = relationship('DgmExpression', foreign_keys=_post_expression_id)
+    _post_expression = relationship('DgmExpression', foreign_keys=_post_expression_id)
 
     _duration_attribute_id = Column('durationAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    duration_attribute = relationship('DgmAttribute', foreign_keys=_duration_attribute_id)
+    _duration_attribute = relationship('DgmAttribute', foreign_keys=_duration_attribute_id)
 
     _discharge_attribute_id = Column('dischargeAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    discharge_attribute = relationship('DgmAttribute', foreign_keys=_discharge_attribute_id)
+    _discharge_attribute = relationship('DgmAttribute', foreign_keys=_discharge_attribute_id)
 
     _range_attribute_id = Column('rangeAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    range_attribute = relationship('DgmAttribute', foreign_keys=_range_attribute_id)
+    _range_attribute = relationship('DgmAttribute', foreign_keys=_range_attribute_id)
 
     _falloff_attribute_id = Column('falloffAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    falloff_attribute = relationship('DgmAttribute', foreign_keys=_falloff_attribute_id)
+    _falloff_attribute = relationship('DgmAttribute', foreign_keys=_falloff_attribute_id)
 
     _tracking_speed_attribute_id = Column('trackingSpeedAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    tracking_speed_attribute = relationship('DgmAttribute', foreign_keys=_tracking_speed_attribute_id)
+    _tracking_speed_attribute = relationship('DgmAttribute', foreign_keys=_tracking_speed_attribute_id)
 
     _fitting_usage_chance_attribute_id = Column('fittingUsageChanceAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    fitting_usage_chance_attribute = relationship('DgmAttribute', foreign_keys=_fitting_usage_chance_attribute_id)
+    _fitting_usage_chance_attribute = relationship('DgmAttribute', foreign_keys=_fitting_usage_chance_attribute_id)
 
     def __repr__(self):
         return '<DgmEffect(id={})>'.format(self.id)
