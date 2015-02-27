@@ -32,11 +32,19 @@ class Fit(PyfaBase):
     id = Column('fit_id', Integer, primary_key=True)
     name = Column('fit_name', String, nullable=False)
     _ship_type_id = Column('ship_type_id', Integer, nullable=False)
+    _stance_type_id = Column('stance_type_id', Integer)
 
     def __init__(self, source, name=None):
+        # Attributes which store objects hidden by properties
         self.__source = None
         self.__ship = None
+        # Holds all child objects of fit which may need update when we change
+        # source, so we can iterate through them as needed
+        self._src_children = set()
+        # Eos fit will be primary point of using Eos calculation engine for
+        # fit-specific data
         self._eos_fit = EosFit()
+        # Set passed values
         self.source = source
         self.name = name
 
@@ -50,6 +58,7 @@ class Fit(PyfaBase):
         # is not instance of source class
         if not isinstance(new_source, Source):
             new_source = SourceManager.get_source(new_source)
+        # Avoid any updates if they're not going to do anything
         if self.__source == new_source:
             return
         self.__source = new_source
@@ -57,11 +66,8 @@ class Fit(PyfaBase):
         # propagates to all child EosFit objects
         self._eos_fit.eos = new_source.eos
         # Update source-dependent data for all child objects
-        for child in (
-            self.ship,
-        ):
-            if child is not None:
-                child.update_source()
+        for child in self._src_children:
+            child.update_source()
 
     @property
     def ship(self):
@@ -72,7 +78,12 @@ class Fit(PyfaBase):
         # DB
         self._ship_type_id = new_ship.eve_id
         # Internal
+        old_ship = self.__ship
+        if old_ship is not None:
+            self._src_children.remove(old_ship)
+        self._src_children.add(new_ship)
         self.__ship = new_ship
+        # Eos
         self._eos_fit.ship = new_ship._eos_ship
         # External
         new_ship._fit = self
