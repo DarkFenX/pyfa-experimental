@@ -75,7 +75,6 @@ class Fit(PyfaBase):
         self._eos_fit.ship = new_ship._eos_ship
         # External
         new_ship._fit = self
-        new_ship._update_source()
 
     def __repr__(self):
         return '<Fit(id={})>'.format(self.id)
