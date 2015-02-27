@@ -18,7 +18,8 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from eos import Fit as EosFit
 from service.source_mgr import SourceManager, Source
@@ -31,11 +32,11 @@ class Fit(PyfaBase):
 
     id = Column('fit_id', Integer, primary_key=True)
     name = Column('fit_name', String, nullable=False)
-    _ship_type_id = Column('ship_type_id', String, nullable=False)
+    _ship_id = Column('ship_id', Integer, ForeignKey('ships.ship_id'))
+    _ship = relationship('Ship')
 
     def __init__(self, source, name=None):
         self.__source = None
-        self.__ship = None
         self._eos_fit = EosFit()
         self.source = source
         self.name = name
@@ -64,14 +65,13 @@ class Fit(PyfaBase):
 
     @property
     def ship(self):
-        return self.__ship
+        return self._ship
 
     @ship.setter
     def ship(self, new_ship):
         # DB
-        self._ship_type_id = new_ship.eve_id
+        self._ship = new_ship
         # Internal
-        self.__ship = new_ship
         self._eos_fit.ship = new_ship._eos_ship
         # External
         new_ship._fit = self
