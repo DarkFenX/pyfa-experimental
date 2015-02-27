@@ -18,20 +18,18 @@
 #===============================================================================
 
 
-from data.pyfa_data import make_pyfadata_session
-from service import SourceManager
+import sqlalchemy
+from sqlalchemy.orm import sessionmaker
+
+from .base import PyfaBase
 
 
-eve_sources = SourceManager.getinst()
+class PydataManager:
 
+    session = None
 
-pyfadb_session = None
-
-
-def set_pyfadb_path(pyfadb_path):
-    """
-    Create session to SQLite database stored at path passed as
-    argument, and store it as module-level pyfadb_session variable.
-    """
-    global pyfadb_session
-    pyfadb_session = make_pyfadata_session(pyfadb_path)
+    @classmethod
+    def set_pyfadb_path(cls, pyfadb_path):
+        pyfadb_engine = sqlalchemy.create_engine('sqlite:///{}'.format(pyfadb_path), echo=False)
+        PyfaBase.metadata.create_all(pyfadb_engine)
+        cls.session = sessionmaker(bind=pyfadb_engine)()

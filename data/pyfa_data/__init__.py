@@ -18,12 +18,10 @@
 #===============================================================================
 
 
-import sqlalchemy
-from sqlalchemy.orm import sessionmaker
-
 from .base import PyfaBase
 from .fit import Fit
 from .ship import Ship
+from .pydata_mgr import PydataManager
 
 
 __all__ = [
@@ -32,8 +30,4 @@ __all__ = [
 ]
 
 
-def make_pyfadata_session(db_path):
-    pyfadb_engine = sqlalchemy.create_engine('sqlite:///{}'.format(db_path), echo=False)
-    PyfaBase.metadata.create_all(pyfadb_engine)
-    pyfadb_session = sessionmaker(bind=pyfadb_engine)()
-    return pyfadb_session
+

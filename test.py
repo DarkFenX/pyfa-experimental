@@ -1,21 +1,22 @@
 import os
 
 from data.pyfa_data import *
-import config
-
+from data.pyfa_data import PydataManager
+from service import SourceManager
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 eve_dbpath_tq = os.path.join(script_dir, 'staticdata', 'tranquility.db')
 pyfa_dbpath = os.path.join(script_dir, 'userdata', 'pyfadata.db')
 
 # Initialize database for tranquility
-config.eve_sources.add_source('tq', eve_dbpath_tq)
-session_evedata_tq = config.eve_sources['tq'].edb
+src_mgr = SourceManager.getinst()
+src_mgr.add_source('tq', eve_dbpath_tq)
+session_evedata_tq = src_mgr['tq'].edb
 
 # (Re-)Initialize database for pyfa save data
 if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
-config.set_pyfadb_path(pyfa_dbpath)
-session_pyfadata = config.pyfadb_session
+PydataManager.set_pyfadb_path(pyfa_dbpath)
+session_pyfadata = PydataManager.session
 
 fit = Fit('tq', name='test fit 1')
 fit.ship = Ship(11184)

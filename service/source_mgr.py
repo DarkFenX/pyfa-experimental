@@ -90,4 +90,4 @@ class SourceManager:
         try:
             return self._sources[src_alias]
         except KeyError as e:
-            raise UnknownSourceError from e
+            raise Un
