@@ -25,6 +25,9 @@ from .base import EveBase
 
 
 class DgmAttribute(EveBase):
+    """
+    Attribute object with all its properties. Directly accessible by pyfa.
+    """
 
     __tablename__ = 'dgmattribs'
 

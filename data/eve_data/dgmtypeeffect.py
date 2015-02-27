@@ -26,8 +26,8 @@ from .base import EveBase
 
 class DgmTypeEffect(EveBase):
     """
-    Association object between type and effect metadata,
-    which also stores if effect is default for item or not.
+    Association object between type and effect metadata, which also stores
+    if effect is default for item or not. Not directly accessible by pyfa.
     """
 
     __tablename__ = 'dgmtypeeffects'

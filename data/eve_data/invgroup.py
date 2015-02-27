@@ -24,6 +24,9 @@ from .base import EveBase
 
 
 class InvGroup(EveBase):
+    """
+    Group with all its properties. Directly accessible by pyfa.
+    """
 
     __tablename__ = 'invgroups'
 

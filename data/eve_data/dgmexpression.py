@@ -25,6 +25,9 @@ from .base import EveBase
 
 
 class DgmExpression(EveBase):
+    """
+    Effect expression object with all its properties. Is not accessible by pyfa..
+    """
 
     __tablename__ = 'dgmexpressions'
 

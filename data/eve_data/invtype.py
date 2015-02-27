@@ -25,6 +25,9 @@ from .base import EveBase
 
 
 class InvType(EveBase):
+    """
+    Type (aka eve item) with all its properties. Directly accessible by pyfa.
+    """
 
     __tablename__ = 'invtypes'
 

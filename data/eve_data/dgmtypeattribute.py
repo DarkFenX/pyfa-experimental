@@ -26,8 +26,8 @@ from .base import EveBase
 
 class DgmTypeAttribute(EveBase):
     """
-    Association object between type and attribute metadata,
-    which also stores attribute value.
+    Association object between type and attribute metadata, which also stores
+    attribute value. Not directly accessible by pyfa.
     """
 
     __tablename__ = 'dgmtypeattribs'
