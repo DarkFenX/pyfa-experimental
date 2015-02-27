@@ -18,29 +18,21 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, Integer
-
 from data.eve_data.queries import get_type, get_attributes
 from eos import Ship as EosShip
-from .base import PyfaBase
 
 
-class Ship(PyfaBase):
-
-    __tablename__ = 'ships'
-
-    _id = Column('ship_id', Integer, primary_key=True)
-    _type_id = Column('type_id', Integer, nullable=False)
+class Ship:
 
     def __init__(self, type_id):
-        self._type_id = type_id
+        self.__type_id = type_id
         self.__fit = None
         self._eve_item = None
         self._eos_ship = EosShip(type_id)
 
     @property
     def eve_id(self):
-        return self._type_id
+        return self.__type_id
 
     @property
     def eve_name(self):

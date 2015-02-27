@@ -18,8 +18,7 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
 
 from eos import Fit as EosFit
 from service.source_mgr import SourceManager, Source
@@ -32,11 +31,11 @@ class Fit(PyfaBase):
 
     id = Column('fit_id', Integer, primary_key=True)
     name = Column('fit_name', String, nullable=False)
-    _ship_id = Column('ship_id', Integer, ForeignKey('ships.ship_id'))
-    _ship = relationship('Ship')
+    _ship_type_id = Column('ship_type_id', Integer, nullable=False)
 
     def __init__(self, source, name=None):
         self.__source = None
+        self.__ship = None
         self._eos_fit = EosFit()
         self.source = source
         self.name = name
@@ -54,6 +53,8 @@ class Fit(PyfaBase):
         if self.__source == new_source:
             return
         self.__source = new_source
+        # Change eos instance on EosFit we work on; it automatically
+        # propagates to all child EosFit objects
         self._eos_fit.eos = new_source.eos
         # Update source-dependent data for all child objects
         for child in (
@@ -64,13 +65,14 @@ class Fit(PyfaBase):
 
     @property
     def ship(self):
-        return self._ship
+        return self.__ship
 
     @ship.setter
     def ship(self, new_ship):
         # DB
-        self._ship = new_ship
+        self._ship_type_id = new_ship.eve_id
         # Internal
+        self.__ship = new_ship
         self._eos_fit.ship = new_ship._eos_ship
         # External
         new_ship._fit = self
