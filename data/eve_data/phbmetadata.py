@@ -25,7 +25,7 @@ from .base import EveBase
 
 class PhbMetaData(EveBase):
     """
-    Metadata properties. Directly accessible by pyfa.
+    EVE database metadata (like client version). Directly accessible by pyfa.
     """
 
     __tablename__ = 'phbmetadata'
