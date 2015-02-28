@@ -19,41 +19,16 @@
 
 
 from data.eve_data.queries import get_type, get_attributes
-from eos import Ship as EosShip
+from eos import Stance as EosStance
 
 
-class Ship:
+class Stance:
 
-    def __init__(self, type_id, stance=None):
+    def __init__(self, type_id):
         self.__type_id = type_id
-        self.__fit = None
-        self.__stance = None
+        self.__ship = None
         self._eve_item = None
-        self._eos_ship = EosShip(type_id)
-        self.stance = stance
-
-    @property
-    def stance(self):
-        return self.__stance
-
-    @stance.setter
-    def stance(self, new_stance):
-        old_stance = self.__stance
-        if self._fit is not None:
-            # Update DB (remove old item, add new)
-            self._fit._stance_type_id = new_stance.eve_id
-            # Update Eos model
-            self._fit._eos_fit.stance = new_stance._eos_stance
-        # Update pyfa model references
-        if old_stance is not None:
-            if self._fit is not None:
-                self._fit._src_children.remove(old_stance)
-            old_stance._fit = None
-        self.__stance = new_stance
-        if new_stance is not None:
-            if self._fit is not None:
-                self._fit._src_children.add(new_stance)
-            new_stance._fit = self._fit
+        self._eos_stance = EosStance(type_id)
 
     @property
     def eve_id(self):
@@ -65,7 +40,7 @@ class Ship:
 
     @property
     def attributes(self):
-        eos_attrs = self._eos_ship.attributes
+        eos_attrs = self._eos_stance.attributes
         attr_ids = eos_attrs.keys()
         attrs = get_attributes(self._fit.source.edb, attr_ids)
         attr_map = {}
@@ -95,4 +70,4 @@ class Ship:
             self._eve_item = get_type(source.edb, self.eve_id)
 
     def __repr__(self):
-        return '<Ship()>'
+        return '<Stance()>'

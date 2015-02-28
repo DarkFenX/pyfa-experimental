@@ -20,19 +20,24 @@ session_pyfadata = PyfaDataManager.session
 CRUSADER = 11184
 CHEETAH = 11182
 CONFESSOR = 34317
+CONFESSOR_DEFENSIVE_MODE = 34319
 
 fit = Fit('tq', name='test fit 1')
-fit.ship = Ship(CONFESSOR)
+confessor = Ship(CONFESSOR, stance=Stance(34319))
+fit.ship = confessor
 print(fit.ship.eve_name)
 print(fit.stats.agility_factor)
-print(fit.ship.attributes)
-print(fit.ship.effects)
+print(dict((k.name, v)for k, v in fit.ship.attributes.items()))
+print(list(i.name for i in fit.ship.effects))
 session_pyfadata.add(fit)
 session_pyfadata.commit()
 fit.ship = Ship(CRUSADER)
-print(fit.ship.eve_name)
-print(fit.stats.agility_factor)
-print(fit.ship.attributes)
-print(fit.ship.effects)
+session_pyfadata.add(fit)
+session_pyfadata.commit()
+fit.ship = confessor
+#print(fit.ship.eve_name)
+#print(fit.stats.agility_factor)
+#print(dict((k.name, v)for k, v in fit.ship.attributes.items()))
+#print(list(i.name for i in fit.ship.effects))
 session_pyfadata.add(fit)
 session_pyfadata.commit()

@@ -75,18 +75,27 @@ class Fit(PyfaBase):
 
     @ship.setter
     def ship(self, new_ship):
-        # DB
-        self._ship_type_id = new_ship.eve_id
-        # Internal
         old_ship = self.__ship
+        # Clean-up
         if old_ship is not None:
             self._src_children.remove(old_ship)
-        self._src_children.add(new_ship)
-        self.__ship = new_ship
-        # Eos
+            old_ship._fit = None
+            if old_ship.stance is not None:
+                self._stance_type_id = None
+                self._eos_fit.stance = None
+                self._src_children.remove(old_ship.stance)
+        # Replacements
+        self._ship_type_id = new_ship.eve_id
         self._eos_fit.ship = new_ship._eos_ship
-        # External
-        new_ship._fit = self
+        self.__ship = new_ship
+        # Additions
+        if new_ship is not None:
+            self._src_children.add(new_ship)
+            new_ship._fit = self
+            if new_ship.stance is not None:
+                self._stance_type_id = new_ship.stance.eve_id
+                self._eos_fit.stance = new_ship.stance._eos_stance
+                self._src_children.add(new_ship.stance)
 
     def __repr__(self):
         return '<Fit(id={})>'.format(self.id)
