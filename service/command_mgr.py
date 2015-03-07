@@ -65,7 +65,7 @@ class CommandManager:
         """
         container.append(command)
         if len(container) > self._capacity:
-            del container[self._capacity:]
+            del container[:len(container) - self._capacity]
 
     @property
     def has_undo(self):
