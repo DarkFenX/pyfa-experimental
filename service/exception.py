@@ -25,9 +25,19 @@ class PyfaError(Exception):
     pass
 
 
+# Source manager exceptions
 class UnknownSourceError(PyfaError):
     """
     Raised when source corresponding to passed alias
     cannot be found.
+    """
+    pass
+
+
+# Command manager exceptions
+class EmptyCommandQueueError(PyfaError):
+    """
+    Raised on attempt to undo or redo command when
+    corresponding queue is empty.
     """
     pass

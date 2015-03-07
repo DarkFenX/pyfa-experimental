@@ -19,6 +19,7 @@
 
 
 from abc import ABCMeta, abstractmethod
+from .exception import EmptyCommandQueueError
 
 
 class CommandManager:
@@ -45,16 +46,16 @@ class CommandManager:
     def undo(self):
         try:
             command = self._undos.pop(-1)
-        except IndexError:
-            return
+        except IndexError as e:
+            raise EmptyCommandQueueError from e
         command.reverse()
         self._limited_append(self._redos, command)
 
     def redo(self):
         try:
             command = self._redos.pop(-1)
-        except IndexError:
-            return
+        except IndexError as e:
+            raise EmptyCommandQueueError from e
         command.run()
         self._limited_append(self._undos, command)
 
