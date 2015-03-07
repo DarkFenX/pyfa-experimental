@@ -12,6 +12,8 @@ pyfa_dbpath = os.path.join(script_dir, 'userdata', 'pyfadata.db')
 SourceManager.add_source('tq', eve_dbpath_tq)
 session_evedata_tq = SourceManager.get_source('tq').edb
 
+SourceManager.add_source('sisi', eve_dbpath_tq)
+
 # (Re-)Initialize database for pyfa save data
 if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
 PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
@@ -24,9 +26,14 @@ CONFESSOR_DEFENSIVE_MODE = 34319
 
 fit = Fit('tq', name='test fit 1')
 confessor = Ship(CONFESSOR, stance=Stance(34319))
-print(fit.has_undo)
 fit.ship = confessor
-print(fit.has_undo)
+print(fit.source.alias, fit.has_undo)
+fit.source = 'sisi'
+print(fit.source.alias, fit.has_undo)
+fit.undo()
+print(fit.source.alias, fit.has_undo)
+fit.redo()
+print(fit.source.alias, fit.has_undo)
 
 session_pyfadata.add(fit)
 session_pyfadata.commit()

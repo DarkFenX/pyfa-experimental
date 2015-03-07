@@ -23,6 +23,7 @@ from sqlalchemy import Column, Integer, String
 from eos import Fit as EosFit
 from service import SourceManager, Source, CommandManager
 from .base import PyfaBase
+from .command import FitSourceChangeCommand
 
 
 class Fit(PyfaBase):
@@ -38,8 +39,7 @@ class Fit(PyfaBase):
         # Attributes which store objects hidden by properties
         self.__source = None
         self.__ship = None
-        # Holds all child objects of fit which may need update when we change
-        # source, so we can iterate through them as needed
+        # Holds all child objects of fit which need update when we change source
         self._src_children = set()
         # Eos fit will be primary point of using Eos calculation engine for
         # fit-specific data
@@ -47,7 +47,7 @@ class Fit(PyfaBase):
         # Manages fit-specific data needed for undo/redo
         self._cmd_mgr = CommandManager(100)
         # Set passed values
-        self.source = source
+        self._set_source(source)
         self.name = name
 
     @property
@@ -56,20 +56,20 @@ class Fit(PyfaBase):
 
     @source.setter
     def source(self, new_source):
+        command = FitSourceChangeCommand(self, new_source)
+        self._cmd_mgr.do(command)
+
+    def _set_source(self, new_source):
         # Attempt to fetch source from source manager if passed object
         # is not instance of source class
         if not isinstance(new_source, Source):
             new_source = SourceManager.get_source(new_source)
-        # Avoid any updates if they're not going to do anything
-        if self.__source == new_source:
-            return
         self.__source = new_source
-        # Change eos instance on EosFit we work on; it automatically
-        # propagates to all child EosFit objects
+        # Update eos model with new data
         self._eos_fit.eos = new_source.eos
-        # Update source-dependent data for all child objects
+        # Update pyfa model with new data
         for child in self._src_children:
-            child.update_source()
+            child._update_source()
 
     @property
     def ship(self):
@@ -103,7 +103,7 @@ class Fit(PyfaBase):
     def stats(self):
         return self._eos_fit.stats
 
-    # Undo/redo proxy methods
+    # Undo/redo proxies
     @property
     def has_undo(self):
         return self._cmd_mgr.has_undo
