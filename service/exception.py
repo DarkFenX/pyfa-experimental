@@ -41,3 +41,11 @@ class EmptyCommandQueueError(PyfaError):
     corresponding queue is empty.
     """
     pass
+
+
+class ExecutedFlagError(PyfaError):
+    """
+    Raised when already executed command is ran or
+    not executed command is undone.
+    """
+    pass

@@ -18,8 +18,8 @@
 #===============================================================================
 
 
-from abc import ABCMeta, abstractmethod
-from .exception import EmptyCommandQueueError
+from abc import ABCMeta, abstractmethod, abstractproperty
+from .exception import EmptyCommandQueueError, ExecutedFlagError
 
 
 class CommandManager:
@@ -39,7 +39,16 @@ class CommandManager:
         self._redos = []
 
     def do(self, command):
+        """
+        Run the command.
+
+        Possible exceptions:
+        ExecutedFlagError -- raised when command has already
+        been ran.
+        """
         self._redos.clear()
+        if command.executed:
+            raise ExecutedFlagError(command.executed)
         command.run()
         self._limited_append(self._undos, command)
 
@@ -48,6 +57,8 @@ class CommandManager:
             command = self._undos.pop(-1)
         except IndexError as e:
             raise EmptyCommandQueueError from e
+        if not command.executed:
+            raise ExecutedFlagError(command.executed)
         command.reverse()
         self._limited_append(self._redos, command)
 
@@ -56,6 +67,8 @@ class CommandManager:
             command = self._redos.pop(-1)
         except IndexError as e:
             raise EmptyCommandQueueError from e
+        if command.executed:
+            raise ExecutedFlagError(command.executed)
         command.run()
         self._limited_append(self._undos, command)
 
@@ -84,6 +97,10 @@ class CommandManager:
 
 
 class BaseCommand(metaclass=ABCMeta):
+
+    @abstractproperty
+    def executed(self):
+        ...
 
     @abstractmethod
     def run(self):
