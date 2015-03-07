@@ -21,7 +21,7 @@
 from sqlalchemy import Column, Integer, String
 
 from eos import Fit as EosFit
-from service.source_mgr import SourceManager, Source
+from service import SourceManager, Source, CommandManager
 from .base import PyfaBase
 
 
@@ -44,6 +44,8 @@ class Fit(PyfaBase):
         # Eos fit will be primary point of using Eos calculation engine for
         # fit-specific data
         self._eos_fit = EosFit()
+        # Manages fit-specific data needed for undo/redo
+        self._cmd_mgr = CommandManager(100)
         # Set passed values
         self.source = source
         self.name = name
@@ -97,9 +99,25 @@ class Fit(PyfaBase):
                 self._eos_fit.stance = new_ship.stance._eos_stance
                 self._src_children.add(new_ship.stance)
 
-    def __repr__(self):
-        return '<Fit(id={})>'.format(self.id)
-
     @property
     def stats(self):
         return self._eos_fit.stats
+
+    # Undo/redo proxy methods
+    @property
+    def has_undo(self):
+        return self._cmd_mgr.has_undo
+
+    @property
+    def has_redo(self):
+        return self._cmd_mgr.has_redo
+
+    def undo(self):
+        self._cmd_mgr.undo()
+
+    def redo(self):
+        self._cmd_mgr.redo()
+
+    # Auxiliary/service stuff
+    def __repr__(self):
+        return '<Fit(id={})>'.format(self.id)

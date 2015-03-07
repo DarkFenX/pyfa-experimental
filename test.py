@@ -24,20 +24,9 @@ CONFESSOR_DEFENSIVE_MODE = 34319
 
 fit = Fit('tq', name='test fit 1')
 confessor = Ship(CONFESSOR, stance=Stance(34319))
+print(fit.has_undo)
 fit.ship = confessor
-print(fit.ship.eve_name)
-print(fit.stats.agility_factor)
-print(dict((k.name, v)for k, v in fit.ship.attributes.items()))
-print(list(i.name for i in fit.ship.effects))
-session_pyfadata.add(fit)
-session_pyfadata.commit()
-fit.ship = Ship(CRUSADER)
-session_pyfadata.add(fit)
-session_pyfadata.commit()
-fit.ship = confessor
-#print(fit.ship.eve_name)
-#print(fit.stats.agility_factor)
-#print(dict((k.name, v)for k, v in fit.ship.attributes.items()))
-#print(list(i.name for i in fit.ship.effects))
+print(fit.has_undo)
+
 session_pyfadata.add(fit)
 session_pyfadata.commit()
