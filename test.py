@@ -25,15 +25,15 @@ CONFESSOR = 34317
 CONFESSOR_DEFENSIVE_MODE = 34319
 
 fit = Fit('tq', name='test fit 1')
+print(fit.ship)
 confessor = Ship(CONFESSOR, stance=Stance(34319))
 fit.ship = confessor
-print(fit.source.alias, fit.has_undo)
-fit.source = 'sisi'
-print(fit.source.alias, fit.has_undo)
+print(fit.ship)
 fit.undo()
-print(fit.source.alias, fit.has_undo)
+print(fit.ship)
 fit.redo()
-print(fit.source.alias, fit.has_undo)
+print(fit.ship)
+
 
 session_pyfadata.add(fit)
 session_pyfadata.commit()

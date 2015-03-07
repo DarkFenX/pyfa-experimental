@@ -40,3 +40,6 @@ class FitSourceChangeCommand(BaseCommand):
     @property
     def executed(self):
         return self.__executed
+
+    def __repr__(self):
+        return '<FitSourceChangeCommand()>'

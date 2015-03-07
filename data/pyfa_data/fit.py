@@ -23,7 +23,7 @@ from sqlalchemy import Column, Integer, String
 from eos import Fit as EosFit
 from service import SourceManager, Source, CommandManager
 from .base import PyfaBase
-from .command import FitSourceChangeCommand
+from .command import FitSourceChangeCommand, FitShipChangeCommand
 
 
 class Fit(PyfaBase):
@@ -77,6 +77,10 @@ class Fit(PyfaBase):
 
     @ship.setter
     def ship(self, new_ship):
+        command = FitShipChangeCommand(self, new_ship)
+        self._cmd_mgr.do(command)
+
+    def _set_ship(self, new_ship):
         old_ship = self.__ship
         # Clean-up
         if old_ship is not None:
@@ -87,8 +91,8 @@ class Fit(PyfaBase):
                 self._eos_fit.stance = None
                 self._src_children.remove(old_ship.stance)
         # Replacements
-        self._ship_type_id = new_ship.eve_id
-        self._eos_fit.ship = new_ship._eos_ship
+        self._ship_type_id = getattr(new_ship, 'eve_id', None)
+        self._eos_fit.ship = getattr(new_ship, '_eos_ship', None)
         self.__ship = new_ship
         # Additions
         if new_ship is not None:
