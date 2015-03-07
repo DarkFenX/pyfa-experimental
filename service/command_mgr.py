@@ -25,9 +25,13 @@ class CommandManager:
     """
     Class which handles undo/redo activities on objects
     which need them.
+
+    Requred arguments:
+    capacity -- capacity of undo/redo queues
     """
 
-    def __init__(self):
+    def __init__(self, capacity):
+        self._capacity = capacity
         # [earlier action, later action]
         self._undos = []
         # [later action, earlier action]
@@ -36,7 +40,7 @@ class CommandManager:
     def do(self, command):
         self._redos.clear()
         command.run()
-        self._undos.append(command)
+        self._limited_append(self._undos, command)
 
     def undo(self):
         try:
@@ -44,7 +48,7 @@ class CommandManager:
         except IndexError:
             return
         command.reverse()
-        self._redos.append(command)
+        self._limited_append(self._redos, command)
 
     def redo(self):
         try:
@@ -52,7 +56,16 @@ class CommandManager:
         except IndexError:
             return
         command.run()
-        self._undos.append(command)
+        self._limited_append(self._undos, command)
+
+    def _limited_append(self, container, command):
+        """
+        Append element to the list, not allowing length of list
+        to exceed the capacity.
+        """
+        container.append(command)
+        if len(container) > self._capacity:
+            del container[self._capacity:]
 
     @property
     def has_undo(self):
