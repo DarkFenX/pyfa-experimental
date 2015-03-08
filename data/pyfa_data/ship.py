@@ -23,6 +23,7 @@ from itertools import chain
 from data.eve_data.queries import get_type, get_attributes
 from eos import Ship as EosShip
 from .aux import get_src_children
+from .aux.command import ShipStanceChangeCommand
 from .aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 
 
@@ -74,7 +75,13 @@ class Ship:
 
     @stance.setter
     def stance(self, new_stance):
-        self._set_stance(new_stance)
+        command = ShipStanceChangeCommand(self, new_stance)
+        try:
+            cmd_mgr = self._fit._cmd_mgr
+        except AttributeError:
+            command.run()
+        else:
+            cmd_mgr.do(command)
 
     def _set_stance(self, new_stance):
         old_stance = self.__stance

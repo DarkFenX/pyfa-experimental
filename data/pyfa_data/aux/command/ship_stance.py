@@ -18,7 +18,28 @@
 #===============================================================================
 
 
-from .manager import CommandManager
-from .fit_source import FitSourceChangeCommand
-from .fit_ship import FitShipChangeCommand
-from .ship_stance import ShipStanceChangeCommand
+from .abc import BaseCommand
+
+
+class ShipStanceChangeCommand(BaseCommand):
+
+    def __init__(self, ship, new_stance):
+        self.__executed = False
+        self.ship = ship
+        self.old_stance = ship.stance
+        self.new_stance = new_stance
+
+    def run(self):
+        self.ship._set_stance(self.new_stance)
+        self.__executed = True
+
+    def reverse(self):
+        self.ship._set_stance(self.old_stance)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return '<ShipStanceChangeCommand()>'
