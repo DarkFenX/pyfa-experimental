@@ -22,10 +22,19 @@ from itertools import chain
 
 from data.eve_data.queries import get_type, get_attributes
 from eos import Ship as EosShip
-from .aux import get_children
+from .aux import get_src_children
+from .aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 
 
 class Ship:
+    """
+    Pyfa model: fit.ship
+    Eos model: fit.ship
+    DB model: fit._ship_type_id
+
+    Pyfa model children:
+      stance
+    """
 
     def __init__(self, type_id, stance=None):
         self.__type_id = type_id
@@ -35,19 +44,7 @@ class Ship:
         self._eos_ship = EosShip(type_id)
         self.stance = stance
 
-    @property
-    def stance(self):
-        return self.__stance
-
-    @stance.setter
-    def stance(self, new_stance):
-        old_stance = self.__stance
-        if old_stance is not None:
-            old_stance._ship = None
-        self.__stance = new_stance
-        if new_stance is not None:
-            new_stance._ship = self
-
+    # Read-only info
     @property
     def eve_id(self):
         return self.__type_id
@@ -70,22 +67,43 @@ class Ship:
     def effects(self):
         return list(self._eve_item.effects)
 
+    # Children getters/setters
+    @property
+    def stance(self):
+        return self.__stance
+
+    @stance.setter
+    def stance(self, new_stance):
+        self._set_stance(new_stance)
+
+    def _set_stance(self, new_stance):
+        old_stance = self.__stance
+        if new_stance is old_stance:
+            return
+        if old_stance is not None:
+            if old_stance._ship is None:
+                raise ItemRemovalConsistencyError(old_stance)
+            old_stance._ship = None
+        self.__stance = new_stance
+        if new_stance is not None:
+            if new_stance._ship is not None:
+                raise ItemAlreadyUsedError(new_stance)
+            new_stance._ship = self
+
+    # Auxiliary methods
     @property
     def _fit(self):
         return self.__fit
 
     @_fit.setter
     def _fit(self, new_fit):
-        """
-        Handle fit switch for ship and all its child objects.
-        """
         old_fit = self._fit
-        if new_fit is old_fit:
-            return
         self._unregister_on_fit(old_fit)
         self.__fit = new_fit
         self._register_on_fit(new_fit)
         self._update_source()
+        for src_child in self._src_children:
+            src_child._update_source()
 
     def  _register_on_fit(self, fit):
         if fit is not None:
@@ -102,8 +120,8 @@ class Ship:
                 self.stance._unregister_on_fit(fit)
 
     @property
-    def _children(self):
-        return get_children(chain(
+    def _src_children(self):
+        return get_src_children(chain(
             (self.stance,)
         ))
 

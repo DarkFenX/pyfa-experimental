@@ -24,12 +24,17 @@ from sqlalchemy import Column, Integer, String
 
 from eos import Fit as EosFit
 from service import SourceManager, Source
-from .aux import get_children
+from .aux import get_src_children
 from .aux.command import CommandManager, FitSourceChangeCommand, FitShipChangeCommand
+from .aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from .base import PyfaBase
 
 
 class Fit(PyfaBase):
+    """
+    Pyfa model children:
+      ship
+    """
 
     __tablename__ = 'fits'
 
@@ -51,34 +56,12 @@ class Fit(PyfaBase):
         self._set_source(source)
         self.name = name
 
+    # Read-only info
     @property
-    def source(self):
-        return self.__source
+    def stats(self):
+        return self._eos_fit.stats
 
-    @source.setter
-    def source(self, new_source):
-        command = FitSourceChangeCommand(self, new_source)
-        self._cmd_mgr.do(command)
-
-    def _set_source(self, new_source):
-        # Attempt to fetch source from source manager if passed object
-        # is not instance of source class
-        if not isinstance(new_source, Source):
-            new_source = SourceManager.get_source(new_source)
-        # Do not update anything if sources are the same
-        if self.source == new_source:
-            return
-        self.__source = new_source
-        # Update eos model with new data
-        self._eos_fit.eos = new_source.eos
-        # Update pyfa model with new data
-        for child in chain(
-            (self.ship,)
-        ):
-            if child is None:
-                continue
-            child._update_source()
-
+    # Children getters/setters
     @property
     def ship(self):
         return self.__ship
@@ -90,24 +73,17 @@ class Fit(PyfaBase):
 
     def _set_ship(self, new_ship):
         old_ship = self.__ship
-        # Clean-up
+        if new_ship is old_ship:
+            return
         if old_ship is not None:
+            if old_ship._fit is None:
+                raise ItemRemovalConsistencyError(old_ship)
             old_ship._fit = None
-        # Replacements
         self.__ship = new_ship
-        # Additions
         if new_ship is not None:
+            if new_ship._fit is not None:
+                raise ItemAlreadyUsedError(new_ship)
             new_ship._fit = self
-
-    @property
-    def _children(self):
-        return get_children(chain(
-            (self.ship,)
-        ))
-
-    @property
-    def stats(self):
-        return self._eos_fit.stats
 
     # Undo/redo proxies
     @property
@@ -124,6 +100,38 @@ class Fit(PyfaBase):
     def redo(self):
         self._cmd_mgr.redo()
 
-    # Auxiliary/service stuff
+    # Miscellanea public stuff
+    @property
+    def source(self):
+        return self.__source
+
+    @source.setter
+    def source(self, new_source):
+        command = FitSourceChangeCommand(self, new_source)
+        self._cmd_mgr.do(command)
+
+    def _set_source(self, new_source):
+        # Attempt to fetch source from source manager if passed object
+        # is not instance of source class
+        if not isinstance(new_source, Source):
+            new_source = SourceManager.get_source(new_source)
+        old_source = self.source
+        # Do not update anything if sources are the same
+        if new_source is old_source:
+            return
+        self.__source = new_source
+        # Update eos model with new data
+        self._eos_fit.eos = new_source.eos
+        # Update pyfa model with new data
+        for src_child in self._src_children:
+            src_child._update_source()
+
+    # Auxiliary methods
+    @property
+    def _src_children(self):
+        return get_src_children(chain(
+            (self.ship,)
+        ))
+
     def __repr__(self):
         return '<Fit(id={})>'.format(self.id)

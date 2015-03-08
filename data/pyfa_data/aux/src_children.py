@@ -18,24 +18,17 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-
-from .base import EveBase
-
-
-class InvMarketGroup(EveBase):
+def get_src_children(child_list):
     """
-    Market Group with all its properties. Directly accessible by pyfa.
+    Accept iterable of source-dependent child objects (some
+    of which may be None) and compose set, which includes all
+    passed child objects and their source-dependent children too.
     """
-
-    __tablename__ = 'invmarketgroups'
-
-    id = Column('marketGroupID', Integer, primary_key=True)
-    name = Column('marketGroupName', String)
-
-    _parent_id = Column('parentGroupID', Integer, ForeignKey('invmarketgroups.marketGroupID'))
-    parent = relationship('InvMarketGroup', backref="children", remote_side=[id])
-
-    def __repr__(self):
-        return '<InvMarketGroup(id={})>'.format(self.id)
+    children = set()
+    for child in child_list:
+        if child is None:
+            continue
+        children.add(child)
+        if hasattr(child, '_src_children'):
+            children.update(child._src_children)
+    return children

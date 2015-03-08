@@ -29,7 +29,7 @@ fit.ship = Ship(CONFESSOR)
 #print(dict((k.name, v)for k, v in fit.ship.attributes.items())['armorEmDamageResonance'])
 fit.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
 #print(dict((k.name, v)for k, v in fit.ship.attributes.items())['armorEmDamageResonance'])
-print(fit._children)
+print(fit._src_children)
 
 session_pyfadata.add(fit)
 session_pyfadata.commit()

@@ -23,6 +23,11 @@ from eos import Stance as EosStance
 
 
 class Stance:
+    """
+    Pyfa model: ship.stance
+    Eos model: fit.stance
+    DB model: fit._stance_type_id
+    """
 
     def __init__(self, type_id):
         self.__type_id = type_id
@@ -30,6 +35,7 @@ class Stance:
         self._eve_item = None
         self._eos_stance = EosStance(type_id)
 
+    # Read-only info
     @property
     def eve_id(self):
         return self.__type_id
@@ -52,6 +58,7 @@ class Stance:
     def effects(self):
         return list(self._eve_item.effects)
 
+    # Auxiliary methods
     @property
     def _ship(self):
         return self.__ship
@@ -59,8 +66,6 @@ class Stance:
     @_ship.setter
     def _ship(self, new_ship):
         old_ship = self._ship
-        if new_ship is old_ship:
-            return
         old_fit = getattr(old_ship, '_fit', None)
         new_fit = getattr(new_ship, '_fit', None)
         self._unregister_on_fit(old_fit)

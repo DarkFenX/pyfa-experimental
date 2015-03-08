@@ -18,17 +18,20 @@
 #===============================================================================
 
 
-def get_children(child_list):
+from exception import PyfaError
+
+
+class ItemAlreadyUsedError(PyfaError):
     """
-    Accept iterable of child objects (some of which may
-    be None) and compose set, which includes all passed
-    child objects and their children too.
+    Raised on attempt to add any item to the parent if it's
+    already used somewhere else.
     """
-    children = set()
-    for child in child_list:
-        if child is None:
-            continue
-        children.add(child)
-        if hasattr(child, '_children'):
-            children.update(child._children)
-    return children
+    pass
+
+
+class ItemRemovalConsistencyError(PyfaError):
+    """
+    Raised on attempt to unassign item which doesn't belong
+    to parent.
+    """
+    pass

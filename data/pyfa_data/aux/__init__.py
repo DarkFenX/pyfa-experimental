@@ -18,4 +18,4 @@
 #===============================================================================
 
 
-from .children import get_children
+from .src_children import get_src_children
