@@ -18,13 +18,4 @@
 #===============================================================================
 
 
-from exception import PyfaError
-
-
-# Source manager exceptions
-class UnknownSourceError(PyfaError):
-    """
-    Raised when source corresponding to passed alias
-    cannot be found.
-    """
-    pass
+from .children import get_children

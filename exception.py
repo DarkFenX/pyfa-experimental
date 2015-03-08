@@ -18,28 +18,8 @@
 #===============================================================================
 
 
-from service import BaseCommand
-
-
-class FitShipChangeCommand(BaseCommand):
-
-    def __init__(self, fit, new_ship):
-        self.__executed = False
-        self.fit = fit
-        self.old_ship = fit.ship
-        self.new_ship = new_ship
-
-    def run(self):
-        self.fit._set_ship(self.new_ship)
-        self.__executed = True
-
-    def reverse(self):
-        self.fit._set_ship(self.old_ship)
-        self.__executed = False
-
-    @property
-    def executed(self):
-        return self.__executed
-
-    def __repr__(self):
-        return '<FitShipChangeCommand()>'
+class PyfaError(Exception):
+    """
+    All pyfa exceptions are based on this class.
+    """
+    pass

@@ -18,13 +18,17 @@
 #===============================================================================
 
 
-from exception import PyfaError
-
-
-# Source manager exceptions
-class UnknownSourceError(PyfaError):
+def get_children(child_list):
     """
-    Raised when source corresponding to passed alias
-    cannot be found.
+    Accept iterable of child objects (some of which may
+    be None) and compose set, which includes all passed
+    child objects and their children too.
     """
-    pass
+    children = set()
+    for child in child_list:
+        if child is None:
+            continue
+        children.add(child)
+        if hasattr(child, '_children'):
+            children.update(child._children)
+    return children

@@ -18,28 +18,21 @@
 #===============================================================================
 
 
-from service import BaseCommand
+from exception import PyfaError
 
 
-class FitSourceChangeCommand(BaseCommand):
+# Command manager exceptions
+class EmptyCommandQueueError(PyfaError):
+    """
+    Raised on attempt to undo or redo command when
+    corresponding queue is empty.
+    """
+    pass
 
-    def __init__(self, fit, new_source):
-        self.__executed = False
-        self.fit = fit
-        self.old_source = fit.source
-        self.new_source = new_source
 
-    def run(self):
-        self.fit._set_source(self.new_source)
-        self.__executed = True
-
-    def reverse(self):
-        self.fit._set_source(self.old_source)
-        self.__executed = False
-
-    @property
-    def executed(self):
-        return self.__executed
-
-    def __repr__(self):
-        return '<FitSourceChangeCommand()>'
+class ExecutedFlagError(PyfaError):
+    """
+    Raised when already executed command is ran or
+    not executed command is undone.
+    """
+    pass

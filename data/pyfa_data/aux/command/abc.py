@@ -18,13 +18,19 @@
 #===============================================================================
 
 
-from exception import PyfaError
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 
-# Source manager exceptions
-class UnknownSourceError(PyfaError):
-    """
-    Raised when source corresponding to passed alias
-    cannot be found.
-    """
-    pass
+class BaseCommand(metaclass=ABCMeta):
+
+    @abstractproperty
+    def executed(self):
+        ...
+
+    @abstractmethod
+    def run(self):
+        ...
+
+    @abstractmethod
+    def reverse(self):
+        ...

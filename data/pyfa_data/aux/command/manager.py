@@ -18,7 +18,6 @@
 #===============================================================================
 
 
-from abc import ABCMeta, abstractmethod, abstractproperty
 from .exception import EmptyCommandQueueError, ExecutedFlagError
 
 
@@ -94,18 +93,3 @@ class CommandManager:
         Check if there're any actions in redo queue.
         """
         return bool(self._redos)
-
-
-class BaseCommand(metaclass=ABCMeta):
-
-    @abstractproperty
-    def executed(self):
-        ...
-
-    @abstractmethod
-    def run(self):
-        ...
-
-    @abstractmethod
-    def reverse(self):
-        ...

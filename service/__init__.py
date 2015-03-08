@@ -19,4 +19,3 @@
 
 
 from .source_mgr import SourceManager, Source
-from .command_mgr import CommandManager, BaseCommand

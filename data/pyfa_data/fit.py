@@ -23,9 +23,10 @@ from itertools import chain
 from sqlalchemy import Column, Integer, String
 
 from eos import Fit as EosFit
-from service import SourceManager, Source, CommandManager
+from service import SourceManager, Source
+from .aux import get_children
+from .aux.command import CommandManager, FitSourceChangeCommand, FitShipChangeCommand
 from .base import PyfaBase
-from .command import FitSourceChangeCommand, FitShipChangeCommand
 
 
 class Fit(PyfaBase):
@@ -97,6 +98,12 @@ class Fit(PyfaBase):
         # Additions
         if new_ship is not None:
             new_ship._fit = self
+
+    @property
+    def _children(self):
+        return get_children(chain(
+            (self.ship,)
+        ))
 
     @property
     def stats(self):

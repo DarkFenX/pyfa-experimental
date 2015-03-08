@@ -18,8 +18,11 @@
 #===============================================================================
 
 
+from itertools import chain
+
 from data.eve_data.queries import get_type, get_attributes
 from eos import Ship as EosShip
+from .aux import get_children
 
 
 class Ship:
@@ -97,6 +100,12 @@ class Ship:
             fit._eos_fit.ship = None
             if self.stance is not None:
                 self.stance._unregister_on_fit(fit)
+
+    @property
+    def _children(self):
+        return get_children(chain(
+            (self.stance,)
+        ))
 
     def _update_source(self):
         try:

@@ -18,13 +18,6 @@
 #===============================================================================
 
 
-from exception import PyfaError
-
-
-# Source manager exceptions
-class UnknownSourceError(PyfaError):
-    """
-    Raised when source corresponding to passed alias
-    cannot be found.
-    """
-    pass
+from .manager import CommandManager
+from .fit_source import FitSourceChangeCommand
+from .fit_ship import FitShipChangeCommand
