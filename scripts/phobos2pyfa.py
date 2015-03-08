@@ -66,6 +66,10 @@ tables = {
         data.eve_data.InvType,
         {'typeName': 'typeName_en-us'}
     ),
+    'mapbulk_marketGroups': (
+        data.eve_data.InvMarketGroup,
+        {'marketGroupName': 'marketGroupName_en-us'}
+    ),
     'phbmetadata': (
         data.eve_data.PhbMetaData,
         {}
