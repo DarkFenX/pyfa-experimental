@@ -88,11 +88,15 @@ class Ship:
         if fit is not None:
             fit._ship_type_id = self.eve_id
             fit._eos_fit.ship = self._eos_ship
+            if self.stance is not None:
+                self.stance._register_on_fit(fit)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
             fit._ship_type_id = None
             fit._eos_fit.ship = None
+            if self.stance is not None:
+                self.stance._unregister_on_fit(fit)
 
     def _update_source(self):
         try:
