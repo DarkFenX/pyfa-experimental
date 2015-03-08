@@ -41,6 +41,9 @@ class InvType(EveBase):
     _group_id = Column('groupID', Integer, ForeignKey('invgroups.groupID'))
     group = relationship('InvGroup')
 
+    _market_group_id = Column('marketGroupID', Integer, ForeignKey('invmarketgroups.marketGroupID'))
+    market_group = relationship('InvMarketGroup')
+
     _attrib_associations = relationship('DgmTypeAttribute')
     _effect_associations = relationship('DgmTypeEffect')
 
