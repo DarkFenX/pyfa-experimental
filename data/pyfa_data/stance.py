@@ -83,4 +83,4 @@ class Stance:
             self._eve_item = get_type(source.edb, self.eve_id)
 
     def __repr__(self):
-        return '<Stance()>'
+        return '<Stance(eve_id={})>'.format(self.eve_id)
