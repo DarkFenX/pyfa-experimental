@@ -58,21 +58,25 @@ class Stance:
 
     @_ship.setter
     def _ship(self, new_ship):
-        old_ship = self.__ship
+        old_ship = self._ship
         if new_ship is old_ship:
             return
-        if old_ship is not None:
-            old_fit = old_ship._fit
-            if old_fit is not None:
-                old_fit._stance_type_id = None
-                old_fit._eos_fit.stance = None
+        old_fit = getattr(old_ship, '_fit', None)
+        new_fit = getattr(new_ship, '_fit', None)
+        self._unregister_on_fit(old_fit)
         self.__ship = new_ship
-        if new_ship is not None:
-            new_fit = new_ship._fit
-            if new_fit is not None:
-                new_fit._stance_type_id = self.eve_id
-                new_fit._eos_fit.stance = self._eos_stance
+        self._register_on_fit(new_fit)
         self._update_source()
+
+    def _register_on_fit(self, fit):
+        if fit is not None:
+            fit._stance_type_id = self.eve_id
+            fit._eos_fit.stance = self._eos_stance
+
+    def _unregister_on_fit(self, fit):
+        if fit is not None:
+            fit._stance_type_id = None
+            fit._eos_fit.stance = None
 
     def _update_source(self):
         try:

@@ -79,14 +79,20 @@ class Ship:
         old_fit = self._fit
         if new_fit is old_fit:
             return
-        if old_fit is not None:
-            old_fit._ship_type_id = None
-            old_fit._eos_fit.ship = None
+        self._unregister_on_fit(old_fit)
         self.__fit = new_fit
-        if new_fit is not None:
-            new_fit._ship_type_id = self.eve_id
-            new_fit._eos_fit.ship = self._eos_ship
+        self._register_on_fit(new_fit)
         self._update_source()
+
+    def  _register_on_fit(self, fit):
+        if fit is not None:
+            fit._ship_type_id = self.eve_id
+            fit._eos_fit.ship = self._eos_ship
+
+    def _unregister_on_fit(self, fit):
+        if fit is not None:
+            fit._ship_type_id = None
+            fit._eos_fit.ship = None
 
     def _update_source(self):
         try:
