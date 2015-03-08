@@ -18,6 +18,8 @@
 #===============================================================================
 
 
+from itertools import chain
+
 from sqlalchemy import Column, Integer, String
 
 from eos import Fit as EosFit
@@ -39,8 +41,6 @@ class Fit(PyfaBase):
         # Attributes which store objects hidden by properties
         self.__source = None
         self.__ship = None
-        # Holds all child objects of fit which need update when we change source
-        self._src_children = set()
         # Eos fit will be primary point of using Eos calculation engine for
         # fit-specific data
         self._eos_fit = EosFit()
@@ -64,11 +64,18 @@ class Fit(PyfaBase):
         # is not instance of source class
         if not isinstance(new_source, Source):
             new_source = SourceManager.get_source(new_source)
+        # Do not update anything if sources are the same
+        if self.source == new_source:
+            return
         self.__source = new_source
         # Update eos model with new data
         self._eos_fit.eos = new_source.eos
         # Update pyfa model with new data
-        for child in self._src_children:
+        for child in chain(
+            (self.ship,)
+        ):
+            if child is None:
+                continue
             child._update_source()
 
     @property
@@ -84,24 +91,12 @@ class Fit(PyfaBase):
         old_ship = self.__ship
         # Clean-up
         if old_ship is not None:
-            self._src_children.remove(old_ship)
             old_ship._fit = None
-            if old_ship.stance is not None:
-                self._stance_type_id = None
-                self._eos_fit.stance = None
-                self._src_children.remove(old_ship.stance)
         # Replacements
-        self._ship_type_id = getattr(new_ship, 'eve_id', None)
-        self._eos_fit.ship = getattr(new_ship, '_eos_ship', None)
         self.__ship = new_ship
         # Additions
         if new_ship is not None:
-            self._src_children.add(new_ship)
             new_ship._fit = self
-            if new_ship.stance is not None:
-                self._stance_type_id = new_ship.stance.eve_id
-                self._eos_fit.stance = new_ship.stance._eos_stance
-                self._src_children.add(new_ship.stance)
 
     @property
     def stats(self):

@@ -49,6 +49,7 @@ class InvType(EveBase):
         """
         Return attributes of type as {DgmAttribute: value} dictionary.
         """
+        # TODO: add base item attributes to the map one way or another
         attribute_map = {}
         for attrib_association in self._attrib_associations:
             attribute_map[attrib_association.attribute] = attrib_association.value

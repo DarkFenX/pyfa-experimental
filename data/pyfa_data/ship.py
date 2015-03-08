@@ -39,21 +39,11 @@ class Ship:
     @stance.setter
     def stance(self, new_stance):
         old_stance = self.__stance
-        if self._fit is not None:
-            # Update DB (remove old item, add new)
-            self._fit._stance_type_id = new_stance.eve_id
-            # Update Eos model
-            self._fit._eos_fit.stance = new_stance._eos_stance
-        # Update pyfa model references
         if old_stance is not None:
-            if self._fit is not None:
-                self._fit._src_children.remove(old_stance)
-            old_stance._fit = None
+            old_stance._ship = None
         self.__stance = new_stance
         if new_stance is not None:
-            if self._fit is not None:
-                self._fit._src_children.add(new_stance)
-            new_stance._fit = self._fit
+            new_stance._ship = self
 
     @property
     def eve_id(self):
@@ -83,7 +73,19 @@ class Ship:
 
     @_fit.setter
     def _fit(self, new_fit):
+        """
+        Handle fit switch for ship and all its child objects.
+        """
+        old_fit = self._fit
+        if new_fit is old_fit:
+            return
+        if old_fit is not None:
+            old_fit._ship_type_id = None
+            old_fit._eos_fit.ship = None
         self.__fit = new_fit
+        if new_fit is not None:
+            new_fit._ship_type_id = self.eve_id
+            new_fit._eos_fit.ship = self._eos_ship
         self._update_source()
 
     def _update_source(self):

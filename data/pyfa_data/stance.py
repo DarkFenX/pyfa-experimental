@@ -42,7 +42,7 @@ class Stance:
     def attributes(self):
         eos_attrs = self._eos_stance.attributes
         attr_ids = eos_attrs.keys()
-        attrs = get_attributes(self._fit.source.edb, attr_ids)
+        attrs = get_attributes(self._ship._fit.source.edb, attr_ids)
         attr_map = {}
         for attr in attrs:
             attr_map[attr] = eos_attrs[attr.id]
@@ -53,17 +53,30 @@ class Stance:
         return list(self._eve_item.effects)
 
     @property
-    def _fit(self):
-        return self.__fit
+    def _ship(self):
+        return self.__ship
 
-    @_fit.setter
-    def _fit(self, new_fit):
-        self.__fit = new_fit
+    @_ship.setter
+    def _ship(self, new_ship):
+        old_ship = self.__ship
+        if new_ship is old_ship:
+            return
+        if old_ship is not None:
+            old_fit = old_ship._fit
+            if old_fit is not None:
+                old_fit._stance_type_id = None
+                old_fit._eos_fit.stance = None
+        self.__ship = new_ship
+        if new_ship is not None:
+            new_fit = new_ship._fit
+            if new_fit is not None:
+                new_fit._stance_type_id = self.eve_id
+                new_fit._eos_fit.stance = self._eos_stance
         self._update_source()
 
     def _update_source(self):
         try:
-            source = self._fit.source
+            source = self._ship._fit.source
         except AttributeError:
             self._eve_item = None
         else:
