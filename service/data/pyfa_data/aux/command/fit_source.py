@@ -18,6 +18,7 @@
 #===============================================================================
 
 
+from service.util.repr import make_repr_str
 from .abc import BaseCommand
 
 
@@ -42,4 +43,4 @@ class FitSourceChangeCommand(BaseCommand):
         return self.__executed
 
     def __repr__(self):
-        return '<FitSourceChangeCommand()>'
+        return make_repr_str(self, ())

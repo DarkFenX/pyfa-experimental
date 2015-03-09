@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #===============================================================================
 # Copyright (C) 2015 Anton Vorobyov
 #
@@ -32,46 +33,46 @@ import json
 
 import sqlalchemy
 
-import data.eve_data
+import service.data.eve_data
 
 
 # Format:
 # {JSON file name: (SQLAlchemy entity, {target column name: source field name})}
 tables = {
     'dgmattribs': (
-        data.eve_data.DgmAttribute,
+        service.data.eve_data.DgmAttribute,
         {}
     ),
     'dgmeffects': (
-        data.eve_data.DgmEffect,
+        service.data.eve_data.DgmEffect,
         {}
     ),
     'dgmtypeattribs': (
-        data.eve_data.DgmTypeAttribute,
+        service.data.eve_data.DgmTypeAttribute,
         {}
     ),
     'dgmtypeeffects': (
-        data.eve_data.DgmTypeEffect,
+        service.data.eve_data.DgmTypeEffect,
         {}
     ),
     'dgmexpressions': (
-        data.eve_data.DgmExpression,
+        service.data.eve_data.DgmExpression,
         {}
     ),
     'invgroups': (
-        data.eve_data.InvGroup,
+        service.data.eve_data.InvGroup,
         {}
     ),
     'invtypes': (
-        data.eve_data.InvType,
+        service.data.eve_data.InvType,
         {'typeName': 'typeName_en-us'}
     ),
     'mapbulk_marketGroups': (
-        data.eve_data.InvMarketGroup,
+        service.data.eve_data.InvMarketGroup,
         {'marketGroupName': 'marketGroupName_en-us'}
     ),
     'phbmetadata': (
-        data.eve_data.PhbMetaData,
+        service.data.eve_data.PhbMetaData,
         {}
     ),
 }
@@ -138,7 +139,7 @@ if __name__ == '__main__':
     if os.path.isfile(db_path):
         os.remove(db_path)
 
-    edb_session = data.eve_data.make_evedata_session(db_path)
+    edb_session = service.data.eve_data.make_evedata_session(db_path)
 
     for json_name in sorted(tables):
         process_table(edb_session, json_path, json_name)
