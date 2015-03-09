@@ -34,7 +34,7 @@ TENGU = 29984
 TENGU_DEF_LINKS = 29972
 TENGU_DEF_EHP = 29971
 TENGU_OFF_MISSILES = 30122
-TENGU_OFF_CAPREGEN = 30143
+TENGU_ENG_CAPREGEN = 30143
 TENGU_PROP_WARP = 30088
 TENGU_ELE_ECCM = 30050
 
@@ -50,4 +50,17 @@ session_pyfadata.commit()
 fit.ship.subsystems.remove(sub_links)
 fit.ship.subsystems.add(sub_ehp)
 print(fit.stats.hp)
+session_pyfadata.commit()
+fit.undo()
+print(fit.stats.hp)
+print(fit.stats.cpu.output)
+fit.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
+print(fit.stats.cpu.output)
+fit.ship.subsystems.add(Subsystem(TENGU_OFF_MISSILES))
+print(fit.stats.cpu.output)
+session_pyfadata.commit()
+fit.ship.subsystems.clear()
+print(fit.stats.cpu.output)
+fit.undo()
+print(fit.stats.cpu.output)
 session_pyfadata.commit()

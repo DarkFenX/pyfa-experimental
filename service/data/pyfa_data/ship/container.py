@@ -19,6 +19,7 @@
 
 
 from service.data.pyfa_data.aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
+from .command import *
 
 
 __all__ = [
@@ -42,7 +43,15 @@ class SubsystemSet:
         Required arguments:
         subsystem -- subsystem to add, cannot be None
         """
-        # TODO: handle through command manager
+        command = ShipSubsystemAddCommand(self, subsystem)
+        try:
+            cmd_mgr = self.__ship._fit._cmd_mgr
+        except AttributeError:
+            command.run()
+        else:
+            cmd_mgr.do(command)
+
+    def _add_to_set(self, subsystem):
         if subsystem._ship is not None:
             raise ItemAlreadyUsedError(subsystem)
         subsystem._ship = self.__ship
@@ -56,7 +65,15 @@ class SubsystemSet:
         subsystem -- subsystem to remove, must be one of
         subsystems from the set
         """
-        # TODO: handle through command manager
+        command = ShipSubsystemRemoveCommand(self, subsystem)
+        try:
+            cmd_mgr = self.__ship._fit._cmd_mgr
+        except AttributeError:
+            command.run()
+        else:
+            cmd_mgr.do(command)
+
+    def _remove_from_set(self, subsystem):
         if subsystem._ship is None:
             raise ItemRemovalConsistencyError(subsystem)
         subsystem._ship = None
@@ -66,7 +83,15 @@ class SubsystemSet:
         """
         Remove all subsystems from set.
         """
-        # TODO: handle through command manager
+        command = ShipSubsystemClearCommand(self)
+        try:
+            cmd_mgr = self.__ship._fit._cmd_mgr
+        except AttributeError:
+            command.run()
+        else:
+            cmd_mgr.do(command)
+
+    def _clear_set(self):
         for subsystem in self.__set:
             if subsystem._ship is None:
                 raise ItemRemovalConsistencyError(subsystem)

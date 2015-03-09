@@ -23,7 +23,10 @@ from service.util.repr import make_repr_str
 
 
 __all__ = [
-    'ShipStanceChangeCommand'
+    'ShipStanceChangeCommand',
+    'ShipSubsystemAddCommand',
+    'ShipSubsystemRemoveCommand',
+    'ShipSubsystemClearCommand'
 ]
 
 
@@ -41,6 +44,76 @@ class ShipStanceChangeCommand(BaseCommand):
 
     def reverse(self):
         self.ship._set_stance(self.old_stance)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())
+
+
+class ShipSubsystemAddCommand(BaseCommand):
+
+    def __init__(self, container, subsystem):
+        self.__executed = False
+        self.container = container
+        self.subsystem = subsystem
+
+    def run(self):
+        self.container._add_to_set(self.subsystem)
+        self.__executed = True
+
+    def reverse(self):
+        self.container._remove_from_set(self.subsystem)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())
+
+
+class ShipSubsystemRemoveCommand(BaseCommand):
+
+    def __init__(self, container, subsystem):
+        self.__executed = False
+        self.container = container
+        self.subsystem = subsystem
+
+    def run(self):
+        self.container._remove_from_set(self.subsystem)
+        self.__executed = True
+
+    def reverse(self):
+        self.container._add_to_set(self.subsystem)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())
+
+
+class ShipSubsystemClearCommand(BaseCommand):
+
+    def __init__(self, container):
+        self.__executed = False
+        self.container = container
+        self.subsystems = set(container)
+
+    def run(self):
+        self.container._clear_set()
+        self.__executed = True
+
+    def reverse(self):
+        for subsystem in self.subsystems:
+            self.container._add_to_set(subsystem)
         self.__executed = False
 
     @property
