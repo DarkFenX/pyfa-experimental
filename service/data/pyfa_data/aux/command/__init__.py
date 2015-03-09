@@ -18,7 +18,5 @@
 #===============================================================================
 
 
+from .abc import BaseCommand
 from .manager import CommandManager
-from .fit_source import FitSourceChangeCommand
-from .fit_ship import FitShipChangeCommand
-from .ship_stance import ShipStanceChangeCommand

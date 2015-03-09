@@ -25,7 +25,7 @@ from sqlalchemy import Column, Integer, String
 from eos import Fit as EosFit
 from service.source_mgr import SourceManager, Source
 from service.util.repr import make_repr_str
-from .aux.command import CommandManager, FitSourceChangeCommand, FitShipChangeCommand
+from .aux.command import CommandManager, BaseCommand
 from .aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from .aux.src_children import get_src_children
 from .base import PyfaBase
@@ -140,3 +140,51 @@ class Fit(PyfaBase):
     def __repr__(self):
         spec = ['id']
         return make_repr_str(self, spec)
+
+
+class FitShipChangeCommand(BaseCommand):
+
+    def __init__(self, fit, new_ship):
+        self.__executed = False
+        self.fit = fit
+        self.old_ship = fit.ship
+        self.new_ship = new_ship
+
+    def run(self):
+        self.fit._set_ship(self.new_ship)
+        self.__executed = True
+
+    def reverse(self):
+        self.fit._set_ship(self.old_ship)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())
+
+
+class FitSourceChangeCommand(BaseCommand):
+
+    def __init__(self, fit, new_source):
+        self.__executed = False
+        self.fit = fit
+        self.old_source = fit.source
+        self.new_source = new_source
+
+    def run(self):
+        self.fit._set_source(self.new_source)
+        self.__executed = True
+
+    def reverse(self):
+        self.fit._set_source(self.old_source)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())

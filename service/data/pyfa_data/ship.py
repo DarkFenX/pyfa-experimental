@@ -23,7 +23,7 @@ from itertools import chain
 from eos import Ship as EosShip
 from service.data.eve_data.queries import get_type, get_attributes
 from service.util.repr import make_repr_str
-from .aux.command import ShipStanceChangeCommand
+from .aux.command import BaseCommand
 from .aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from .aux.src_children import get_src_children
 
@@ -144,3 +144,27 @@ class Ship:
     def __repr__(self):
         spec = ['eve_id']
         return make_repr_str(self, spec)
+
+
+class ShipStanceChangeCommand(BaseCommand):
+
+    def __init__(self, ship, new_stance):
+        self.__executed = False
+        self.ship = ship
+        self.old_stance = ship.stance
+        self.new_stance = new_stance
+
+    def run(self):
+        self.ship._set_stance(self.new_stance)
+        self.__executed = True
+
+    def reverse(self):
+        self.ship._set_stance(self.old_stance)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())
