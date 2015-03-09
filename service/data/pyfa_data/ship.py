@@ -20,8 +20,8 @@
 
 from itertools import chain
 
-from data.eve_data.queries import get_type, get_attributes
 from eos import Ship as EosShip
+from service.data.eve_data.queries import get_type, get_attributes
 from service.util.repr import make_repr_str
 from .aux.command import ShipStanceChangeCommand
 from .aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError

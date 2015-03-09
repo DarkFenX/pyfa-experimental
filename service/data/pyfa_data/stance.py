@@ -18,8 +18,8 @@
 #===============================================================================
 
 
-from data.eve_data.queries import get_type, get_attributes
 from eos import Stance as EosStance
+from service.data.eve_data.queries import get_type, get_attributes
 from service.util.repr import make_repr_str
 
 

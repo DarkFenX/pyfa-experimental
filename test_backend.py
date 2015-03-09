@@ -1,8 +1,14 @@
+import os.path
+import sys
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.realpath(os.path.join(script_dir, 'dependency')))
+
 import os
 
-from data.eve_data import *
-from data.pyfa_data import *
-from data.pyfa_data import PyfaDataManager
+from service.data.eve_data import *
+from service.data.pyfa_data import *
+from service.data.pyfa_data import PyfaDataManager
 from service.source_mgr import SourceManager
 
 script_dir = os.path.dirname(os.path.abspath(__file__))

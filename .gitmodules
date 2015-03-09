@@ -1,3 +1,3 @@
-[submodule "eos"]
-	path = eos
-	url = git@github.com:DarkFenX/Eos.git
+[submodule "dependency/eos"]
+	path = dependency/eos
+	url = https://github.com/DarkFenX/Eos.git

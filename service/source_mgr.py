@@ -20,8 +20,8 @@
 
 from collections import namedtuple
 
-from data.eve_data import make_evedata_session
 from eos import Eos, SQLiteDataHandler, JsonCacheHandler, TextLogger
+from .data.eve_data import make_evedata_session
 from .exception import UnknownSourceError
 
 
