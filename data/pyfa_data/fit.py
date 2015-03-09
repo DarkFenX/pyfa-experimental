@@ -126,6 +126,9 @@ class Fit(PyfaBase):
         for src_child in self._src_children:
             src_child._update_source()
 
+    def validate(self):
+        self._eos_fit.validate()
+
     # Auxiliary methods
     @property
     def _src_children(self):
