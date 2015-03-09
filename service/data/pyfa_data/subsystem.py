@@ -19,7 +19,7 @@
 
 
 from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Session, relationship
 
 from eos import Subsystem as EosSubsystem
 from service.data.eve_data.queries import get_type, get_attributes
@@ -89,12 +89,22 @@ class Subsystem(PyfaBase):
 
     def _register_on_fit(self, fit):
         if fit is not None:
+            # DB
             self._fit = fit
+            fit_db_session = Session.object_session(fit)
+            if fit_db_session is not None:
+                fit_db_session.add(self)
+            # Eos
             fit._eos_fit.subsystems.add(self._eos_subsystem)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
+            # DB
             self._fit = None
+            fit_db_session = Session.object_session(fit)
+            if fit_db_session is not None:
+                fit_db_session.delete(self)
+            # Eos
             fit._eos_fit.subsystems.remove(self._eos_subsystem)
 
     def _update_source(self):

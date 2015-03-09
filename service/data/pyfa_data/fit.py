@@ -34,7 +34,7 @@ from .base import PyfaBase
 class Fit(PyfaBase):
     """
     Pyfa model children:
-      ship
+      .ship
     """
 
     __tablename__ = 'fits'
