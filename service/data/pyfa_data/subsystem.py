@@ -107,7 +107,7 @@ class Subsystem(PyfaBase):
             self._fit = None
             fit_db_session = Session.object_session(fit)
             if fit_db_session is not None:
-                fit_db_session.delete(self)
+                fit_db_session.expunge(self)
             # Update Eos
             fit._eos_fit.subsystems.remove(self._eos_subsystem)
 
