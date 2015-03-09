@@ -22,10 +22,11 @@ from itertools import chain
 
 from eos import Ship as EosShip
 from service.data.eve_data.queries import get_type, get_attributes
+from service.data.pyfa_data.aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
+from service.data.pyfa_data.aux.src_children import get_src_children
 from service.util.repr import make_repr_str
-from .aux.command import BaseCommand
-from .aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
-from .aux.src_children import get_src_children
+from .command import *
+from .container import *
 
 
 class Ship:
@@ -162,87 +163,3 @@ class Ship:
     def __repr__(self):
         spec = ['eve_id']
         return make_repr_str(self, spec)
-
-
-class SubsystemSet:
-    """
-    Container for subsystems.
-    """
-
-    def __init__(self, ship):
-        self.__ship = ship
-        self.__set = set()
-
-    def add(self, subsystem):
-        """
-        Add subsystem to set.
-
-        Required arguments:
-        subsystem -- subsystem to add, cannot be None
-        """
-        # TODO: handle through command manager
-        if subsystem._ship is not None:
-            raise ItemAlreadyUsedError(subsystem)
-        subsystem._ship = self.__ship
-        self.__set.add(subsystem)
-
-    def remove(self, subsystem):
-        """
-        Remove subsystem from set.
-
-        Required arguments:
-        subsystem -- subsystem to remove, must be one of
-        subsystems from the set
-        """
-        # TODO: handle through command manager
-        if subsystem._ship is None:
-            raise ItemRemovalConsistencyError(subsystem)
-        subsystem._ship = None
-        self.__set.remove(subsystem)
-
-    def clear(self):
-        """
-        Remove all subsystems from set.
-        """
-        # TODO: handle through command manager
-        for subsystem in self.__set:
-            if subsystem._ship is None:
-                raise ItemRemovalConsistencyError(subsystem)
-            subsystem._ship = None
-        self.__set.clear()
-
-    def __iter__(self):
-        return self.__set.__iter__()
-
-    def __contains__(self, subsystem):
-        return self.__set.__contains__(subsystem)
-
-    def __len__(self):
-        return self.__set.__len__()
-
-    def __repr__(self):
-        return repr(self.__set)
-
-
-class ShipStanceChangeCommand(BaseCommand):
-
-    def __init__(self, ship, new_stance):
-        self.__executed = False
-        self.ship = ship
-        self.old_stance = ship.stance
-        self.new_stance = new_stance
-
-    def run(self):
-        self.ship._set_stance(self.new_stance)
-        self.__executed = True
-
-    def reverse(self):
-        self.ship._set_stance(self.old_stance)
-        self.__executed = False
-
-    @property
-    def executed(self):
-        return self.__executed
-
-    def __repr__(self):
-        return make_repr_str(self, ())
