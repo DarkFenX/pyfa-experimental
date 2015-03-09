@@ -40,9 +40,11 @@ TENGU_ELE_ECCM = 30050
 
 fit = Fit('tq', name='test fit 1')
 fit.ship = Ship(TENGU)
-print(fit._subsystems)
-fit._subsystems.append(Subsystem(TENGU_DEF_LINKS))
-print(fit._subsystems)
+print(fit.stats.hp)
+#print(dict((k.name, v)for k, v in fit.ship.attributes.items())['shieldCapacity'])
+fit.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
+print(fit.stats.hp)
+#print(dict((k.name, v)for k, v in fit.ship.attributes.items())['shieldCapacity'])
 session_pyfadata.add(fit)
 session_pyfadata.commit()
 

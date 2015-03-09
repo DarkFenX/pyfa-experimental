@@ -44,6 +44,7 @@ class Ship:
         self.__stance = None
         self._eve_item = None
         self._eos_ship = EosShip(type_id)
+        self.subsystems = SubsystemSet(self)
         self.stance = stance
 
     # Read-only info
@@ -119,6 +120,8 @@ class Ship:
             fit._eos_fit.ship = self._eos_ship
             if self.stance is not None:
                 self.stance._register_on_fit(fit)
+            for subsystem in self.subsystems:
+                subsystem._register_on_fit(fit)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
@@ -126,6 +129,8 @@ class Ship:
             fit._eos_fit.ship = None
             if self.stance is not None:
                 self.stance._unregister_on_fit(fit)
+            for subsystem in self.subsystems:
+                subsystem._unregister_on_fit(fit)
 
     @property
     def _src_children(self):
@@ -168,3 +173,38 @@ class ShipStanceChangeCommand(BaseCommand):
 
     def __repr__(self):
         return make_repr_str(self, ())
+
+
+class SubsystemSet:
+
+    def __init__(self, ship):
+        self.__ship = ship
+        self.__set = set()
+
+    def add(self, subsystem):
+        if subsystem._ship is not None:
+            raise ItemAlreadyUsedError(subsystem)
+        subsystem._ship = self.__ship
+        self.__set.add(subsystem)
+
+    def remove(self, subsystem):
+        if subsystem._ship is None:
+            raise ItemRemovalConsistencyError(subsystem)
+        subsystem._ship = None
+        self.__set.remove(subsystem)
+
+    def clear(self):
+        # TODO: implement proper clearling
+        self.__set.clear()
+
+    def __iter__(self):
+        return self.__set.__iter__()
+
+    def __contains__(self, subsystem):
+        return self.__set.__contains__(subsystem)
+
+    def __len__(self):
+        return self.__set.__len__()
+
+    def __repr__(self):
+        return repr(self.__set)

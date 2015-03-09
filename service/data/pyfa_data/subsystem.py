@@ -38,13 +38,14 @@ class Subsystem(PyfaBase):
 
     _id = Column('id', Integer, primary_key=True)
 
-    _fit_db_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'))
-    _fit_db = relationship('Fit', backref='_subsystems')
+    _fit_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'), nullable=False)
+    _fit = relationship('Fit', backref='_subsystems')
 
     _type_id = Column('type_id', Integer, nullable=False)
 
     def __init__(self, type_id):
         self._type_id = type_id
+        self.__ship = None
         self._eve_item = None
         self._eos_subsystem = EosSubsystem(type_id)
 
@@ -72,7 +73,29 @@ class Subsystem(PyfaBase):
         return list(self._eve_item.effects)
 
     # Auxiliary methods
-    # SHIP SETTERS GO INTO HERE
+    @property
+    def _ship(self):
+        return self.__ship
+
+    @_ship.setter
+    def _ship(self, new_ship):
+        old_ship = self._ship
+        old_fit = getattr(old_ship, '_fit', None)
+        new_fit = getattr(new_ship, '_fit', None)
+        self._unregister_on_fit(old_fit)
+        self.__ship = new_ship
+        self._register_on_fit(new_fit)
+        self._update_source()
+
+    def _register_on_fit(self, fit):
+        if fit is not None:
+            self._fit = fit
+            fit._eos_fit.subsystems.add(self._eos_subsystem)
+
+    def _unregister_on_fit(self, fit):
+        if fit is not None:
+            self._fit = None
+            fit._eos_fit.subsystems.remove(self._eos_subsystem)
 
     def _update_source(self):
         try:
