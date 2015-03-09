@@ -23,10 +23,11 @@ from itertools import chain
 from sqlalchemy import Column, Integer, String
 
 from eos import Fit as EosFit
-from service import SourceManager, Source
-from .aux import get_src_children
+from service.source_mgr import SourceManager, Source
+from service.util.repr import make_repr_str
 from .aux.command import CommandManager, FitSourceChangeCommand, FitShipChangeCommand
 from .aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
+from .aux.src_children import get_src_children
 from .base import PyfaBase
 
 
@@ -137,4 +138,5 @@ class Fit(PyfaBase):
         ))
 
     def __repr__(self):
-        return '<Fit(id={})>'.format(self.id)
+        spec = ['id']
+        return make_repr_str(self, spec)

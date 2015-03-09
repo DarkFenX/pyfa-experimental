@@ -21,7 +21,7 @@
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
-from .base import PyfaBase
+from data.pyfa_data.base import PyfaBase
 
 
 class PyfaDataManager:

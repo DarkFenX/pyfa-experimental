@@ -21,6 +21,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, Float, String
 from sqlalchemy.orm import Session, relationship
 
+from service.util.repr import make_repr_str
 from .base import EveBase
 from .dgmattribute import DgmAttribute
 
@@ -79,4 +80,5 @@ class InvType(EveBase):
         return [assoc.effect for assoc in self._effect_associations]
 
     def __repr__(self):
-        return '<InvType(id={})>'.format(self.id)
+        spec = ['id']
+        return make_repr_str(self, spec)

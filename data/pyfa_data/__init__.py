@@ -73,7 +73,7 @@ from .base import PyfaBase
 from .fit import Fit
 from .ship import Ship
 from .stance import Stance
-from .pyfadata_mgr import PyfaDataManager
+from .aux.pyfadata_mgr import PyfaDataManager
 
 
 __all__ = [

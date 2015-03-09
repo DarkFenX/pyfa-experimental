@@ -20,6 +20,7 @@
 
 from sqlalchemy import Column, String
 
+from service.util.repr import make_repr_str
 from .base import EveBase
 
 
@@ -34,4 +35,5 @@ class PhbMetaData(EveBase):
     field_value = Column(String)
 
     def __repr__(self):
-        return '<PhbMetaData(field_name={})>'.format(self.field_name)
+        spec = ['field_name']
+        return make_repr_str(self, spec)

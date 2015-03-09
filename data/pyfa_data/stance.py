@@ -20,6 +20,7 @@
 
 from data.eve_data.queries import get_type, get_attributes
 from eos import Stance as EosStance
+from service.util.repr import make_repr_str
 
 
 class Stance:
@@ -92,4 +93,5 @@ class Stance:
             self._eve_item = get_type(source.edb, self.eve_id)
 
     def __repr__(self):
-        return '<Stance(eve_id={})>'.format(self.eve_id)
+        spec = ['eve_id']
+        return make_repr_str(self, spec)

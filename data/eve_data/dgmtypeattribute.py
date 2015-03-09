@@ -21,6 +21,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship
 
+from service.util.repr import make_repr_str
 from .base import EveBase
 
 
@@ -39,4 +40,5 @@ class DgmTypeAttribute(EveBase):
     attribute = relationship('DgmAttribute')
 
     def __repr__(self):
-        return '<DgmTypeAttribute(type_id={}, attribute_id={})>'.format(self.type_id, self.attribute_id)
+        spec = ['type_id', 'attribute_id']
+        return make_repr_str(self, spec)

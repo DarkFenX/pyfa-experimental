@@ -21,6 +21,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, Boolean, String
 from sqlalchemy.orm import relationship
 
+from service.util.repr import make_repr_str
 from .base import EveBase
 
 
@@ -63,4 +64,5 @@ class DgmEffect(EveBase):
     _fitting_usage_chance_attribute = relationship('DgmAttribute', foreign_keys=_fitting_usage_chance_attribute_id)
 
     def __repr__(self):
-        return '<DgmEffect(id={})>'.format(self.id)
+        spec = ['id']
+        return make_repr_str(self, spec)

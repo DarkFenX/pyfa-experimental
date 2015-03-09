@@ -3,7 +3,7 @@ import os
 from data.eve_data import *
 from data.pyfa_data import *
 from data.pyfa_data import PyfaDataManager
-from service import SourceManager
+from service.source_mgr import SourceManager
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 eve_dbpath_tq = os.path.join(script_dir, 'staticdata', 'tranquility.db')

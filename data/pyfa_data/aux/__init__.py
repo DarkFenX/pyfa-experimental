@@ -16,6 +16,3 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Pyfa 3. If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
-
-
-from .src_children import get_src_children

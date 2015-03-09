@@ -18,29 +18,5 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, Float, Boolean, String
-from sqlalchemy.orm import relationship
-
-from service.util.repr import make_repr_str
-from .base import EveBase
-
-
-class DgmAttribute(EveBase):
-    """
-    Attribute object with all its properties. Directly accessible by pyfa.
-    """
-
-    __tablename__ = 'dgmattribs'
-
-    id = Column('attributeID', Integer, primary_key=True)
-    name = Column('attributeName', String)
-    _default_value = Column('defaultValue', Float)
-    _high_is_good = Column('highIsGood', Boolean, nullable=False)
-    _stackable = Column('stackable', Boolean, nullable=False)
-
-    _max_attribute_id = Column('maxAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
-    _max_attribute = relationship('DgmAttribute')
-
-    def __repr__(self):
-        spec = ['id']
-        return make_repr_str(self, spec)
+# Just re-import repr function as it is the same as we use in Eos
+from eos.util.repr import make_repr_str

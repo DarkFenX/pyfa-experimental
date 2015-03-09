@@ -20,6 +20,7 @@
 
 from sqlalchemy import Column, Integer, String
 
+from service.util.repr import make_repr_str
 from .base import EveBase
 
 
@@ -35,4 +36,5 @@ class InvGroup(EveBase):
     _category_id = Column('categoryID', Integer, nullable=False)
 
     def __repr__(self):
-        return '<InvGroup(id={})>'.format(self.id)
+        spec = ['id']
+        return make_repr_str(self, spec)

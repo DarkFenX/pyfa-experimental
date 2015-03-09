@@ -22,9 +22,10 @@ from itertools import chain
 
 from data.eve_data.queries import get_type, get_attributes
 from eos import Ship as EosShip
-from .aux import get_src_children
+from service.util.repr import make_repr_str
 from .aux.command import ShipStanceChangeCommand
 from .aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
+from .aux.src_children import get_src_children
 
 
 class Ship:
@@ -141,4 +142,5 @@ class Ship:
             self._eve_item = get_type(source.edb, self.eve_id)
 
     def __repr__(self):
-        return '<Ship(eve_id={})>'.format(self.eve_id)
+        spec = ['eve_id']
+        return make_repr_str(self, spec)

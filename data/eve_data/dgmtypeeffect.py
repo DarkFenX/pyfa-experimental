@@ -21,6 +21,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, Boolean
 from sqlalchemy.orm import relationship
 
+from service.util.repr import make_repr_str
 from .base import EveBase
 
 
@@ -40,3 +41,7 @@ class DgmTypeEffect(EveBase):
 
     def __repr__(self):
         return '<DgmTypeEffect(type_id={}, effect_id={})>'.format(self.type_id, self.effect_id)
+
+    def __repr__(self):
+        spec = ['type_id', 'effect_id']
+        return make_repr_str(self, spec)

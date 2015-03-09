@@ -21,6 +21,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
+from service.util.repr import make_repr_str
 from .base import EveBase
 
 
@@ -52,4 +53,5 @@ class DgmExpression(EveBase):
     expression_attribute = relationship('DgmAttribute')
 
     def __repr__(self):
-        return '<DgmExpression(id={})>'.format(self.id)
+        spec = ['id']
+        return make_repr_str(self, spec)
