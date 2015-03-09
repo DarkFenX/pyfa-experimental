@@ -19,9 +19,18 @@
 
 
 from sqlalchemy import Column, ForeignKey, Integer, Float, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Session, relationship
 
 from .base import EveBase
+from .dgmattribute import DgmAttribute
+
+
+BASIC_ATTRS = {
+    4: '_mass',
+    38: '_capacity',
+    161: '_volume',
+    162: '_radius'
+}
 
 
 class InvType(EveBase):
@@ -33,10 +42,10 @@ class InvType(EveBase):
 
     id = Column('typeID', Integer, primary_key=True)
     name = Column('typeName', String)
-    _radius = Column('radius', Float, nullable=False)
     _mass = Column('mass', Float, nullable=False)
-    _volume = Column('volume', Float, nullable=False)
     _capacity = Column('capacity', Float, nullable=False)
+    _volume = Column('volume', Float, nullable=False)
+    _radius = Column('radius', Float, nullable=False)
 
     _group_id = Column('groupID', Integer, ForeignKey('invgroups.groupID'))
     group = relationship('InvGroup')
@@ -52,8 +61,12 @@ class InvType(EveBase):
         """
         Return attributes of type as {DgmAttribute: value} dictionary.
         """
-        # TODO: add base item attributes to the map one way or another
         attribute_map = {}
+        # Process basic attributes (those stored in invtypes table) first
+        evedata_session = Session.object_session(self)
+        for attribute in evedata_session.query(DgmAttribute).filter(DgmAttribute.id.in_(BASIC_ATTRS.keys())).all():
+            attribute_map[attribute] = getattr(self, BASIC_ATTRS[attribute.id])
+        # Then extended (in dgmtypeattribs table)
         for attrib_association in self._attrib_associations:
             attribute_map[attrib_association.attribute] = attrib_association.value
         return attribute_map
