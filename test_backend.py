@@ -30,13 +30,19 @@ CHEETAH = 11182
 CONFESSOR = 34317
 CONFESSOR_DEFENSIVE_MODE = 34319
 CONFESSOR_SNIPER_MODE = 34321
+TENGU = 29984
+TENGU_DEF_LINKS = 29972
+TENGU_DEF_EHP = 29971
+TENGU_OFF_MISSILES = 30122
+TENGU_OFF_CAPREGEN = 30143
+TENGU_PROP_WARP = 30088
+TENGU_ELE_ECCM = 30050
 
 fit = Fit('tq', name='test fit 1')
-fit.ship = Ship(CONFESSOR)
-print(dict((k.name, v)for k, v in fit.ship.attributes.items())['armorEmDamageResonance'])
-fit.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
-print(dict((k.name, v)for k, v in fit.ship.attributes.items())['armorEmDamageResonance'])
-fit.validate()
+fit.ship = Ship(TENGU)
+print(fit._subsystems)
+fit._subsystems.append(Subsystem(TENGU_DEF_LINKS))
+print(fit._subsystems)
 session_pyfadata.add(fit)
 session_pyfadata.commit()
 

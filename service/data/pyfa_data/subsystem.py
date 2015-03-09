@@ -18,23 +18,35 @@
 #===============================================================================
 
 
-from eos import Stance as EosStance
+from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy.orm import relationship
+
+from eos import Subsystem as EosSubsystem
 from service.data.eve_data.queries import get_type, get_attributes
 from service.util.repr import make_repr_str
+from .base import PyfaBase
 
 
-class Stance:
+class Subsystem(PyfaBase):
     """
-    Pyfa model: ship.stance
-    Eos model: efit.stance
-    DB model: fit._stance_type_id
+    Pyfa model: ship.{subsystems}
+    Eos model: efit.{subsystems}
+    DB model: fit.{_subsystems}
     """
+
+    __tablename__ = 'subsystems'
+
+    _id = Column('id', Integer, primary_key=True)
+
+    _fit_db_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'))
+    _fit_db = relationship('Fit', backref='_subsystems')
+
+    _type_id = Column('type_id', Integer, nullable=False)
 
     def __init__(self, type_id):
         self._type_id = type_id
-        self.__ship = None
         self._eve_item = None
-        self._eos_stance = EosStance(type_id)
+        self._eos_subsystem = EosSubsystem(type_id)
 
     # Read-only info
     @property
@@ -47,7 +59,7 @@ class Stance:
 
     @property
     def attributes(self):
-        eos_attrs = self._eos_stance.attributes
+        eos_attrs = self._eos_subsystem.attributes
         attr_ids = eos_attrs.keys()
         attrs = get_attributes(self._ship._fit.source.edb, attr_ids)
         attr_map = {}
@@ -60,29 +72,7 @@ class Stance:
         return list(self._eve_item.effects)
 
     # Auxiliary methods
-    @property
-    def _ship(self):
-        return self.__ship
-
-    @_ship.setter
-    def _ship(self, new_ship):
-        old_ship = self._ship
-        old_fit = getattr(old_ship, '_fit', None)
-        new_fit = getattr(new_ship, '_fit', None)
-        self._unregister_on_fit(old_fit)
-        self.__ship = new_ship
-        self._register_on_fit(new_fit)
-        self._update_source()
-
-    def _register_on_fit(self, fit):
-        if fit is not None:
-            fit._stance_type_id = self.eve_id
-            fit._eos_fit.stance = self._eos_stance
-
-    def _unregister_on_fit(self, fit):
-        if fit is not None:
-            fit._stance_type_id = None
-            fit._eos_fit.stance = None
+    # SHIP SETTERS GO INTO HERE
 
     def _update_source(self):
         try:

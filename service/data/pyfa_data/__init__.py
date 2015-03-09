@@ -73,13 +73,15 @@ from .base import PyfaBase
 from .fit import Fit
 from .ship import Ship
 from .stance import Stance
+from .subsystem import Subsystem
 from .aux.pyfadata_mgr import PyfaDataManager
 
 
 __all__ = [
     'Fit',
     'Ship',
-    'Stance'
+    'Stance',
+    'Subsystem'
 ]
 
 

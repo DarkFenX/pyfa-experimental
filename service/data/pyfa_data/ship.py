@@ -31,7 +31,7 @@ from .aux.src_children import get_src_children
 class Ship:
     """
     Pyfa model: fit.ship
-    Eos model: fit.ship
+    Eos model: efit.ship
     DB model: fit._ship_type_id
 
     Pyfa model children:
@@ -39,7 +39,7 @@ class Ship:
     """
 
     def __init__(self, type_id, stance=None):
-        self.__type_id = type_id
+        self._type_id = type_id
         self.__fit = None
         self.__stance = None
         self._eve_item = None
@@ -49,7 +49,7 @@ class Ship:
     # Read-only info
     @property
     def eve_id(self):
-        return self.__type_id
+        return self._type_id
 
     @property
     def eve_name(self):
