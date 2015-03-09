@@ -94,6 +94,7 @@ class Ship:
             if old_stance._ship is None:
                 raise ItemRemovalConsistencyError(old_stance)
             old_stance._ship = None
+        # Update forward reference
         self.__stance = new_stance
         if new_stance is not None:
             if new_stance._ship is not None:
@@ -108,17 +109,24 @@ class Ship:
     @_fit.setter
     def _fit(self, new_fit):
         old_fit = self._fit
+        # Update DB and Eos for self and children
         self._unregister_on_fit(old_fit)
+        # Update reverse reference
         self.__fit = new_fit
+        # Update DB and Eos for self and children
         self._register_on_fit(new_fit)
+        # Update EVE item for self and children
         self._update_source()
         for src_child in self._src_children:
             src_child._update_source()
 
     def  _register_on_fit(self, fit):
         if fit is not None:
+            # Update DB
             fit._ship_type_id = self.eve_id
+            # Update Eos
             fit._eos_fit.ship = self._eos_ship
+            # Update DB and Eos for children
             if self.stance is not None:
                 self.stance._register_on_fit(fit)
             for subsystem in self.subsystems:
@@ -126,8 +134,11 @@ class Ship:
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
+            # Update DB
             fit._ship_type_id = None
+            # Update Eos
             fit._eos_fit.ship = None
+            # Update DB and Eos for children
             if self.stance is not None:
                 self.stance._unregister_on_fit(fit)
             for subsystem in self.subsystems:
@@ -136,7 +147,8 @@ class Ship:
     @property
     def _src_children(self):
         return get_src_children(chain(
-            (self.stance,)
+            (self.stance,),
+            self.subsystems
         ))
 
     def _update_source(self):

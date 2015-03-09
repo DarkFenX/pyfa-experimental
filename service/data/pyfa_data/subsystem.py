@@ -82,29 +82,33 @@ class Subsystem(PyfaBase):
         old_ship = self._ship
         old_fit = getattr(old_ship, '_fit', None)
         new_fit = getattr(new_ship, '_fit', None)
+        # Update DB and Eos
         self._unregister_on_fit(old_fit)
+        # Update reverse reference
         self.__ship = new_ship
+        # Update DB and Eos
         self._register_on_fit(new_fit)
+        # Update EVE item
         self._update_source()
 
     def _register_on_fit(self, fit):
         if fit is not None:
-            # DB
+            # Update DB
             self._fit = fit
             fit_db_session = Session.object_session(fit)
             if fit_db_session is not None:
                 fit_db_session.add(self)
-            # Eos
+            # Update Eos
             fit._eos_fit.subsystems.add(self._eos_subsystem)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
-            # DB
+            # Update DB
             self._fit = None
             fit_db_session = Session.object_session(fit)
             if fit_db_session is not None:
                 fit_db_session.delete(self)
-            # Eos
+            # Update Eos
             fit._eos_fit.subsystems.remove(self._eos_subsystem)
 
     def _update_source(self):
