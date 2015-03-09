@@ -194,7 +194,10 @@ class SubsystemSet:
         self.__set.remove(subsystem)
 
     def clear(self):
-        # TODO: implement proper clearling
+        for subsystem in self.__set:
+            if subsystem._ship is None:
+                raise ItemRemovalConsistencyError(subsystem)
+            subsystem._ship = None
         self.__set.clear()
 
     def __iter__(self):
