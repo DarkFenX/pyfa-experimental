@@ -2,7 +2,7 @@ import os.path
 import sys
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.realpath(os.path.join(script_dir, 'dependency')))
+sys.path.append(os.path.realpath(os.path.join(script_dir, 'external')))
 
 import os
 

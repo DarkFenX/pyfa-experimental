@@ -128,6 +128,12 @@ class Fit(PyfaBase):
         for src_child in self._src_children:
             src_child._update_source()
 
+    def persist(self):
+        pass
+
+    def abandon(self):
+        pass
+
     def validate(self):
         self._eos_fit.validate()
 
