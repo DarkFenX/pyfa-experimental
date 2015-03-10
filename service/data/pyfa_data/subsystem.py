@@ -19,7 +19,7 @@
 
 
 from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, reconstructor
 from sqlalchemy.orm.collections import InstrumentedSet
 
 from eos import Subsystem as EosSubsystem
@@ -47,9 +47,17 @@ class Subsystem(PyfaBase):
 
     def __init__(self, type_id):
         self._type_id = type_id
+        self.__generic_init()
+
+    @reconstructor
+    def _dbinit(self):
+        self.__generic_init()
+
+    def __generic_init(self):
         self.__ship = None
         self._eve_item = None
-        self._eos_subsystem = EosSubsystem(type_id)
+        if self._type_id is not None:
+            self._eos_subsystem = EosSubsystem(self._type_id)
 
     # Read-only info
     @property
@@ -116,7 +124,10 @@ class Subsystem(PyfaBase):
         except AttributeError:
             self._eve_item = None
         else:
-            self._eve_item = get_type(source.edb, self.eve_id)
+            if source is not None:
+                self._eve_item = get_type(source.edb, self.eve_id)
+            else:
+                self._eve_item = None
 
     def __repr__(self):
         spec = ['eve_id']

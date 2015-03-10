@@ -98,7 +98,10 @@ class Stance:
         except AttributeError:
             self._eve_item = None
         else:
-            self._eve_item = get_type(source.edb, self.eve_id)
+            if source is not None:
+                self._eve_item = get_type(source.edb, self.eve_id)
+            else:
+                self._eve_item = None
 
     def __repr__(self):
         spec = ['eve_id']

@@ -21,13 +21,13 @@
 from itertools import chain
 
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import object_session
+from sqlalchemy.orm import reconstructor, object_session
 from sqlalchemy.orm.util import has_identity
 
 from eos import Fit as EosFit
 from service.source_mgr import SourceManager, Source
 from service.util.repr import make_repr_str
-from service.data.pyfa_data import PyfaDataManager
+from service.data.pyfa_data import PyfaDataManager, Ship, Stance
 from service.data.pyfa_data.aux.command import CommandManager
 from service.data.pyfa_data.aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from service.data.pyfa_data.aux.src_children import get_src_children
@@ -49,17 +49,29 @@ class Fit(PyfaBase):
     _stance_type_id = Column('stance_type_id', Integer)
 
     def __init__(self, source, name=None):
-        # Attributes which store objects hidden by properties
-        self.__source = None
-        self.__ship = None
-        # Eos fit will be primary point of using Eos calculation engine for
-        # fit-specific data
-        self._eos_fit = EosFit()
-        # Manages fit-specific data needed for undo/redo
-        self._cmd_mgr = CommandManager(100)
-        # Set passed values
+        self.__generic_init()
         self._set_source(source)
         self.name = name
+
+    @reconstructor
+    def _dbinit(self):
+        self.__generic_init()
+        if self._ship_type_id is not None:
+            self._set_ship(Ship(self._ship_type_id))
+            if self._stance_type_id is not None:
+                self.ship._set_stance(Stance(self._stance_type_id))
+            for subsystem in self._subsystems:
+                self.ship.subsystems._add_to_set(subsystem)
+
+    def __generic_init(self):
+        # Attributes which store objects hidden by properties
+        self.__source = None
+        # Eos fit will be primary point of using Eos calculation engine for
+        # fit-specific data
+        self.__ship = None
+        # Manages fit-specific data needed for undo/redo
+        self._eos_fit = EosFit()
+        self._cmd_mgr = CommandManager(100)
 
     # Read-only info
     @property

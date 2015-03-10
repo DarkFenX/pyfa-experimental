@@ -72,11 +72,12 @@ changing anything:
 # which can be used from anywhere go first (to avoid import loops)
 from .aux.pyfadata_mgr import PyfaDataManager
 from .base import PyfaBase
-# Miscellanea imports
-from .fit import Fit
-from .ship import Ship
-from .stance import Stance
+# Miscellanea imports - top-down from the most specific to most generic imports
+# (because top-level objects sometimes import their children for reconstruction)
 from .subsystem import Subsystem
+from .stance import Stance
+from .ship import Ship
+from .fit import Fit
 
 
 __all__ = [
