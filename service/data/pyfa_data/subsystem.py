@@ -56,8 +56,7 @@ class Subsystem(PyfaBase):
     def __generic_init(self):
         self.__ship = None
         self._eve_item = None
-        if self._type_id is not None:
-            self._eos_subsystem = EosSubsystem(self._type_id)
+        self._eos_subsystem = EosSubsystem(self._type_id)
 
     # Read-only info
     @property
