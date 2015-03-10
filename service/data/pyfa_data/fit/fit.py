@@ -64,13 +64,13 @@ class Fit(PyfaBase):
                 self.ship.subsystems._add_to_set(subsystem)
 
     def __generic_init(self):
-        # Attributes which store objects hidden by properties
+        # Attributes which store objects hidden behind properties
         self.__source = None
+        self.__ship = None
         # Eos fit will be primary point of using Eos calculation engine for
         # fit-specific data
-        self.__ship = None
-        # Manages fit-specific data needed for undo/redo
         self._eos_fit = EosFit()
+        # Manages fit-specific data needed for undo/redo
         self._cmd_mgr = CommandManager(100)
 
     # Read-only info
