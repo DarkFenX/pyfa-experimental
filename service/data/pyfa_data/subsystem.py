@@ -19,8 +19,7 @@
 
 
 from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import relationship, backref, object_session
-from sqlalchemy.orm.util import has_identity
+from sqlalchemy.orm import relationship, backref
 
 from eos import Subsystem as EosSubsystem
 from service.data.eve_data.queries import get_type, get_attributes
@@ -95,29 +94,19 @@ class Subsystem(PyfaBase):
     def _register_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            self._fit = fit
-            fit_db_session = object_session(fit)
-            if fit_db_session is not None:
-                fit_db_session.add(self)
+            # Here we can't set self._fit reference because our cascades
+            # are configured to on the parent object, and we have to use
+            # fit._subsystems to ensure proper item addition/deletion
+            fit._subsystems.append(self)
             # Update Eos
             fit._eos_fit.subsystems.add(self._eos_subsystem)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            self._fit = None
-            self._abandon()
+            fit._subsystems.remove(self)
             # Update Eos
             fit._eos_fit.subsystems.remove(self._eos_subsystem)
-
-    def _abandon(self):
-        db_session = object_session(self)
-        if db_session is None:
-            return
-        if has_identity(self):
-            db_session.delete(self)
-        else:
-            db_session.expunge(self)
 
     def _update_source(self):
         try:
