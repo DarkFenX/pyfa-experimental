@@ -20,6 +20,7 @@
 
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm.collections import InstrumentedSet
 
 from eos import Subsystem as EosSubsystem
 from service.data.eve_data.queries import get_type, get_attributes
@@ -39,7 +40,8 @@ class Subsystem(PyfaBase):
     _id = Column('id', Integer, primary_key=True)
 
     _fit_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'), nullable=False)
-    _fit = relationship('Fit', backref=backref('_subsystems', cascade='all, delete-orphan'))
+    _fit = relationship('Fit', backref=backref(
+        '_subsystems', collection_class=InstrumentedSet, cascade='all, delete-orphan'))
 
     _type_id = Column('type_id', Integer, nullable=False)
 
@@ -97,7 +99,7 @@ class Subsystem(PyfaBase):
             # Here we can't set self._fit reference because our cascades
             # are configured to on the parent object, and we have to use
             # fit._subsystems to ensure proper item addition/deletion
-            fit._subsystems.append(self)
+            fit._subsystems.add(self)
             # Update Eos
             fit._eos_fit.subsystems.add(self._eos_subsystem)
 
