@@ -21,10 +21,13 @@
 from itertools import chain
 
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import object_session
+from sqlalchemy.orm.util import has_identity
 
 from eos import Fit as EosFit
 from service.source_mgr import SourceManager, Source
 from service.util.repr import make_repr_str
+from service.data.pyfa_data import PyfaDataManager
 from service.data.pyfa_data.aux.command import CommandManager
 from service.data.pyfa_data.aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from service.data.pyfa_data.aux.src_children import get_src_children
@@ -129,10 +132,26 @@ class Fit(PyfaBase):
             src_child._update_source()
 
     def persist(self):
-        pass
+        """
+        Add fit to pyfa data session to make sure it's saved on commit.
+        """
+        PyfaDataManager.session.add(self)
 
     def abandon(self):
-        pass
+        """
+        Remove fit from database session.
+        """
+        db_session = object_session(self)
+        # If object isn't in session (transient or detached state),
+        # do not do anything at all
+        if db_session is None:
+            return
+        # Delete if persistent state
+        if has_identity(self):
+            db_session.delete(self)
+        # Expunge if pending state
+        else:
+            db_session.expunge(self)
 
     def validate(self):
         self._eos_fit.validate()

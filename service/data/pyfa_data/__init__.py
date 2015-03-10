@@ -68,13 +68,15 @@ changing anything:
     EVE item: update
 """
 
-
+# Imports of modules which do not have dependencies on other Pyfa modules and
+# which can be used from anywhere go first (to avoid import loops)
+from .aux.pyfadata_mgr import PyfaDataManager
 from .base import PyfaBase
+# Miscellanea imports
 from .fit import Fit
 from .ship import Ship
 from .stance import Stance
 from .subsystem import Subsystem
-from .aux.pyfadata_mgr import PyfaDataManager
 
 
 __all__ = [

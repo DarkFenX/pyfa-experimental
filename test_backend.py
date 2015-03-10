@@ -40,12 +40,10 @@ TENGU_ELE_ECCM = 30050
 
 fit = Fit('tq', name='test fit 1')
 fit.ship = Ship(TENGU)
-print(fit.stats.hp)
 sub_links = Subsystem(TENGU_DEF_LINKS)
 sub_ehp = Subsystem(TENGU_DEF_EHP)
 fit.ship.subsystems.add(sub_links)
 print(fit.stats.hp)
-session_pyfadata.add(fit)
 session_pyfadata.commit()
 fit.ship.subsystems.remove(sub_links)
 fit.ship.subsystems.add(sub_ehp)
