@@ -23,7 +23,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.collections import InstrumentedSet
 
 from eos import Subsystem as EosSubsystem
-from service.data.eve_data.queries import get_type, get_attributes
+from service.data.eve_data.query import get_type, get_attributes
 from service.util.repr import make_repr_str
 from .base import PyfaBase
 
