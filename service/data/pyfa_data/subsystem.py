@@ -19,7 +19,8 @@
 
 
 from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import relationship, object_session
+from sqlalchemy.orm import relationship, backref, object_session
+from sqlalchemy.orm.util import has_identity
 
 from eos import Subsystem as EosSubsystem
 from service.data.eve_data.queries import get_type, get_attributes
@@ -39,7 +40,7 @@ class Subsystem(PyfaBase):
     _id = Column('id', Integer, primary_key=True)
 
     _fit_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'), nullable=False)
-    _fit = relationship('Fit', backref='_subsystems')
+    _fit = relationship('Fit', backref=backref('_subsystems', cascade='all, delete-orphan'))
 
     _type_id = Column('type_id', Integer, nullable=False)
 
@@ -105,11 +106,18 @@ class Subsystem(PyfaBase):
         if fit is not None:
             # Update DB
             self._fit = None
-            fit_db_session = object_session(fit)
-            if fit_db_session is not None:
-                fit_db_session.expunge(self)
+            self._abandon()
             # Update Eos
             fit._eos_fit.subsystems.remove(self._eos_subsystem)
+
+    def _abandon(self):
+        db_session = object_session(self)
+        if db_session is None:
+            return
+        if has_identity(self):
+            db_session.delete(self)
+        else:
+            db_session.expunge(self)
 
     def _update_source(self):
         try:
