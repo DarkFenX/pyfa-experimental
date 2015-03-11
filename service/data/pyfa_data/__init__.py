@@ -76,11 +76,13 @@ from .base import PyfaBase
 # (because top-level objects sometimes import their children for reconstruction)
 from .subsystem import Subsystem
 from .stance import Stance
+from .character import CharacterMetadata
 from .ship import Ship
 from .fit import Fit
 
 
 __all__ = [
+    'CharacterMetadata',
     'Fit',
     'Ship',
     'Stance',

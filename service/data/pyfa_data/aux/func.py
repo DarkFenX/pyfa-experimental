@@ -18,6 +18,11 @@
 #===============================================================================
 
 
+from sqlalchemy.orm.util import has_identity
+
+from service.data.pyfa_data import PyfaDataManager
+
+
 def get_src_children(child_list):
     """
     Accept iterable of source-dependent child objects (some
@@ -32,3 +37,28 @@ def get_src_children(child_list):
         if hasattr(child, '_src_children'):
             children.update(child._src_children)
     return children
+
+
+# Object persistence functions for pyfa database session
+def pyfa_persist(obj):
+    """
+    Add object to pyfa data session to make sure it's saved on commit.
+    """
+    PyfaDataManager.session.add(obj)
+
+
+def pyfa_abandon(obj):
+    """
+    Remove object from database session.
+    """
+    db_session = PyfaDataManager.session
+    # If object isn't in session (transient or detached state),
+    # do not do anything at all
+    if db_session is None:
+        return
+    # Delete if persistent state
+    if has_identity(obj):
+        db_session.delete(obj)
+    # Expunge if pending state
+    else:
+        db_session.expunge(obj)

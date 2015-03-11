@@ -44,8 +44,13 @@ fit1.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
 fit1.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
 fit1.persist()
 session_pyfadata.commit()
+
 fit2 = Fit('tq', name='test fit 2')
 fit2.ship = Ship(CONFESSOR)
 fit2.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
 fit2.persist()
+session_pyfadata.commit()
+
+charmeta = CharacterMetadata(alias='Kadesh Priestess')
+charmeta.persist()
 session_pyfadata.commit()

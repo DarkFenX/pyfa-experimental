@@ -23,7 +23,7 @@ from itertools import chain
 from eos import Ship as EosShip
 from service.data.eve_data.query import get_type, get_attributes
 from service.data.pyfa_data.aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
-from service.data.pyfa_data.aux.src_children import get_src_children
+from service.data.pyfa_data.aux.func import get_src_children
 from service.util.repr import make_repr_str
 from .command import *
 from .container import *

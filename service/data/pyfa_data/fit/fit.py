@@ -21,17 +21,16 @@
 from itertools import chain
 
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import reconstructor, object_session
-from sqlalchemy.orm.util import has_identity
+from sqlalchemy.orm import reconstructor
 
 from eos import Fit as EosFit
 from service.source_mgr import SourceManager, Source
-from service.util.repr import make_repr_str
-from service.data.pyfa_data import PyfaDataManager, Ship, Stance
+from service.data.pyfa_data import Ship, Stance
 from service.data.pyfa_data.aux.command import CommandManager
 from service.data.pyfa_data.aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
-from service.data.pyfa_data.aux.src_children import get_src_children
+from service.data.pyfa_data.aux.func import get_src_children, pyfa_persist, pyfa_abandon
 from service.data.pyfa_data.base import PyfaBase
+from service.util.repr import make_repr_str
 from .command import *
 
 
@@ -142,27 +141,8 @@ class Fit(PyfaBase):
         for src_child in self._src_children:
             src_child._update_source()
 
-    def persist(self):
-        """
-        Add fit to pyfa data session to make sure it's saved on commit.
-        """
-        PyfaDataManager.session.add(self)
-
-    def abandon(self):
-        """
-        Remove fit from database session.
-        """
-        db_session = object_session(self)
-        # If object isn't in session (transient or detached state),
-        # do not do anything at all
-        if db_session is None:
-            return
-        # Delete if persistent state
-        if has_identity(self):
-            db_session.delete(self)
-        # Expunge if pending state
-        else:
-            db_session.expunge(self)
+    persist = pyfa_persist
+    abandon = pyfa_abandon
 
     def validate(self):
         self._eos_fit.validate()
