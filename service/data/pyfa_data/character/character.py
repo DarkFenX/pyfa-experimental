@@ -33,7 +33,7 @@ class Character(PyfaBase):
 
     __tablename__ = 'characters'
 
-    id = Column('char_id', Integer, primary_key=True)
+    id = Column('character_id', Integer, primary_key=True)
     alias = Column(String)
 
     def __init__(self, alias=''):

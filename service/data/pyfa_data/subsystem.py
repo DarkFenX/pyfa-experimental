@@ -36,7 +36,7 @@ class Subsystem(PyfaBase):
 
     __tablename__ = 'subsystems'
 
-    _id = Column('id', Integer, primary_key=True)
+    _id = Column('subsystem_id', Integer, primary_key=True)
 
     _fit_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'), nullable=False)
     _fit = relationship('Fit', backref=backref(

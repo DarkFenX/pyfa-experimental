@@ -6,7 +6,6 @@ sys.path.append(os.path.realpath(os.path.join(script_dir, 'external')))
 
 import os
 
-from service.data.eve_data import *
 from service.data.pyfa_data import *
 from service.data.pyfa_data import PyfaDataManager
 from service.source_mgr import SourceManager
