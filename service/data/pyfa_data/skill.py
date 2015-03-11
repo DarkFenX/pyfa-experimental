@@ -19,11 +19,10 @@
 
 
 from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import relationship, backref, reconstructor
+from sqlalchemy.orm import relationship, backref
 
 from service.util.repr import make_repr_str
 from .base import PyfaBase
-from .func import pyfa_persist, pyfa_abandon
 
 
 class Skill(PyfaBase):
