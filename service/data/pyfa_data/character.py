@@ -27,8 +27,11 @@ from .func import pyfa_persist, pyfa_abandon
 
 class Character(PyfaBase):
     """
-    This object doesn't carry any fit-specific data on itself. It's used
-    by character proxy object to keep track of skills, implants, etc.
+    This class will be used for managing characters (e.g. in character
+    editor). Fits will use other class' instance as character. We cannot
+    use this one because different fits carry different attributes on
+    character and all child entities (like skills, on-character implants,
+    and so on).
     """
 
     __tablename__ = 'characters'

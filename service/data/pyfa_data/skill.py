@@ -27,8 +27,8 @@ from .base import PyfaBase
 
 class Skill(PyfaBase):
     """
-    This class will be used for managing character's skills (like for character
-    editor). Fits will use other class instances as skills to carry attributes.
+    This class will be used for managing character's skills (e.g. in character
+    editor). Fits will use other class' instances as skills.
     """
 
     __tablename__ = 'skills'
