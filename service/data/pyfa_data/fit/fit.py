@@ -47,14 +47,20 @@ class Fit(PyfaBase):
     _ship_type_id = Column('ship_type_id', Integer, nullable=False)
     _stance_type_id = Column('stance_type_id', Integer)
 
-    def __init__(self, source, name=None):
+    def __init__(self, name='', source=None):
         self.__generic_init()
+        # Use default source, unless specified otherwise
+        if source is None:
+            source = SourceManager.default
         self._set_source(source)
         self.name = name
 
     @reconstructor
     def _dbinit(self):
         self.__generic_init()
+        # Use default source for all reconstructed fits
+        self._set_source(SourceManager.default)
+        # Restore entities which are stored on fit
         self._set_ship(Ship(self._ship_type_id))
         if self._stance_type_id is not None:
             self.ship._set_stance(Stance(self._stance_type_id))
@@ -126,9 +132,15 @@ class Fit(PyfaBase):
         self._cmd_mgr.do(command)
 
     def _set_source(self, new_source):
+        """
+        Set fit's source. Source represents EVE data to be used.
+
+        Required arguments:
+        new_source -- source to use, can be None
+        """
         # Attempt to fetch source from source manager if passed object
         # is not instance of source class
-        if not isinstance(new_source, Source):
+        if not isinstance(new_source, Source) and new_source is not None:
             new_source = SourceManager.get(new_source)
         old_source = self.source
         # Do not update anything if sources are the same
@@ -136,7 +148,7 @@ class Fit(PyfaBase):
             return
         self.__source = new_source
         # Update eos model with new data
-        self._eos_fit.eos = new_source.eos
+        self._eos_fit.eos = getattr(new_source, 'eos', None)
         # Update pyfa model with new data
         for src_child in self._src_children:
             src_child._update_source()

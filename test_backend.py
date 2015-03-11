@@ -14,10 +14,8 @@ from service.source_mgr import SourceManager
 eve_dbpath_tq = os.path.join(script_dir, 'staticdata', 'tranquility.db')
 pyfa_dbpath = os.path.join(script_dir, 'userdata', 'pyfadata.db')
 
-# Initialize database for tranquility
-SourceManager.add('tq', eve_dbpath_tq)
-session_evedata_tq = SourceManager.get('tq').edb
-
+# Initialize databases with eve data
+SourceManager.add('tq', eve_dbpath_tq, make_default=True)
 SourceManager.add('sisi', eve_dbpath_tq)
 
 # (Re-)Initialize database for pyfa save data
@@ -38,14 +36,14 @@ TENGU_ENG_CAPREGEN = 30143
 TENGU_PROP_WARP = 30088
 TENGU_ELE_ECCM = 30050
 
-fit1 = Fit('tq', name='test fit 1')
+fit1 = Fit(name='test fit 1')
 fit1.persist()
 fit1.ship = Ship(TENGU)
 fit1.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
 fit1.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
 session_pyfadata.commit()
 
-fit2 = Fit('tq', name='test fit 2')
+fit2 = Fit(name='test fit 2')
 fit2.ship = Ship(CONFESSOR)
 fit2.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
 fit2.persist()
