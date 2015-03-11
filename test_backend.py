@@ -6,6 +6,7 @@ sys.path.append(os.path.realpath(os.path.join(script_dir, 'external')))
 
 import os
 
+from service.data.eve_data.query import *
 from service.data.pyfa_data import *
 from service.data.pyfa_data import PyfaDataManager
 from service.source_mgr import SourceManager
@@ -48,6 +49,9 @@ fit2.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
 fit2.persist()
 session_pyfadata.commit()
 
-charmeta = Character(alias='Kadesh Priestess')
-charmeta.persist()
+char = Character(alias='Kadesh Priestess')
+for skill_type in get_published_skills(SourceManager.default.edb):
+    char.skills.add(Skill(skill_type.id, level=5))
+char.persist()
+
 session_pyfadata.commit()

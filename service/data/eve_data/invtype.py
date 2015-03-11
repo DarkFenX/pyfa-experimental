@@ -18,7 +18,7 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, Float, String
+from sqlalchemy import Column, ForeignKey, Integer, Float, Boolean, String
 from sqlalchemy.orm import Session, relationship
 
 from service.util.repr import make_repr_str
@@ -51,8 +51,11 @@ class InvType(EveBase):
     _group_id = Column('groupID', Integer, ForeignKey('invgroups.groupID'))
     group = relationship('InvGroup')
 
+    published = Column(Boolean)
+
     _market_group_id = Column('marketGroupID', Integer, ForeignKey('invmarketgroups.marketGroupID'))
     market_group = relationship('InvMarketGroup')
+
 
     _attrib_associations = relationship('DgmTypeAttribute')
     _effect_associations = relationship('DgmTypeEffect')

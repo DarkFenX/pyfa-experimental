@@ -74,6 +74,7 @@ from .pyfadata_mgr import PyfaDataManager
 from .base import PyfaBase
 # Miscellanea imports - top-down from the most specific to most generic imports
 # (because top-level objects sometimes import their children for reconstruction)
+from .skill import Skill
 from .subsystem import Subsystem
 from .stance import Stance
 from .character import Character
@@ -85,6 +86,7 @@ __all__ = [
     'Character',
     'Fit',
     'Ship',
+    'Skill',
     'Stance',
     'Subsystem'
 ]

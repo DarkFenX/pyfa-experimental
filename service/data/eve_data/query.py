@@ -18,6 +18,10 @@
 #===============================================================================
 
 
+from sqlalchemy import and_
+
+from eos.const.eve import Category as ConstCategory
+from .invgroup import InvGroup
 from .invtype import InvType
 from .dgmattribute import DgmAttribute
 from .dgmeffect import DgmEffect
@@ -53,11 +57,18 @@ def get_effects(evedata_session, effect_ids):
     return effects
 
 
+def get_published_skills(evedata_session):
+    skills = evedata_session.query(InvType).join(InvGroup).filter(
+        and_(InvGroup._category_id == ConstCategory.skill, InvType.published == True))
+    return skills
+
+
 __all__ = [
     'get_type',
     'get_types',
     'get_attribute',
     'get_attributes',
     'get_effect',
-    'get_effects'
+    'get_effects',
+    'get_published_skills'
 ]

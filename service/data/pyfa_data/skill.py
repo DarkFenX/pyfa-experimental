@@ -18,28 +18,37 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, Float
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy.orm import relationship, backref, reconstructor
 
 from service.util.repr import make_repr_str
-from .base import EveBase
+from .base import PyfaBase
+from .func import pyfa_persist, pyfa_abandon
 
 
-class DgmTypeAttribute(EveBase):
+class Skill(PyfaBase):
     """
-    Association object between type and attribute metadata, which also stores
-    attribute value. Not directly accessible by pyfa.
+    This class will be used for managing character's skills (like for character
+    editor). Fits will use other class instances as skills to carry attributes.
     """
 
-    __tablename__ = 'dgmtypeattribs'
+    __tablename__ = 'skills'
 
-    type_id = Column('typeID', Integer, ForeignKey('invtypes.typeID'), primary_key=True)
+    id = Column('skill_id', Integer, primary_key=True)
 
-    attribute_id = Column('attributeID', Integer, ForeignKey('dgmattribs.attributeID'), primary_key=True)
-    attribute = relationship('DgmAttribute')
+    _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'), nullable=False)
+    _character = relationship('Character', backref=backref(
+        'skills', collection_class=set, cascade='all, delete-orphan'))
 
-    value = Column('value', Float, nullable=False)
+    eve_id = Column('type_id', Integer, nullable=False)
+    level = Column(Integer, nullable=False)
 
+
+    def __init__(self, type_id, level=0):
+        self.eve_id = type_id
+        self.level = level
+
+    # Auxiliary methods
     def __repr__(self):
-        spec = ['type_id', 'attribute_id']
+        spec = ['eve_id']
         return make_repr_str(self, spec)
