@@ -15,10 +15,10 @@ eve_dbpath_tq = os.path.join(script_dir, 'staticdata', 'tranquility.db')
 pyfa_dbpath = os.path.join(script_dir, 'userdata', 'pyfadata.db')
 
 # Initialize database for tranquility
-SourceManager.add_source('tq', eve_dbpath_tq)
-session_evedata_tq = SourceManager.get_source('tq').edb
+SourceManager.add('tq', eve_dbpath_tq)
+session_evedata_tq = SourceManager.get('tq').edb
 
-SourceManager.add_source('sisi', eve_dbpath_tq)
+SourceManager.add('sisi', eve_dbpath_tq)
 
 # (Re-)Initialize database for pyfa save data
 if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)

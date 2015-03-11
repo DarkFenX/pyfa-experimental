@@ -39,8 +39,12 @@ class SourceManager:
     # {literal alias: Source(eve data database session, eos instance)}
     _sources = {}
 
+    # Default source, will be used implicitly in many cases
+    # when service user doesn't set it explicitly
+    default = None
+
     @classmethod
-    def add_source(cls, alias, db_path):
+    def add(cls, alias, db_path, make_default=False):
         """
         Add source to source manager - this includes initializing
         all facilities hidden behind name 'source'. After source
@@ -51,6 +55,11 @@ class SourceManager:
         controls several paths under which temporary data is stored
         for the sources
         db_path -- path to database with EVE data for this source
+
+        Optional arguments:
+        make_default -- marks passed source default; it will be used
+        by default for some actions, like fit initialization, unless
+        specified explicitly
         """
         # Database session
         edb_session = make_evedata_session(db_path)
@@ -60,10 +69,13 @@ class SourceManager:
         cache_handler = JsonCacheHandler('staticdata/eos_cache/{}.json.bz2'.format(alias), logger)
         eos_instance = Eos(data_handler, cache_handler, logger)
         # Finally, add record to list of sources
-        cls._sources[alias] = Source(alias=alias, edb=edb_session, eos=eos_instance)
+        source = Source(alias=alias, edb=edb_session, eos=eos_instance)
+        cls._sources[alias] = source
+        if make_default is True:
+            cls.default = source
 
     @classmethod
-    def get_source(cls, alias):
+    def get(cls, alias):
         """
         Using source alias, return source data.
 
