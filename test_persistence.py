@@ -26,6 +26,7 @@ PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
 
 for fit in get_all_fits():
     fit.source = 'tq'
+    print('---')
     print(fit)
     print(fit.ship)
     print(fit.ship.stance)

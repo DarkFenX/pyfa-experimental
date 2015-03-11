@@ -39,10 +39,10 @@ TENGU_PROP_WARP = 30088
 TENGU_ELE_ECCM = 30050
 
 fit1 = Fit('tq', name='test fit 1')
+fit1.persist()
 fit1.ship = Ship(TENGU)
 fit1.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
 fit1.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
-fit1.persist()
 session_pyfadata.commit()
 
 fit2 = Fit('tq', name='test fit 2')

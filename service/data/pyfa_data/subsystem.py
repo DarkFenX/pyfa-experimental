@@ -20,7 +20,6 @@
 
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship, backref, reconstructor
-from sqlalchemy.orm.collections import InstrumentedSet
 
 from eos import Subsystem as EosSubsystem
 from service.data.eve_data.query import get_type, get_attributes
@@ -41,7 +40,7 @@ class Subsystem(PyfaBase):
 
     _fit_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'), nullable=False)
     _fit = relationship('Fit', backref=backref(
-        '_subsystems', collection_class=InstrumentedSet, cascade='all, delete-orphan'))
+        '_subsystems', collection_class=set, cascade='all, delete-orphan'))
 
     _type_id = Column('type_id', Integer, nullable=False)
 
