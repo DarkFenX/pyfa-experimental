@@ -51,6 +51,6 @@ fit2.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
 fit2.persist()
 session_pyfadata.commit()
 
-charmeta = CharacterMetadata(alias='Kadesh Priestess')
+charmeta = Character(alias='Kadesh Priestess')
 charmeta.persist()
 session_pyfadata.commit()

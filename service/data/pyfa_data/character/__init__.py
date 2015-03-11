@@ -18,4 +18,4 @@
 #===============================================================================
 
 
-from .character import CharacterMetadata
+from .character import Character

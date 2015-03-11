@@ -25,10 +25,10 @@ from service.data.pyfa_data.base import PyfaBase
 from service.util.repr import make_repr_str
 
 
-class CharacterMetadata(PyfaBase):
+class Character(PyfaBase):
     """
     This object doesn't carry any fit-specific data on itself. It's used
-    by real character object to keep track of skills, implants, etc.
+    by character proxy object to keep track of skills, implants, etc.
     """
 
     __tablename__ = 'characters'
