@@ -20,9 +20,9 @@
 
 from sqlalchemy import Column, Integer, String
 
-from service.data.pyfa_data.func import pyfa_persist, pyfa_abandon
-from service.data.pyfa_data.base import PyfaBase
 from service.util.repr import make_repr_str
+from .base import PyfaBase
+from .func import pyfa_persist, pyfa_abandon
 
 
 class Character(PyfaBase):
