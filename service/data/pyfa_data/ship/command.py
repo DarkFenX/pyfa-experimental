@@ -18,7 +18,7 @@
 #===============================================================================
 
 
-from service.data.pyfa_data.aux.command import BaseCommand
+from service.data.pyfa_data.command import BaseCommand
 from service.util.repr import make_repr_str
 
 

@@ -20,7 +20,7 @@
 
 from sqlalchemy.orm.util import has_identity
 
-from service.data.pyfa_data import PyfaDataManager
+from .pyfadata_mgr import PyfaDataManager
 
 
 def get_src_children(child_list):

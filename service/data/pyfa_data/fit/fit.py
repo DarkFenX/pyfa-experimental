@@ -26,9 +26,9 @@ from sqlalchemy.orm import reconstructor
 from eos import Fit as EosFit
 from service.source_mgr import SourceManager, Source
 from service.data.pyfa_data import Ship, Stance
-from service.data.pyfa_data.aux.command import CommandManager
-from service.data.pyfa_data.aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
-from service.data.pyfa_data.aux.func import get_src_children, pyfa_persist, pyfa_abandon
+from service.data.pyfa_data.command import CommandManager
+from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
+from service.data.pyfa_data.func import get_src_children, pyfa_persist, pyfa_abandon
 from service.data.pyfa_data.base import PyfaBase
 from service.util.repr import make_repr_str
 from .command import *

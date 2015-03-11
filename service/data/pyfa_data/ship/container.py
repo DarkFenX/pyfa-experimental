@@ -18,7 +18,7 @@
 #===============================================================================
 
 
-from service.data.pyfa_data.aux.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
+from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from .command import *
 
 

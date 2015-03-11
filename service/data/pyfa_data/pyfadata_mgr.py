@@ -16,3 +16,23 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Pyfa 3. If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
+
+
+import sqlalchemy
+from sqlalchemy.orm import sessionmaker
+
+from .base import PyfaBase
+
+
+class PyfaDataManager:
+    """
+    Generates and holds access to pyfa database session (fits, characters, etc.)
+    """
+
+    session = None
+
+    @classmethod
+    def set_pyfadb_path(cls, pyfadb_path):
+        pyfadb_engine = sqlalchemy.create_engine('sqlite:///{}'.format(pyfadb_path), echo=False)
+        PyfaBase.metadata.create_all(pyfadb_engine)
+        cls.session = sessionmaker(bind=pyfadb_engine)()

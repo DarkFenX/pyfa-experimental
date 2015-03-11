@@ -19,7 +19,7 @@
 
 
 from .fit import Fit
-from .aux.pyfadata_mgr import PyfaDataManager
+from .pyfadata_mgr import PyfaDataManager
 
 
 def get_all_fits():

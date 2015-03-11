@@ -70,7 +70,7 @@ changing anything:
 
 # Imports of modules which do not have dependencies on other Pyfa modules and
 # which can be used from anywhere go first (to avoid import loops)
-from .aux.pyfadata_mgr import PyfaDataManager
+from .pyfadata_mgr import PyfaDataManager
 from .base import PyfaBase
 # Miscellanea imports - top-down from the most specific to most generic imports
 # (because top-level objects sometimes import their children for reconstruction)
