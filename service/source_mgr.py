@@ -20,7 +20,7 @@
 
 from collections import namedtuple
 
-from eos import Eos, SQLiteDataHandler, JsonCacheHandler, TextLogger
+from eos import SourceManager as EosSourceManager, SQLiteDataHandler, JsonCacheHandler
 from .data.eve_data import make_evedata_session
 from .exception import UnknownSourceError
 
@@ -36,7 +36,7 @@ class SourceManager:
     """
 
     # Format:
-    # {literal alias: Source(eve data database session, eos instance)}
+    # {literal alias: Source}
     _sources = {}
 
     # Default source, will be used implicitly in many cases
@@ -63,13 +63,13 @@ class SourceManager:
         """
         # Database session
         edb_session = make_evedata_session(db_path)
-        # Eos instance
-        logger = TextLogger('eos_{}'.format(alias), 'userdata/eos_logs/{}.log'.format(alias))
+        # Eos source
         data_handler = SQLiteDataHandler(db_path)
-        cache_handler = JsonCacheHandler('staticdata/eos_cache/{}.json.bz2'.format(alias), logger)
-        eos_instance = Eos(data_handler, cache_handler, logger)
+        cache_handler = JsonCacheHandler('staticdata/eos_cache/{}.json.bz2'.format(alias))
+        EosSourceManager.add(alias, data_handler, cache_handler)
+        eos_source = EosSourceManager.get(alias)
         # Finally, add record to list of sources
-        source = Source(alias=alias, edb=edb_session, eos=eos_instance)
+        source = Source(alias=alias, edb=edb_session, eos=eos_source)
         cls._sources[alias] = source
         if make_default is True:
             cls.default = source
@@ -89,5 +89,5 @@ class SourceManager:
         """
         try:
             return cls._sources[alias]
-        except KeyError as e:
-            raise UnknownSourceError
+        except KeyError:
+            raise UnknownSourceError(alias)
