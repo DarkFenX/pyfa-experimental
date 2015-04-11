@@ -19,7 +19,7 @@
 
 
 from sqlalchemy import Column, ForeignKey, Integer, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from service.util.repr import make_repr_str
 from .base import EveBase
@@ -34,13 +34,14 @@ class DgmTypeEffect(EveBase):
     __tablename__ = 'dgmtypeeffects'
 
     type_id = Column('typeID', Integer, ForeignKey('invtypes.typeID'), primary_key=True)
-    is_default = Column('isDefault', Boolean, nullable=False)
+    type_ = relationship('InvType', backref=backref(
+        '_dgmtypeeffects', collection_class=set, cascade='all, delete-orphan'))
 
     effect_id = Column('effectID', Integer, ForeignKey('dgmeffects.effectID'), primary_key=True)
-    effect = relationship('DgmEffect')
+    effect = relationship('DgmEffect', backref=backref(
+        '_dgmtypeeffects', collection_class=set, cascade='all, delete-orphan'))
 
-    def __repr__(self):
-        return '<DgmTypeEffect(type_id={}, effect_id={})>'.format(self.type_id, self.effect_id)
+    is_default = Column('isDefault', Boolean, nullable=False)
 
     def __repr__(self):
         spec = ['type_id', 'effect_id']

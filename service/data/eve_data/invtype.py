@@ -56,10 +56,6 @@ class InvType(EveBase):
     _market_group_id = Column('marketGroupID', Integer, ForeignKey('invmarketgroups.marketGroupID'))
     market_group = relationship('InvMarketGroup')
 
-
-    _attrib_associations = relationship('DgmTypeAttribute')
-    _effect_associations = relationship('DgmTypeEffect')
-
     @property
     def attributes(self):
         """
@@ -71,8 +67,8 @@ class InvType(EveBase):
         for attribute in evedata_session.query(DgmAttribute).filter(DgmAttribute.id.in_(BASIC_ATTRS.keys())).all():
             attribute_map[attribute] = getattr(self, BASIC_ATTRS[attribute.id])
         # Then extended (in dgmtypeattribs table)
-        for attrib_association in self._attrib_associations:
-            attribute_map[attrib_association.attribute] = attrib_association.value
+        for dgmtypeattrib in self._dgmtypeattribs:
+            attribute_map[dgmtypeattrib.attribute] = dgmtypeattrib.value
         return attribute_map
 
     @property
@@ -80,7 +76,7 @@ class InvType(EveBase):
         """
         Return effects of type as DgmEffect list.
         """
-        return [assoc.effect for assoc in self._effect_associations]
+        return [assoc.effect for assoc in self._dgmtypeeffects]
 
     def __repr__(self):
         spec = ['id']

@@ -39,19 +39,26 @@ TENGU_ELE_ECCM = 30050
 fit1 = Fit(name='test fit 1')
 fit1.persist()
 fit1.ship = Ship(TENGU)
-fit1.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
-fit1.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
-session_pyfadata.commit()
+for k in sorted(fit1.ship._eve_item.attributes, key=lambda a: a.name):
+    print(k.name, fit1.ship._eve_item.attributes[k])
+print('---')
+for i in sorted(fit1.ship._eve_item.effects, key=lambda i: i.name):
+    print(i.name)
+print('---')
+print(fit1.ship._eve_item._dgmtypeeffects)
+#fit1.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
+#fit1.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
+#session_pyfadata.commit()
 
-fit2 = Fit(name='test fit 2')
-fit2.ship = Ship(CONFESSOR)
-fit2.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
-fit2.persist()
-session_pyfadata.commit()
+#fit2 = Fit(name='test fit 2')
+#fit2.ship = Ship(CONFESSOR)
+#fit2.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
+#fit2.persist()
+#session_pyfadata.commit()
 
-char = Character(alias='Kadesh Priestess')
-for skill_type in get_published_skills(SourceManager.default.edb):
-    char.skills.add(Skill(skill_type.id, level=5))
-char.persist()
+#char = Character(alias='Kadesh Priestess')
+#for skill_type in get_published_skills(SourceManager.default.edb):
+#    char.skills.add(Skill(skill_type.id, level=5))
+#char.persist()
 
-session_pyfadata.commit()
+#session_pyfadata.commit()
