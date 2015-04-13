@@ -20,6 +20,7 @@
 
 from sqlalchemy import Column, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from service.util.repr import make_repr_str
 from .base import EveBase
@@ -35,7 +36,7 @@ class DgmTypeAttribute(EveBase):
 
     type_id = Column('typeID', Integer, ForeignKey('invtypes.typeID'), primary_key=True)
     type_ = relationship('InvType', backref=backref(
-        '_dgmtypeattribs', collection_class=set, cascade='all, delete-orphan'))
+        '_dgmtypeattribs', collection_class=attribute_mapped_collection('attribute'), cascade='all, delete-orphan'))
 
     attribute_id = Column('attributeID', Integer, ForeignKey('dgmattribs.attributeID'), primary_key=True)
     attribute = relationship('DgmAttribute', backref=backref(

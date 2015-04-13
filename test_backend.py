@@ -39,13 +39,7 @@ TENGU_ELE_ECCM = 30050
 fit1 = Fit(name='test fit 1')
 fit1.persist()
 fit1.ship = Ship(TENGU)
-for k in sorted(fit1.ship._eve_item.attributes, key=lambda a: a.name):
-    print(k.name, fit1.ship._eve_item.attributes[k])
-print('---')
-for i in sorted(fit1.ship._eve_item.effects, key=lambda i: i.name):
-    print(i.name)
-print('---')
-print(fit1.ship._eve_item._dgmtypeeffects)
+print(fit1.ship._eve_item.attributes_extended)
 #fit1.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
 #fit1.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
 #session_pyfadata.commit()
