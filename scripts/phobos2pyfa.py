@@ -35,6 +35,7 @@ import json
 import sqlalchemy
 
 import service.data.eve_data
+from eos.const.eve import Attribute
 
 
 # Format:
@@ -77,7 +78,6 @@ tables = {
         {}
     ),
 }
-
 
 def process_table(edb_session, json_path, json_name):
     """
@@ -125,18 +125,44 @@ def write_table(edb_session, json_name, table_data):
         edb_session.add(instance)
 
 
+def move_basic_attribs(edb_session, json_path):
+    # {Attribute name in invtypes: attribute ID}
+    basic_attributes = {
+        'mass': Attribute.mass,
+        'capacity': Attribute.capacity,
+        'volume': Attribute.volume,
+        'radius': Attribute.radius
+    }
+    for row in load_table(json_path, 'invtypes'):
+        for invtypes_name, attribute_id in basic_attributes.items():
+            attribute_value = row.get(invtypes_name, None)
+            # Skip empty values (never seen empty though)
+            if attribute_value is None:
+                continue
+            dta = service.data.eve_data.DgmTypeAttribute()
+            dta.type_id = row['typeID']
+            dta.attribute_id = attribute_id
+            dta.value = attribute_value
+            edb_session.add(dta)
+
+
+special_conversions = {
+    'basic attributes relocation': move_basic_attribs
+}
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='This script converts Phobos JSON dump into database usable by pyfa.')
-    parser.add_argument('-j', '--json', required=True, type=str, help='The path to Phobos json dump')
-    parser.add_argument('-d', '--db', required=True, type=str, help='Path to database')
+    parser.add_argument('-j', '--json', required=True, type=str, help='path to Phobos json dump')
+    parser.add_argument('-d', '--db', required=True, type=str, help='path to database')
     args = parser.parse_args()
 
     # Expand home folder if needed
     json_path = os.path.expanduser(args.json)
     db_path = os.path.expanduser(args.db)
 
-    # Check if there's a file at DB path, and if it's there, remove it
+    # Check if there's a file at DB path, remove it
     if os.path.isfile(db_path):
         os.remove(db_path)
 
@@ -144,6 +170,10 @@ if __name__ == '__main__':
 
     for json_name in sorted(tables):
         process_table(edb_session, json_path, json_name)
+
+    for conv_name, conversion in special_conversions.items():
+        print('applying conversion: {}'.format(conv_name))
+        conversion(edb_session, json_path)
 
     print('committing')
     edb_session.commit()
