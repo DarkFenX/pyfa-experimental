@@ -18,4 +18,4 @@
 #===============================================================================
 
 
-from eos.util.repr import make_repr_str
+from eos.const.eve import Attribute as AttributeEnum
