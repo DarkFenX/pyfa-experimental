@@ -26,7 +26,7 @@ from .dgmattribute import DgmAttribute
 from .dgmeffect import DgmEffect
 from .dgmexpression import DgmExpression
 from .invgroup import InvGroup
-from .invmarketgroups import InvMarketGroup
+from .invmarketgroup import InvMarketGroup
 from .invtype import InvType
 from .phbmetadata import PhbMetaData
 # Just for initialization
