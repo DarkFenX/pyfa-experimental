@@ -79,6 +79,7 @@ tables = {
     ),
 }
 
+
 def process_table(edb_session, json_path, json_name):
     """
     Handle flow of how JSON is converted into table.
@@ -135,7 +136,7 @@ def move_basic_attribs(edb_session, json_path):
     }
     for row in load_table(json_path, 'invtypes'):
         for invtypes_name, attribute_id in basic_attributes.items():
-            attribute_value = row.get(invtypes_name, None)
+            attribute_value = row.get(invtypes_name)
             # Skip empty values (never seen empty though)
             if attribute_value is None:
                 continue
@@ -149,6 +150,12 @@ def move_basic_attribs(edb_session, json_path):
 special_conversions = {
     'basic attributes relocation': move_basic_attribs
 }
+
+
+def process_conversions(edb_session, json_path):
+    for conv_name, conversion in special_conversions.items():
+        print('applying conversion: {}'.format(conv_name))
+        conversion(edb_session, json_path)
 
 
 if __name__ == '__main__':
@@ -171,9 +178,10 @@ if __name__ == '__main__':
     for json_name in sorted(tables):
         process_table(edb_session, json_path, json_name)
 
-    for conv_name, conversion in special_conversions.items():
-        print('applying conversion: {}'.format(conv_name))
-        conversion(edb_session, json_path)
+    process_conversions(edb_session, json_path)
 
     print('committing')
     edb_session.commit()
+
+    print('vacuuming')
+    edb_session.execute('VACUUM')
