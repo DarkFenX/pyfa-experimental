@@ -19,7 +19,7 @@
 
 
 from service.data.pyfa_data.command import BaseCommand
-from service.util.repr import make_repr_str
+from util.repr import make_repr_str
 
 
 __all__ = [

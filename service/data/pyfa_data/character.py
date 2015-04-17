@@ -20,7 +20,7 @@
 
 from sqlalchemy import Column, Integer, String
 
-from service.util.repr import make_repr_str
+from util.repr import make_repr_str
 from .base import PyfaBase
 from .func import pyfa_persist, pyfa_abandon
 

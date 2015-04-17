@@ -22,7 +22,7 @@ from sqlalchemy import Column, ForeignKey, Integer, Float, Boolean, String
 from sqlalchemy.orm import Session, relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from service.util.repr import make_repr_str
+from util.repr import make_repr_str
 from .base import EveBase
 
 

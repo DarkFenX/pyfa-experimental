@@ -22,7 +22,7 @@ from sqlalchemy import Column, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.collections import attribute_mapped_collection
 
-from service.util.repr import make_repr_str
+from util.repr import make_repr_str
 from .base import EveBase
 
 

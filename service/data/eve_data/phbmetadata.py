@@ -20,7 +20,7 @@
 
 from sqlalchemy import Column, String
 
-from service.util.repr import make_repr_str
+from util.repr import make_repr_str
 from .base import EveBase
 
 

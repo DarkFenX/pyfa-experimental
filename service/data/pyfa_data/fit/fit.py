@@ -30,7 +30,7 @@ from service.data.pyfa_data.base import PyfaBase
 from service.data.pyfa_data.command import CommandManager
 from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from service.data.pyfa_data.func import get_src_children, pyfa_persist, pyfa_abandon
-from service.util.repr import make_repr_str
+from util.repr import make_repr_str
 from .command import *
 
 

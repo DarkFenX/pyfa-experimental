@@ -23,7 +23,7 @@ from sqlalchemy.orm import relationship, backref, reconstructor
 
 from eos import Subsystem as EosSubsystem
 from service.data.eve_data.query import get_type, get_attributes
-from service.util.repr import make_repr_str
+from util.repr import make_repr_str
 from .base import PyfaBase
 
 
