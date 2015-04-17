@@ -18,4 +18,4 @@
 #===============================================================================
 
 
-from eos.const.eve import Attribute as AttributeEnum
+from eos.const.eve import Attribute as Attribute

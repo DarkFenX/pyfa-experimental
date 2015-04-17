@@ -35,7 +35,7 @@ import json
 import sqlalchemy
 
 import service.data.eve_data
-from util.const import AttributeEnum
+from util.const import Attribute
 
 
 # Format:
@@ -129,10 +129,10 @@ def write_table(edb_session, json_name, table_data):
 def move_basic_attribs(edb_session, json_path):
     # {Attribute name in invtypes: attribute ID}
     basic_attributes = {
-        'mass': AttributeEnum.mass,
-        'capacity': AttributeEnum.capacity,
-        'volume': AttributeEnum.volume,
-        'radius': AttributeEnum.radius
+        'mass': Attribute.mass,
+        'capacity': Attribute.capacity,
+        'volume': Attribute.volume,
+        'radius': Attribute.radius
     }
     for row in load_table(json_path, 'invtypes'):
         for invtypes_name, attribute_id in basic_attributes.items():
