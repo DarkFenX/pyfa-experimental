@@ -56,7 +56,7 @@ class Ship:
 
     @property
     def eve_name(self):
-        return self._eve_item.name
+        return getattr(self._eve_item, 'name', None)
 
     @property
     def attributes(self):

@@ -51,11 +51,28 @@ def make_confessor():
     fit.persist()
     session_pyfadata.commit()
 
-def test_random_shit():
+def test_chracters():
     char = Character(alias='Kadesh Priestess')
     #for skill_type in query_published_skills(SourceManager.default.edb):
     #    char.skills.add(Skill(skill_type.id, level=5))
     #char.persist()
+
+def test_random_shit():
+    fit = Fit(name='test fit 3')
+    print(fit.source)
+    print(fit._eos_fit.source)
+    ship = Ship(CONFESSOR)
+    fit.ship = ship
+    print(ship)
+    print(ship.eve_id)
+    print(ship.eve_name)
+    print(ship.attributes)
+    fit.ship = None
+    print('---')
+    print(ship)
+    print(ship.eve_id)
+    print(ship.eve_name)
+    print(ship.attributes)
 
 #make_tengu()
 #make_confessor()

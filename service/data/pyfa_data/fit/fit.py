@@ -148,7 +148,7 @@ class Fit(PyfaBase):
             return
         self.__source = new_source
         # Update eos model with new data
-        self._eos_fit.eos = getattr(new_source, 'eos', None)
+        self._eos_fit.source = getattr(new_source, 'eos', None)
         # Update pyfa model with new data
         for src_child in self._src_children:
             src_child._update_source()
