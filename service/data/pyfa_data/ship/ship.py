@@ -69,6 +69,10 @@ class Ship:
         return attr_map
 
     @property
+    def attributes_original(self):
+        return self._eve_item.attributes
+
+    @property
     def effects(self):
         return list(self._eve_item.effects)
 
