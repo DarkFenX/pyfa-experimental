@@ -19,17 +19,18 @@
 
 
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import reconstructor
 
+from service.data.pyfa_data.base import PyfaBase
+from service.data.pyfa_data.func import pyfa_persist, pyfa_abandon
 from util.repr import make_repr_str
-from .base import PyfaBase
-from .func import pyfa_persist, pyfa_abandon
 
 
 class Character(PyfaBase):
     """
-    This class will be used for managing characters (e.g. in character
-    editor). Fits will use other class' instance as character. We cannot
-    use this one because different fits carry different attributes on
+    "Core" character class. It will be used for managing characters (e.g.
+    in character editor). Fits will use proxy twin of the character. We
+    cannot use core because different fits carry different attributes on
     character and all child entities (like skills, on-character implants,
     and so on).
     """
@@ -41,6 +42,10 @@ class Character(PyfaBase):
 
     def __init__(self, alias=''):
         self.alias = alias
+
+    @reconstructor
+    def _dbinit(self):
+        pass
 
     # Miscellanea public stuff
     persist = pyfa_persist

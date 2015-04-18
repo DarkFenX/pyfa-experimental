@@ -36,22 +36,27 @@ TENGU_ENG_CAPREGEN = 30143
 TENGU_PROP_WARP = 30088
 TENGU_ELE_ECCM = 30050
 
-fit1 = Fit(name='test fit 1')
-fit1.persist()
-fit1.ship = Ship(TENGU)
-fit1.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
-fit1.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
-session_pyfadata.commit()
+def make_tengu():
+    fit = Fit(name='test fit 1')
+    fit.persist()
+    fit.ship = Ship(TENGU)
+    fit.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
+    fit.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
+    session_pyfadata.commit()
 
-fit2 = Fit(name='test fit 2')
-fit2.ship = Ship(CONFESSOR)
-fit2.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
-fit2.persist()
-session_pyfadata.commit()
+def make_confessor():
+    fit = Fit(name='test fit 2')
+    fit.ship = Ship(CONFESSOR)
+    fit.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
+    fit.persist()
+    session_pyfadata.commit()
 
-#char = Character(alias='Kadesh Priestess')
-#for skill_type in get_published_skills(SourceManager.default.edb):
-#    char.skills.add(Skill(skill_type.id, level=5))
-#char.persist()
+def test_random_shit():
+    char = Character(alias='Kadesh Priestess')
+    #for skill_type in get_published_skills(SourceManager.default.edb):
+    #    char.skills.add(Skill(skill_type.id, level=5))
+    #char.persist()
 
-#session_pyfadata.commit()
+#make_tengu()
+#make_confessor()
+test_random_shit()
