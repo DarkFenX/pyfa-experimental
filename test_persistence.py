@@ -20,7 +20,7 @@ SourceManager.add('sisi', eve_dbpath_tq)
 # Initialize database for pyfa save data
 PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
 
-for fit in get_all_fits():
+for fit in query_all_fits():
     print('---')
     print(fit)
     print(fit.ship)

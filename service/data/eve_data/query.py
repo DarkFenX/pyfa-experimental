@@ -27,48 +27,48 @@ from .dgmattribute import DgmAttribute
 from .dgmeffect import DgmEffect
 
 
-def get_type(evedata_session, type_id):
+def query_type(evedata_session, type_id):
     type_ = evedata_session.query(InvType).get(type_id)
     return type_
 
 
-def get_types(evedata_session, type_ids):
+def query_types(evedata_session, type_ids):
     types = evedata_session.query(InvType).filter(InvType.id.in_(type_ids)).all()
     return types
 
 
-def get_attribute(evedata_session, attribute_id):
+def query_attribute(evedata_session, attribute_id):
     attribute = evedata_session.query(DgmAttribute).get(attribute_id)
     return attribute
 
 
-def get_attributes(evedata_session, attribute_ids):
+def query_attributes(evedata_session, attribute_ids):
     attributes = evedata_session.query(DgmAttribute).filter(DgmAttribute.id.in_(attribute_ids)).all()
     return attributes
 
 
-def get_effect(evedata_session, effect_id):
+def query_effect(evedata_session, effect_id):
     effect = evedata_session.query(DgmEffect).get(effect_id)
     return effect
 
 
-def get_effects(evedata_session, effect_ids):
+def query_effects(evedata_session, effect_ids):
     effects = evedata_session.query(DgmEffect).filter(DgmEffect.id.in_(effect_ids)).all()
     return effects
 
 
-def get_published_skills(evedata_session):
+def query_published_skills(evedata_session):
     skills = evedata_session.query(InvType).join(InvGroup).filter(
         and_(InvGroup._category_id == ConstCategory.skill, InvType.published == True))
     return skills
 
 
 __all__ = [
-    'get_type',
-    'get_types',
-    'get_attribute',
-    'get_attributes',
-    'get_effect',
-    'get_effects',
-    'get_published_skills'
+    'query_type',
+    'query_types',
+    'query_attribute',
+    'query_attributes',
+    'query_effect',
+    'query_effects',
+    'query_published_skills'
 ]

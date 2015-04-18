@@ -19,7 +19,7 @@
 
 
 from eos import Stance as EosStance
-from service.data.eve_data.query import get_type, get_attributes
+from service.data.eve_data.query import query_type, query_attributes
 from util.repr import make_repr_str
 
 
@@ -49,7 +49,7 @@ class Stance:
     def attributes(self):
         eos_attrs = self._eos_stance.attributes
         attr_ids = eos_attrs.keys()
-        attrs = get_attributes(self._ship._fit.source.edb, attr_ids)
+        attrs = query_attributes(self._ship._fit.source.edb, attr_ids)
         attr_map = {}
         for attr in attrs:
             attr_map[attr] = eos_attrs[attr.id]
@@ -99,7 +99,7 @@ class Stance:
             self._eve_item = None
         else:
             if source is not None:
-                self._eve_item = get_type(source.edb, self.eve_id)
+                self._eve_item = query_type(source.edb, self.eve_id)
             else:
                 self._eve_item = None
 

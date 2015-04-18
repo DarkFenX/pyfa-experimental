@@ -53,7 +53,7 @@ def make_confessor():
 
 def test_random_shit():
     char = Character(alias='Kadesh Priestess')
-    #for skill_type in get_published_skills(SourceManager.default.edb):
+    #for skill_type in query_published_skills(SourceManager.default.edb):
     #    char.skills.add(Skill(skill_type.id, level=5))
     #char.persist()
 

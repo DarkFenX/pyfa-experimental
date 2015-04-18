@@ -21,7 +21,7 @@
 from itertools import chain
 
 from eos import Ship as EosShip
-from service.data.eve_data.query import get_type, get_attributes
+from service.data.eve_data.query import query_type, query_attributes
 from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from service.data.pyfa_data.func import get_src_children
 from util.repr import make_repr_str
@@ -62,7 +62,7 @@ class Ship:
     def attributes(self):
         eos_attrs = self._eos_ship.attributes
         attr_ids = eos_attrs.keys()
-        attrs = get_attributes(self._fit.source.edb, attr_ids)
+        attrs = query_attributes(self._fit.source.edb, attr_ids)
         attr_map = {}
         for attr in attrs:
             attr_map[attr] = eos_attrs[attr.id]
@@ -159,7 +159,7 @@ class Ship:
             self._eve_item = None
         else:
             if source is not None:
-                self._eve_item = get_type(source.edb, self.eve_id)
+                self._eve_item = query_type(source.edb, self.eve_id)
             else:
                 self._eve_item = None
 

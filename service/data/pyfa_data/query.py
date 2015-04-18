@@ -22,12 +22,12 @@ from .fit import Fit
 from .pyfadata_mgr import PyfaDataManager
 
 
-def get_all_fits():
+def query_all_fits():
     pyfadata_session = PyfaDataManager.session
     fits = pyfadata_session.query(Fit).all()
     return fits
 
 
 __all__ = [
-    'get_all_fits'
+    'query_all_fits'
 ]
