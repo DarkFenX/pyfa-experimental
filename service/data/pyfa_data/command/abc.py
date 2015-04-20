@@ -18,12 +18,13 @@
 #===============================================================================
 
 
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 
 
 class BaseCommand(metaclass=ABCMeta):
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def executed(self):
         ...
 

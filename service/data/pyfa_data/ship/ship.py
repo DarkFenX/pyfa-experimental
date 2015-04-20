@@ -21,7 +21,7 @@
 from itertools import chain
 
 from eos import Ship as EosShip
-from service.data.eve_data.query import query_type, query_attributes
+from service.data.pyfa_data.base import FitItemBase
 from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from service.data.pyfa_data.func import get_src_children
 from util.repr import make_repr_str
@@ -29,7 +29,7 @@ from .command import *
 from .container import *
 
 
-class Ship:
+class Ship(FitItemBase):
     """
     Pyfa model: fit.ship
     Eos model: efit.ship
@@ -41,7 +41,7 @@ class Ship:
     """
 
     def __init__(self, type_id, stance=None):
-        self._type_id = type_id
+        FitItemBase.__init__(self, type_id)
         self.__fit = None
         self.__stance = None
         self._eve_item = None
@@ -49,32 +49,24 @@ class Ship:
         self.subsystems = SubsystemSet(self)
         self.stance = stance
 
-    # Read-only info
+    # Implementation of abstract methods for pyfa fit item
     @property
-    def eve_id(self):
-        return self._type_id
+    def _source(self):
+        try:
+            return self._fit.source
+        except AttributeError:
+            return None
 
     @property
-    def eve_name(self):
-        return self._eve_item.name
+    def _eos_item(self):
+        return self._eos_ship
 
     @property
-    def attributes(self):
-        eos_attrs = self._eos_ship.attributes
-        attr_ids = eos_attrs.keys()
-        attrs = query_attributes(self._fit.source.edb, attr_ids)
-        attr_map = {}
-        for attr in attrs:
-            attr_map[attr] = eos_attrs[attr.id]
-        return attr_map
-
-    @property
-    def attributes_original(self):
-        return self._eve_item.attributes
-
-    @property
-    def effects(self):
-        return list(self._eve_item.effects)
+    def _src_children(self):
+        return get_src_children(chain(
+            (self.stance,),
+            self.subsystems
+        ))
 
     # Children getters/setters
     @property
@@ -148,24 +140,6 @@ class Ship:
                 self.stance._unregister_on_fit(fit)
             for subsystem in self.subsystems:
                 subsystem._unregister_on_fit(fit)
-
-    @property
-    def _src_children(self):
-        return get_src_children(chain(
-            (self.stance,),
-            self.subsystems
-        ))
-
-    def _update_source(self):
-        try:
-            source = self._fit.source
-        except AttributeError:
-            self._eve_item = None
-        else:
-            if source is not None:
-                self._eve_item = query_type(source.edb, self.eve_id)
-            else:
-                self._eve_item = None
 
     def __repr__(self):
         spec = ['eve_id']

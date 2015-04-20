@@ -18,7 +18,104 @@
 #===============================================================================
 
 
+from abc import ABCMeta, abstractmethod
+
 from sqlalchemy.ext.declarative import declarative_base
 
+from service.data.eve_data.query import query_type, query_attributes
 
 PyfaBase = declarative_base()
+
+
+class FitItemBase(metaclass=ABCMeta):
+    """
+    Defines interface for all objects which represent
+    EVE items in pyfa model.
+    """
+
+    def __init__(self, type_id):
+        self._type_id = type_id
+        self._eve_item = None
+
+    @property
+    def eve_id(self):
+        """
+        Return type ID of EVE item, even if source is not defined.
+        """
+        return self._type_id
+
+    @property
+    def eve_name(self):
+        """
+        Return name of EVE item, if source is defined. If source
+        is not defined, return None.
+        """
+        try:
+            return self._eve_item.name
+        except AttributeError:
+            return None
+
+    @property
+    def attributes(self):
+        """
+        Return dictionary with modified attributes in the form of
+        {DgmAttribute: attr value}. If source is not defined,
+        return empty dictionary.
+        """
+        try:
+            edb_session = self._source.edb
+        except AttributeError:
+            return {}
+        eos_attrs = self._eos_item.attributes
+        attr_ids = eos_attrs.keys()
+        attrs = query_attributes(edb_session, attr_ids)
+        attr_map = {}
+        for attr in attrs:
+            attr_map[attr] = eos_attrs[attr.id]
+        return attr_map
+
+
+    @property
+    def attributes_original(self):
+        """
+        Return dictionary with original attributes in the form of
+        {DgmAttribute: attr value}. If source is not defined,
+        return empty dictionary.
+        """
+        try:
+            return self._eve_item.attributes
+        except AttributeError:
+            return {}
+
+    @property
+    def effects(self):
+        """
+        Return set with item effects. If source is not defined,
+        return empty set.
+        """
+        try:
+            return self._eve_item.effects
+        except AttributeError:
+            return set()
+
+    def _update_source(self):
+        try:
+            edb_session = self._source.edb
+        except AttributeError:
+            self._eve_item = None
+        else:
+            self._eve_item = query_type(edb_session, self.eve_id)
+
+    @property
+    @abstractmethod
+    def _source(self):
+        ...
+
+    @property
+    @abstractmethod
+    def _eos_item(self):
+        ...
+
+    @abstractmethod
+    def _src_children(self):
+        ...
