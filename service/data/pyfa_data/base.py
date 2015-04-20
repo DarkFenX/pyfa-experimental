@@ -34,15 +34,15 @@ class FitItemBase(metaclass=ABCMeta):
     """
 
     def __init__(self, type_id):
-        self._type_id = type_id
-        self._eve_item = None
+        self.__type_id = type_id
+        self.__eve_item = None
 
     @property
     def eve_id(self):
         """
         Return type ID of EVE item, even if source is not defined.
         """
-        return self._type_id
+        return self.__type_id
 
     @property
     def eve_name(self):
@@ -51,7 +51,7 @@ class FitItemBase(metaclass=ABCMeta):
         is not defined, return None.
         """
         try:
-            return self._eve_item.name
+            return self.__eve_item.name
         except AttributeError:
             return None
 
@@ -83,7 +83,7 @@ class FitItemBase(metaclass=ABCMeta):
         return empty dictionary.
         """
         try:
-            return self._eve_item.attributes
+            return self.__eve_item.attributes
         except AttributeError:
             return {}
 
@@ -94,7 +94,7 @@ class FitItemBase(metaclass=ABCMeta):
         return empty set.
         """
         try:
-            return self._eve_item.effects
+            return self.__eve_item.effects
         except AttributeError:
             return set()
 
@@ -107,9 +107,9 @@ class FitItemBase(metaclass=ABCMeta):
         try:
             edb_session = self._source.edb
         except AttributeError:
-            self._eve_item = None
+            self.__eve_item = None
         else:
-            self._eve_item = query_type(edb_session, self.eve_id)
+            self.__eve_item = query_type(edb_session, self.eve_id)
 
     @property
     @abstractmethod

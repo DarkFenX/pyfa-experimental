@@ -22,12 +22,11 @@ from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship, backref, reconstructor
 
 from eos import Subsystem as EosSubsystem
-from service.data.eve_data.query import query_type, query_attributes
 from util.repr import make_repr_str
-from .base import PyfaBase
+from .base import PyfaBase, FitItemBase
 
 
-class Subsystem(PyfaBase):
+class Subsystem(PyfaBase, FitItemBase):
     """
     Pyfa model: ship.{subsystems}
     Eos model: efit.{subsystems}
@@ -53,32 +52,25 @@ class Subsystem(PyfaBase):
         self.__generic_init()
 
     def __generic_init(self):
+        FitItemBase.__init__(self._type_id)
         self.__ship = None
-        self._eve_item = None
         self._eos_subsystem = EosSubsystem(self._type_id)
 
-    # Read-only info
+    # Pyfa fit item methods
     @property
-    def eve_id(self):
-        return self._type_id
+    def _source(self):
+        try:
+            return self._ship._fit.source
+        except AttributeError:
+            return None
 
     @property
-    def eve_name(self):
-        return self._eve_item.name
+    def _eos_item(self):
+        return self._eos_subsystem
 
     @property
-    def attributes(self):
-        eos_attrs = self._eos_subsystem.attributes
-        attr_ids = eos_attrs.keys()
-        attrs = query_attributes(self._ship._fit.source.edb, attr_ids)
-        attr_map = {}
-        for attr in attrs:
-            attr_map[attr] = eos_attrs[attr.id]
-        return attr_map
-
-    @property
-    def effects(self):
-        return list(self._eve_item.effects)
+    def _src_children(self):
+        return ()
 
     # Auxiliary methods
     @property
@@ -115,17 +107,6 @@ class Subsystem(PyfaBase):
             fit._subsystems.remove(self)
             # Update Eos
             fit._eos_fit.subsystems.remove(self._eos_subsystem)
-
-    def _update_source(self):
-        try:
-            source = self._ship._fit.source
-        except AttributeError:
-            self._eve_item = None
-        else:
-            if source is not None:
-                self._eve_item = query_type(source.edb, self.eve_id)
-            else:
-                self._eve_item = None
 
     def __repr__(self):
         spec = ['eve_id']

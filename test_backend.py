@@ -68,6 +68,6 @@ def test_random_shit():
     print(fit.ship.attributes)
     print(fit.ship.attributes_original)
 
-#make_tengu()
-#make_confessor()
-test_random_shit()
+make_tengu()
+make_confessor()
+#test_random_shit()

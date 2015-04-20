@@ -44,12 +44,11 @@ class Ship(FitItemBase):
         FitItemBase.__init__(self, type_id)
         self.__fit = None
         self.__stance = None
-        self._eve_item = None
         self._eos_ship = EosShip(type_id)
         self.subsystems = SubsystemSet(self)
         self.stance = stance
 
-    # Implementation of abstract methods for pyfa fit item
+    # Pyfa fit item methods
     @property
     def _source(self):
         try:

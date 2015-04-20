@@ -19,11 +19,11 @@
 
 
 from eos import Stance as EosStance
-from service.data.eve_data.query import query_type, query_attributes
+from service.data.pyfa_data.base import FitItemBase
 from util.repr import make_repr_str
 
 
-class Stance:
+class Stance(FitItemBase):
     """
     Pyfa model: ship.stance
     Eos model: efit.stance
@@ -31,33 +31,25 @@ class Stance:
     """
 
     def __init__(self, type_id):
-        self._type_id = type_id
+        FitItemBase.__init__(self, type_id)
         self.__ship = None
-        self._eve_item = None
         self._eos_stance = EosStance(type_id)
 
-    # Read-only info
+    # Pyfa fit item methods
     @property
-    def eve_id(self):
-        return self._type_id
+    def _source(self):
+        try:
+            return self._ship._fit.source
+        except AttributeError:
+            return None
 
     @property
-    def eve_name(self):
-        return self._eve_item.name
+    def _eos_item(self):
+        return self._eos_stance
 
     @property
-    def attributes(self):
-        eos_attrs = self._eos_stance.attributes
-        attr_ids = eos_attrs.keys()
-        attrs = query_attributes(self._ship._fit.source.edb, attr_ids)
-        attr_map = {}
-        for attr in attrs:
-            attr_map[attr] = eos_attrs[attr.id]
-        return attr_map
-
-    @property
-    def effects(self):
-        return list(self._eve_item.effects)
+    def _src_children(self):
+        return ()
 
     # Auxiliary methods
     @property
@@ -91,17 +83,6 @@ class Stance:
             fit._stance_type_id = None
             # Update Eos
             fit._eos_fit.stance = None
-
-    def _update_source(self):
-        try:
-            source = self._ship._fit.source
-        except AttributeError:
-            self._eve_item = None
-        else:
-            if source is not None:
-                self._eve_item = query_type(source.edb, self.eve_id)
-            else:
-                self._eve_item = None
 
     def __repr__(self):
         spec = ['eve_id']
