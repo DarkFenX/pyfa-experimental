@@ -99,6 +99,11 @@ class FitItemBase(metaclass=ABCMeta):
             return set()
 
     def _update_source(self):
+        """
+        When fit source is updated in any way, this method should
+        be called on every item to make sure all of them are up-
+        to-date.
+        """
         try:
             edb_session = self._source.edb
         except AttributeError:
@@ -109,13 +114,23 @@ class FitItemBase(metaclass=ABCMeta):
     @property
     @abstractmethod
     def _source(self):
+        """
+        Shortcut to fit's source.
+        """
         ...
 
     @property
     @abstractmethod
     def _eos_item(self):
+        """
+        Shortcut to single Eos item.
+        """
         ...
 
     @abstractmethod
     def _src_children(self):
+        """
+        Get iterable with all source-dependent children pyfa
+        fit objects, considering self as parent.
+        """
         ...
