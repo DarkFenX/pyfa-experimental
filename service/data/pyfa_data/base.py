@@ -18,19 +18,23 @@
 #===============================================================================
 
 
-from abc import ABCMeta, abstractmethod
-
 from sqlalchemy.ext.declarative import declarative_base
 
 from service.data.eve_data.query import query_type, query_attributes
 
+
 PyfaBase = declarative_base()
 
 
-class FitItemBase(metaclass=ABCMeta):
+class FitItemBase:
     """
     Defines interface for all objects which represent
     EVE items in pyfa model.
+
+    Note that we cannot use ABCMeta here to avoid metaclass
+    conflicts when using this class together with SQL
+    Alchemy's declarative base classes. Working them around
+    with various hacks is something better to avoid too.
     """
 
     def __init__(self, type_id):
@@ -112,25 +116,22 @@ class FitItemBase(metaclass=ABCMeta):
             self.__eve_item = query_type(edb_session, self.eve_id)
 
     @property
-    @abstractmethod
     def _source(self):
         """
         Shortcut to fit's source.
         """
-        ...
+        raise NotImplementedError
 
     @property
-    @abstractmethod
     def _eos_item(self):
         """
         Shortcut to single Eos item.
         """
-        ...
+        raise NotImplementedError
 
-    @abstractmethod
     def _src_children(self):
         """
         Get iterable with all source-dependent children pyfa
         fit objects, considering self as parent.
         """
-        ...
+        raise NotImplementedError

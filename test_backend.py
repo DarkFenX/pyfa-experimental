@@ -23,6 +23,11 @@ if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
 PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
 session_pyfadata = PyfaDataManager.session
 
+
+def print_attrs(item):
+    print(dict((k.name, v) for k, v in item.attributes.items()))
+
+
 CRUSADER = 11184
 CHEETAH = 11182
 CONFESSOR = 34317
@@ -42,12 +47,15 @@ def make_tengu():
     fit.ship = Ship(TENGU)
     fit.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
     fit.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
+    for s in fit.ship.subsystems:
+        print_attrs(s)
     session_pyfadata.commit()
 
 def make_confessor():
     fit = Fit(name='test fit 2')
     fit.ship = Ship(CONFESSOR)
     fit.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
+    print_attrs(fit.ship.stance)
     fit.persist()
     session_pyfadata.commit()
 

@@ -52,7 +52,7 @@ class Subsystem(PyfaBase, FitItemBase):
         self.__generic_init()
 
     def __generic_init(self):
-        FitItemBase.__init__(self._type_id)
+        FitItemBase.__init__(self, self._type_id)
         self.__ship = None
         self._eos_subsystem = EosSubsystem(self._type_id)
 
