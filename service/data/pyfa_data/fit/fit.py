@@ -77,6 +77,14 @@ class Fit(PyfaBase):
         # Manages fit-specific data needed for undo/redo
         self._cmd_mgr = CommandManager(100)
 
+    # Define list of source-dependent child objects, it's necessary
+    # to update fit source
+    @property
+    def _src_children(self):
+        return get_src_children(chain(
+            (self.ship,)
+        ))
+
     # Read-only info
     @property
     def stats(self):
@@ -160,12 +168,6 @@ class Fit(PyfaBase):
         self._eos_fit.validate()
 
     # Auxiliary methods
-    @property
-    def _src_children(self):
-        return get_src_children(chain(
-            (self.ship,)
-        ))
-
     def __repr__(self):
         spec = ['id']
         return make_repr_str(self, spec)
