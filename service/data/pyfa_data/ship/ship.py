@@ -44,9 +44,9 @@ class Ship(FitItemBase):
         FitItemBase.__init__(self, type_id)
         self.__fit = None
         self.__stance = None
-        self._eos_ship = EosShip(type_id)
         self.subsystems = SubsystemSet(self)
-        self.stance = stance
+        self.__eos_ship = EosShip(type_id)
+        self._set_stance(stance)
 
     # Pyfa fit item methods
     @property
@@ -58,7 +58,7 @@ class Ship(FitItemBase):
 
     @property
     def _eos_item(self):
-        return self._eos_ship
+        return self.__eos_ship
 
     @property
     def _src_children(self):
@@ -121,7 +121,7 @@ class Ship(FitItemBase):
             # Update DB
             fit._ship_type_id = self.eve_id
             # Update Eos
-            fit._eos_fit.ship = self._eos_ship
+            fit._eos_fit.ship = self.__eos_ship
             # Update DB and Eos for children
             if self.stance is not None:
                 self.stance._register_on_fit(fit)

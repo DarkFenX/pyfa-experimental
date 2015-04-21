@@ -25,7 +25,9 @@ session_pyfadata = PyfaDataManager.session
 
 
 def print_attrs(item):
-    print(dict((k.name, v) for k, v in item.attributes.items()))
+    print(item.eve_name)
+    for k in sorted(item.attributes, key=lambda i: i.name):
+        print('  {}: {}'.format(k.name, item.attributes[k]))
 
 
 CRUSADER = 11184
@@ -53,9 +55,10 @@ def make_tengu():
 
 def make_confessor():
     fit = Fit(name='test fit 2')
-    fit.ship = Ship(CONFESSOR)
-    fit.ship.stance = Stance(CONFESSOR_DEFENSIVE_MODE)
-    print_attrs(fit.ship.stance)
+    fit.ship = Ship(CONFESSOR, stance=Stance(CONFESSOR_DEFENSIVE_MODE))
+    print_attrs(fit.ship)
+    fit.ship.stance = None
+    print_attrs(fit.ship)
     fit.persist()
     session_pyfadata.commit()
 
@@ -76,6 +79,6 @@ def test_random_shit():
     print(fit.ship.attributes)
     print(fit.ship.attributes_original)
 
-make_tengu()
+#make_tengu()
 make_confessor()
 #test_random_shit()

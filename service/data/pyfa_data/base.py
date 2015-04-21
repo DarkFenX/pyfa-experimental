@@ -116,6 +116,15 @@ class FitItemBase:
             self.__eve_item = query_type(edb_session, self.eve_id)
 
     @property
+    def _src_children(self):
+        """
+        Get iterable with all source-dependent children pyfa
+        fit objects, considering self as parent. Override it
+        only if class has such children.
+        """
+        return ()
+
+    @property
     def _source(self):
         """
         Shortcut to fit's source.
@@ -126,12 +135,5 @@ class FitItemBase:
     def _eos_item(self):
         """
         Shortcut to single Eos item.
-        """
-        raise NotImplementedError
-
-    def _src_children(self):
-        """
-        Get iterable with all source-dependent children pyfa
-        fit objects, considering self as parent.
         """
         raise NotImplementedError

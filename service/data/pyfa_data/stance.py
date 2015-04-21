@@ -33,7 +33,7 @@ class Stance(FitItemBase):
     def __init__(self, type_id):
         FitItemBase.__init__(self, type_id)
         self.__ship = None
-        self._eos_stance = EosStance(type_id)
+        self.__eos_stance = EosStance(type_id)
 
     # Pyfa fit item methods
     @property
@@ -45,11 +45,7 @@ class Stance(FitItemBase):
 
     @property
     def _eos_item(self):
-        return self._eos_stance
-
-    @property
-    def _src_children(self):
-        return ()
+        return self.__eos_stance
 
     # Auxiliary methods
     @property
@@ -75,7 +71,7 @@ class Stance(FitItemBase):
             # Update DB
             fit._stance_type_id = self.eve_id
             # Update Eos
-            fit._eos_fit.stance = self._eos_stance
+            fit._eos_fit.stance = self.__eos_stance
 
     def _unregister_on_fit(self, fit):
         if fit is not None:

@@ -54,7 +54,7 @@ class Subsystem(PyfaBase, FitItemBase):
     def __generic_init(self):
         FitItemBase.__init__(self, self._type_id)
         self.__ship = None
-        self._eos_subsystem = EosSubsystem(self._type_id)
+        self.__eos_subsystem = EosSubsystem(self._type_id)
 
     # Pyfa fit item methods
     @property
@@ -66,11 +66,7 @@ class Subsystem(PyfaBase, FitItemBase):
 
     @property
     def _eos_item(self):
-        return self._eos_subsystem
-
-    @property
-    def _src_children(self):
-        return ()
+        return self.__eos_subsystem
 
     # Auxiliary methods
     @property
@@ -99,14 +95,14 @@ class Subsystem(PyfaBase, FitItemBase):
             # fit._subsystems to ensure proper item addition/deletion
             fit._subsystems.add(self)
             # Update Eos
-            fit._eos_fit.subsystems.add(self._eos_subsystem)
+            fit._eos_fit.subsystems.add(self.__eos_subsystem)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
             # Update DB
             fit._subsystems.remove(self)
             # Update Eos
-            fit._eos_fit.subsystems.remove(self._eos_subsystem)
+            fit._eos_fit.subsystems.remove(self.__eos_subsystem)
 
     def __repr__(self):
         spec = ['eve_id']
