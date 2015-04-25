@@ -64,9 +64,11 @@ def make_confessor():
 
 def test_chracters():
     char = Character(alias='Kadesh Priestess')
-    #for skill_type in query_published_skills(SourceManager.default.edb):
-    #    char.skills.add(Skill(skill_type.id, level=5))
-    #char.persist()
+    for skill_type in query_published_skills(SourceManager.default.edb):
+        char.skills.add(Skill(skill_type.id, level=5))
+    char.persist()
+    session_pyfadata.commit()
+    print(char.skills)
 
 def test_random_shit():
     fit = Fit(name='test fit 3')
@@ -80,5 +82,6 @@ def test_random_shit():
     print(fit.ship.attributes_original)
 
 #make_tengu()
-make_confessor()
+#make_confessor()
 #test_random_shit()
+test_chracters()

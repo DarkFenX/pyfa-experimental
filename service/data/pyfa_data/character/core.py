@@ -43,10 +43,6 @@ class Character(PyfaBase):
     def __init__(self, alias=''):
         self.alias = alias
 
-    @reconstructor
-    def _dbinit(self):
-        pass
-
     # Miscellanea public stuff
     persist = pyfa_persist
     abandon = pyfa_abandon

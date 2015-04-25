@@ -20,15 +20,17 @@
 
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm.collections import attribute_mapped_collection
 
+from service.data.pyfa_data.base import PyfaBase
 from util.repr import make_repr_str
-from .base import PyfaBase
 
 
 class Skill(PyfaBase):
     """
-    This class will be used for managing character's skills (e.g. in character
-    editor). Fits will use other class' instances as skills.
+    This is "core" skill class (e.g. it will be used for managing
+    character's skills in character editor). Fits will use proxy
+    twin of this class to carry fit-specific attributes.
     """
 
     __tablename__ = 'skills'
@@ -42,12 +44,11 @@ class Skill(PyfaBase):
     eve_id = Column('type_id', Integer, nullable=False)
     level = Column(Integer, nullable=False)
 
-
     def __init__(self, type_id, level=0):
         self.eve_id = type_id
         self.level = level
 
     # Auxiliary methods
     def __repr__(self):
-        spec = ['eve_id']
+        spec = ['eve_id', 'level']
         return make_repr_str(self, spec)
