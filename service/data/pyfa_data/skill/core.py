@@ -18,8 +18,7 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, PrimaryKeyConstraint
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, ForeignKey, Integer
 
 from service.data.pyfa_data.base import PyfaBase
 from util.repr import make_repr_str
@@ -35,8 +34,6 @@ class Skill(PyfaBase):
     __tablename__ = 'skills'
 
     _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'), primary_key=True)
-    _character = relationship('Character', backref=backref(
-        'skills', collection_class=set, cascade='all, delete-orphan'))
 
     eve_id = Column('type_id', Integer, primary_key=True)
     level = Column(Integer, nullable=False)

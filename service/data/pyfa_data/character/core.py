@@ -19,11 +19,12 @@
 
 
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import reconstructor
+from sqlalchemy.orm import relationship, backref
 
 from service.data.pyfa_data.base import PyfaBase
 from service.data.pyfa_data.func import pyfa_persist, pyfa_abandon
 from util.repr import make_repr_str
+from .container import RestrictedSet
 
 
 class Character(PyfaBase):
@@ -39,6 +40,9 @@ class Character(PyfaBase):
 
     id = Column('character_id', Integer, primary_key=True)
     alias = Column(String)
+
+    skills = relationship('Skill', collection_class=RestrictedSet, cascade='all, delete-orphan',
+        backref=backref('_character'))
 
     def __init__(self, alias=''):
         self.alias = alias

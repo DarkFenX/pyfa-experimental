@@ -68,7 +68,7 @@ def test_chracters():
         char.skills.add(Skill(skill_type.id, level=5))
     char.persist()
     session_pyfadata.commit()
-    print(char.skills)
+    print(char.skills[30548])
 
 def test_random_shit():
     fit = Fit(name='test fit 3')
