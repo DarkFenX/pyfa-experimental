@@ -18,7 +18,10 @@
 #===============================================================================
 
 
+from weakref import WeakSet
+
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import reconstructor
 
 from service.data.pyfa_data.base import PyfaBase
 from service.data.pyfa_data.func import pyfa_persist, pyfa_abandon
@@ -44,6 +47,15 @@ class Character(PyfaBase):
 
     def __init__(self, alias=''):
         self.alias = alias
+        self.__generic_init()
+
+    @reconstructor
+    def _dbinit(self):
+        self.__generic_init()
+
+    def __generic_init(self):
+        # Set with fits which are loaded and use this character
+        self._loaded_proxies = WeakSet()
 
     # Miscellanea public stuff
     persist = pyfa_persist

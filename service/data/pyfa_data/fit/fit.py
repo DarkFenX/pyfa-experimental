@@ -90,6 +90,10 @@ class Fit(PyfaBase):
         # There's little sense in changing proxy character, thus we assign
         # it here and it stays with fit forever
         self.__set_character_proxy(CharacterProxy())
+        char_core = self.character_core
+        # Inform character core that there's proxy it should handle
+        if char_core is not None:
+            char_core._loaded_proxies.add(self.character_proxy)
 
     # Define list of source-dependent child objects, it's necessary
     # to update fit source
@@ -112,7 +116,14 @@ class Fit(PyfaBase):
 
     @character_core.setter
     def character_core(self, new_char_core):
+        old_char_core = self._character
+        if new_char_core is old_char_core:
+            return
+        if old_char_core is not None:
+            old_char_core._loaded_proxies.discard(self.character_proxy)
         self._character = new_char_core
+        if new_char_core is not None:
+            new_char_core._loaded_proxies.add(self.character_proxy)
 
     @property
     def character_proxy(self):
