@@ -69,14 +69,13 @@ def test_chracters():
         char_kp.skills.add(Skill(skill_type.id, level=5))
     char_kp.persist()
     session_pyfadata.commit()
-    print(set(char_kp._loaded_proxies))
 
     fit = Fit(name='confessor fit')
     fit.ship = Ship(CONFESSOR, stance=Stance(CONFESSOR_DEFENSIVE_MODE))
     fit.persist()
     fit.character_core = char_kp
     session_pyfadata.commit()
-    print(set(char_kp._loaded_proxies))
+    print(fit.character_proxy.alias)
 
 def test_random_shit():
     fit = Fit(name='test fit 3')

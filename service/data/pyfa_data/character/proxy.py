@@ -49,6 +49,14 @@ class CharacterProxy(FitItemBase):
     def _src_children(self):
         return ()
 
+    # Character-specific readonly data
+    @property
+    def alias(self):
+        try:
+            return self.__core.alias
+        except AttributeError:
+            return None
+
     # Auxiliary methods
     @property
     def _fit(self):
@@ -79,6 +87,16 @@ class CharacterProxy(FitItemBase):
             # Update Eos
             fit._eos_fit.character = None
             # Update DB and Eos for children
+
+    @property
+    def __core(self):
+        """
+        Reference to character core.
+        """
+        try:
+            return self._fit.character_core
+        except AttributeError:
+            return None
 
     def __repr__(self):
         spec = ['eve_id']
