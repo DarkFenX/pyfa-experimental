@@ -20,8 +20,8 @@
 
 from itertools import chain
 
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import reconstructor
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship, reconstructor
 
 from eos import Fit as EosFit
 from service.source_mgr import SourceManager, Source
@@ -38,6 +38,7 @@ class Fit(PyfaBase):
     """
     Pyfa model children:
       .ship
+      .character_core
     """
 
     __tablename__ = 'fits'
@@ -46,6 +47,9 @@ class Fit(PyfaBase):
     name = Column('fit_name', String, nullable=False)
     _ship_type_id = Column('ship_type_id', Integer, nullable=False)
     _stance_type_id = Column('stance_type_id', Integer)
+
+    _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'))
+    _character = relationship('Character')
 
     def __init__(self, name='', source=None):
         self.__generic_init()
@@ -91,6 +95,14 @@ class Fit(PyfaBase):
         return self._eos_fit.stats
 
     # Children getters/setters
+    @property
+    def character_core(self):
+        return self._character
+
+    @character_core.setter
+    def character_core(self, new_char_core):
+        self._character = new_char_core
+
     @property
     def ship(self):
         return self.__ship

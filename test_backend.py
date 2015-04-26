@@ -63,12 +63,18 @@ def make_confessor():
     session_pyfadata.commit()
 
 def test_chracters():
-    char = Character(alias='Kadesh Priestess')
+
+    char_kp = Character(alias='Kadesh Priestess')
     for skill_type in query_published_skills(SourceManager.default.edb):
-        char.skills.add(Skill(skill_type.id, level=5))
-    char.persist()
+        char_kp.skills.add(Skill(skill_type.id, level=5))
+    char_kp.persist()
     session_pyfadata.commit()
-    print(char.skills[30548])
+
+    fit = Fit(name='confessor fit')
+    fit.ship = Ship(CONFESSOR, stance=Stance(CONFESSOR_DEFENSIVE_MODE))
+    fit.persist()
+    fit.character_core = char_kp
+    session_pyfadata.commit()
 
 def test_random_shit():
     fit = Fit(name='test fit 3')
