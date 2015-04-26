@@ -75,6 +75,7 @@ def test_chracters():
     fit.persist()
     fit.character_core = char_kp
     session_pyfadata.commit()
+    print_attrs(fit.character_proxy)
 
 def test_random_shit():
     fit = Fit(name='test fit 3')

@@ -18,4 +18,4 @@
 #===============================================================================
 
 
-from eos.const.eve import Attribute as Attribute
+from eos.const.eve import Type, Attribute

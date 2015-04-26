@@ -27,6 +27,7 @@ from eos import Fit as EosFit
 from service.source_mgr import SourceManager, Source
 from service.data.pyfa_data import Ship, Stance
 from service.data.pyfa_data.base import PyfaBase
+from service.data.pyfa_data.character import CharacterProxy
 from service.data.pyfa_data.command import CommandManager
 from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from service.data.pyfa_data.func import get_src_children, pyfa_persist, pyfa_abandon
@@ -36,9 +37,14 @@ from .command import *
 
 class Fit(PyfaBase):
     """
-    Pyfa model children:
+    Full pyfa model of fit:
+    .fit
+      .character_core (read-write fit-agnostic)
+        .{skills}
+      .character_proxy (read-only fit-specific)
       .ship
-      .character_core
+        .stance
+        .{subsystems}
     """
 
     __tablename__ = 'fits'
@@ -75,18 +81,23 @@ class Fit(PyfaBase):
         # Attributes which store objects hidden behind properties
         self.__source = None
         self.__ship = None
+        self.__character_proxy = None
         # Eos fit will be primary point of using Eos calculation engine for
         # fit-specific data
         self._eos_fit = EosFit()
         # Manages fit-specific data needed for undo/redo
         self._cmd_mgr = CommandManager(100)
+        # There's little sense in changing proxy character, thus we assign
+        # it here and it stays with fit forever
+        self.__set_character_proxy(CharacterProxy())
 
     # Define list of source-dependent child objects, it's necessary
     # to update fit source
     @property
     def _src_children(self):
         return get_src_children(chain(
-            (self.ship,)
+            (self.ship,),
+            (self.character_proxy,),
         ))
 
     # Read-only info
@@ -102,6 +113,24 @@ class Fit(PyfaBase):
     @character_core.setter
     def character_core(self, new_char_core):
         self._character = new_char_core
+
+    @property
+    def character_proxy(self):
+        return self.__character_proxy
+
+    def __set_character_proxy(self, new_char_proxy):
+        old_char_proxy = self.__character_proxy
+        if new_char_proxy is old_char_proxy:
+            return
+        if old_char_proxy is not None:
+            if old_char_proxy._fit is None:
+                raise ItemRemovalConsistencyError(old_char_proxy)
+            old_char_proxy._fit = None
+        self.__character_proxy = new_char_proxy
+        if new_char_proxy is not None:
+            if new_char_proxy._fit is not None:
+                raise ItemAlreadyUsedError(new_char_proxy)
+            new_char_proxy._fit = self
 
     @property
     def ship(self):

@@ -32,6 +32,9 @@ class Character(PyfaBase):
     cannot use core because different fits carry different attributes on
     character and all child entities (like skills, on-character implants,
     and so on).
+
+    Pyfa model children:
+    .{skills}
     """
 
     __tablename__ = 'characters'

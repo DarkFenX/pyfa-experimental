@@ -19,3 +19,4 @@
 
 
 from .core import Character
+from .proxy import CharacterProxy
