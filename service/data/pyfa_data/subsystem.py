@@ -23,10 +23,10 @@ from sqlalchemy.orm import relationship, backref, reconstructor
 
 from eos import Subsystem as EosSubsystem
 from util.repr import make_repr_str
-from .base import PyfaBase, FitItemBase
+from .base import PyfaBase, EveItemWrapper
 
 
-class Subsystem(PyfaBase, FitItemBase):
+class Subsystem(PyfaBase, EveItemWrapper):
     """
     Pyfa model: ship.{subsystems}
     Eos model: efit.{subsystems}
@@ -52,7 +52,7 @@ class Subsystem(PyfaBase, FitItemBase):
         self.__generic_init()
 
     def __generic_init(self):
-        FitItemBase.__init__(self, self._type_id)
+        EveItemWrapper.__init__(self, self._type_id)
         self.__ship = None
         self.__eos_subsystem = EosSubsystem(self._type_id)
 

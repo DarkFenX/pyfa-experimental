@@ -26,7 +26,7 @@ from service.data.eve_data.query import query_type, query_attributes
 PyfaBase = declarative_base()
 
 
-class FitItemBase:
+class EveItemWrapper:
     """
     Defines interface for all objects which represent
     EVE items in pyfa model.

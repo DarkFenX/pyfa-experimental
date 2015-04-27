@@ -21,7 +21,7 @@
 from itertools import chain
 
 from eos import Ship as EosShip
-from service.data.pyfa_data.base import FitItemBase
+from service.data.pyfa_data.base import EveItemWrapper
 from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from service.data.pyfa_data.func import get_src_children
 from util.repr import make_repr_str
@@ -29,7 +29,7 @@ from .command import *
 from .container import *
 
 
-class Ship(FitItemBase):
+class Ship(EveItemWrapper):
     """
     Pyfa model: fit.ship
     Eos model: efit.ship
@@ -41,7 +41,7 @@ class Ship(FitItemBase):
     """
 
     def __init__(self, type_id, stance=None):
-        FitItemBase.__init__(self, type_id)
+        EveItemWrapper.__init__(self, type_id)
         self.__fit = None
         self.__stance = None
         self.subsystems = SubsystemSet(self)

@@ -21,7 +21,7 @@
 from itertools import chain
 
 from eos import Character as EosCharacter
-from service.data.pyfa_data.base import FitItemBase
+from service.data.pyfa_data.base import EveItemWrapper
 from service.data.pyfa_data.func import get_src_children
 from service.data.pyfa_data.skill import SkillProxy
 from util.const import Type
@@ -29,7 +29,7 @@ from util.repr import make_repr_str
 from .container import SkillProxySet
 
 
-class CharacterProxy(FitItemBase):
+class CharacterProxy(EveItemWrapper):
     """
     "Proxy" character class. It's directly attached to fit and carries
     fit-specific attributes. Exposes regular fit item interface (with
@@ -43,7 +43,7 @@ class CharacterProxy(FitItemBase):
 
     def __init__(self):
         char_type_id = Type.character_static
-        FitItemBase.__init__(self, char_type_id)
+        EveItemWrapper.__init__(self, char_type_id)
         self.__fit = None
         self.__char_core = None
         self.__eos_char = EosCharacter(char_type_id)

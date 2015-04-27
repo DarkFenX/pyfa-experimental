@@ -19,11 +19,11 @@
 
 
 from eos import Skill as EosSkill
-from service.data.pyfa_data.base import FitItemBase
+from service.data.pyfa_data.base import EveItemWrapper
 from util.repr import make_repr_str
 
 
-class SkillProxy(FitItemBase):
+class SkillProxy(EveItemWrapper):
     """
     Pyfa model: character_proxy.{skills}
     Eos model: efit.{skills}
@@ -31,7 +31,7 @@ class SkillProxy(FitItemBase):
     """
 
     def __init__(self, type_id, level):
-        FitItemBase.__init__(self, type_id)
+        EveItemWrapper.__init__(self, type_id)
         self.__char_proxy = None
         self.__eos_skill = EosSkill(type_id, level=level)
 

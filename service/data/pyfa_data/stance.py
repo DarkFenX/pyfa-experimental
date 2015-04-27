@@ -19,11 +19,11 @@
 
 
 from eos import Stance as EosStance
-from service.data.pyfa_data.base import FitItemBase
+from service.data.pyfa_data.base import EveItemWrapper
 from util.repr import make_repr_str
 
 
-class Stance(FitItemBase):
+class Stance(EveItemWrapper):
     """
     Pyfa model: ship.stance
     Eos model: efit.stance
@@ -31,7 +31,7 @@ class Stance(FitItemBase):
     """
 
     def __init__(self, type_id):
-        FitItemBase.__init__(self, type_id)
+        EveItemWrapper.__init__(self, type_id)
         self.__ship = None
         self.__eos_stance = EosStance(type_id)
 
