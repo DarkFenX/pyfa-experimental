@@ -59,7 +59,7 @@ class Character(PyfaBase):
     def __generic_init(self):
         self.skills = CoreSkillSet(self)
         # Set with fits which are loaded and use this character
-        self._loaded_proxies = WeakSet()
+        self.__loaded_proxies = WeakSet()
 
     # Miscellanea public stuff
     persist = pyfa_persist
@@ -71,7 +71,7 @@ class Character(PyfaBase):
         Safe iterator over related character proxies, avoids issues
         with set size getting changed by GC during iteration.
         """
-        for char_proxy in tuple(self._loaded_proxies):
+        for char_proxy in tuple(self.__loaded_proxies):
             yield char_proxy
 
     def __repr__(self):
