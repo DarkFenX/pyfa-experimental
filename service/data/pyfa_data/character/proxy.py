@@ -144,7 +144,7 @@ class CharacterProxy(FitItemBase):
             current_skills[type_id]._char_proxy = None
             del current_skills[type_id]
         for type_id in to_change:
-            current_skills[type_id].level = new_levels[type_id]
+            current_skills[type_id]._set_level(new_levels[type_id])
         for type_id in to_add:
             current_skills.add(SkillProxy(type_id, new_levels[type_id]))
             current_skills[type_id]._char_proxy = self

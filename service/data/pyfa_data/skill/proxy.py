@@ -52,8 +52,7 @@ class SkillProxy(FitItemBase):
     def level(self):
         return self.__eos_skill.level
 
-    @level.setter
-    def level(self, new_level):
+    def _set_level(self, new_level):
         self.__eos_skill.level = new_level
 
     # Auxiliary methods
