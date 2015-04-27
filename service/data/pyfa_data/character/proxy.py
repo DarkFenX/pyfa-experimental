@@ -121,15 +121,15 @@ class CharacterProxy(FitItemBase):
         old_char_core = self.__char_core
         # Handle proxy reference on old character core
         if old_char_core is not None:
-            old_char_core._loaded_proxies.discard(self)
-        # Update internal reference
+            old_char_core._unlink_proxy(self)
+        # Update internal reference to core
         self.__char_core = new_char_core
         # Run updates on various child objects using data from
         # new character core
         self.__update_skills(new_char_core)
         # Handle proxy reference on new character core
         if new_char_core is not None:
-            new_char_core._loaded_proxies.add(self)
+            new_char_core._link_proxy(self)
 
     def __update_skills(self, new_char_core):
         # Gather data about skill levels

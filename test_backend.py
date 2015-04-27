@@ -43,61 +43,34 @@ TENGU_ENG_CAPREGEN = 30143
 TENGU_PROP_WARP = 30088
 TENGU_ELE_ECCM = 30050
 
+
 def make_tengu():
     fit = Fit(name='test fit 1')
-    fit.persist()
     fit.ship = Ship(TENGU)
     fit.ship.subsystems.add(Subsystem(TENGU_DEF_LINKS))
     fit.ship.subsystems.add(Subsystem(TENGU_ELE_ECCM))
-    for s in fit.ship.subsystems:
-        print_attrs(s)
-    session_pyfadata.commit()
+    return fit
+
 
 def make_confessor():
     fit = Fit(name='test fit 2')
     fit.ship = Ship(CONFESSOR, stance=Stance(CONFESSOR_DEFENSIVE_MODE))
-    print_attrs(fit.ship)
-    fit.ship.stance = None
-    print_attrs(fit.ship)
-    fit.persist()
-    session_pyfadata.commit()
+    return fit
 
-def test_chracters():
-
-    char_kp = Character(alias='Kadesh Priestess')
+def make_character():
+    char = Character(alias='Kadesh Priestess')
     for skill_type in query_published_skills(SourceManager.default.edb):
-        char_kp.skills.add(Skill(skill_type.id, level=5))
-    char_kp.persist()
-    session_pyfadata.commit()
+        char.skills.add(Skill(skill_type.id, level=5))
+    return char
 
-    fit = Fit(name='confessor fit')
-    fit.ship = Ship(CONFESSOR, stance=Stance(CONFESSOR_DEFENSIVE_MODE))
-    fit.persist()
-    print_attrs(fit.ship)
-    fit.character_core = char_kp
-    print('---')
-    print_attrs(fit.ship)
-    for skill in fit.character_core.skills:
-        skill.level = 4
-    print('---')
-    print_attrs(fit.ship)
-    fit.character_core.skills.clear()
-    print('---')
-    print_attrs(fit.ship)
-    session_pyfadata.commit()
 
 def test_random_shit():
-    fit = Fit(name='test fit 3')
-    print(fit.source)
-    print(fit._eos_fit.source)
-    fit.ship = Ship(CONFESSOR)
-    print(fit.ship)
-    print(fit.ship.eve_id)
-    print(fit.ship.eve_name)
-    print(fit.ship.attributes)
-    print(fit.ship.attributes_original)
+    fit = make_confessor()
+    print_attrs(fit.ship)
+    fit.character_core = make_character()
+    print_attrs(fit.ship)
+    fit.persist()
+    session_pyfadata.commit()
 
-#make_tengu()
-#make_confessor()
-#test_random_shit()
-test_chracters()
+
+test_random_shit()

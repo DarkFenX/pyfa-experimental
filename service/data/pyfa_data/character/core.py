@@ -74,6 +74,14 @@ class Character(PyfaBase):
         for char_proxy in tuple(self.__loaded_proxies):
             yield char_proxy
 
+    def _link_proxy(self, char_proxy):
+        """Create connection between character core and proxy"""
+        self.__loaded_proxies.add(char_proxy)
+
+    def _unlink_proxy(self, char_proxy):
+        """Remove connection between character core and proxy"""
+        self.__loaded_proxies.discard(char_proxy)
+
     def __repr__(self):
         spec = ['id']
         return make_repr_str(self, spec)
