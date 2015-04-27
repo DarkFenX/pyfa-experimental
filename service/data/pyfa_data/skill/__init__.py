@@ -19,3 +19,4 @@
 
 
 from .core import Skill
+from .proxy import SkillProxy

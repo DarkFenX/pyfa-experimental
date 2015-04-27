@@ -21,7 +21,7 @@
 class RestrictedSet:
     """
     Provides same interface as regular set, but with getitem
-    and delitem (using item EVE ID as key) on top of that.
+    and delitem (using item type ID as key) on top of that.
     Several items with the same EVE ID cannot be added to
     this set.
     """
@@ -30,31 +30,31 @@ class RestrictedSet:
 
     def __init__(self):
         self.__set = set()
-        self.__eve_id_map = {}
+        self.__type_id_map = {}
 
     def add(self, item):
-        eve_id = item.eve_id
-        if eve_id in self.__eve_id_map:
-            msg = 'item with EVE ID {} already exists in this set'.format(eve_id)
+        type_id = item.eve_id
+        if type_id in self.__type_id_map:
+            msg = 'item with type ID {} already exists in this set'.format(type_id)
             raise ValueError(msg)
         self.__set.add(item)
-        self.__eve_id_map[eve_id] = item
+        self.__type_id_map[type_id] = item
 
     def remove(self, item):
         if item not in self.__set:
             raise KeyError(item)
         self.__set.remove(item)
-        del self.__eve_id_map[item.eve_id]
+        del self.__type_id_map[item.eve_id]
 
     def clear(self):
         self.__set.clear()
-        self.__eve_id_map.clear()
+        self.__type_id_map.clear()
 
     def __getitem__(self, eve_id):
-        return self.__eve_id_map[eve_id]
+        return self.__type_id_map[eve_id]
 
     def __delitem__(self, eve_id):
-        item = self.__eve_id_map[eve_id]
+        item = self.__type_id_map[eve_id]
         self.remove(item)
 
     def __iter__(self):

@@ -21,11 +21,12 @@
 from weakref import WeakSet
 
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import reconstructor
+from sqlalchemy.orm import relationship, reconstructor
 
 from service.data.pyfa_data.base import PyfaBase
 from service.data.pyfa_data.func import pyfa_persist, pyfa_abandon
 from util.repr import make_repr_str
+from .container import RestrictedSet
 
 
 class Character(PyfaBase):
@@ -45,6 +46,8 @@ class Character(PyfaBase):
     id = Column('character_id', Integer, primary_key=True)
     alias = Column(String)
 
+    skills = relationship('Skill', collection_class=RestrictedSet, cascade='all, delete-orphan', backref='_character')
+
     def __init__(self, alias=''):
         self.alias = alias
         self.__generic_init()
@@ -56,6 +59,14 @@ class Character(PyfaBase):
     def __generic_init(self):
         # Set with fits which are loaded and use this character
         self._loaded_proxies = WeakSet()
+
+    def __proxy_iter(self):
+        """
+        Safe iterator over related character proxies, avoids issues
+        with set size getting changed by GC during iteration.
+        """
+        for char_proxy in tuple(self._loaded_proxies):
+            yield char_proxy
 
     # Miscellanea public stuff
     persist = pyfa_persist

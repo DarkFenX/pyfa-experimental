@@ -73,9 +73,11 @@ def test_chracters():
     fit = Fit(name='confessor fit')
     fit.ship = Ship(CONFESSOR, stance=Stance(CONFESSOR_DEFENSIVE_MODE))
     fit.persist()
+    print_attrs(fit.ship)
     fit.character_core = char_kp
+    print('---')
+    print_attrs(fit.ship)
     session_pyfadata.commit()
-    print(fit.character_proxy.alias)
 
 def test_random_shit():
     fit = Fit(name='test fit 3')

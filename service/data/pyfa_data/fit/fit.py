@@ -82,6 +82,7 @@ class Fit(PyfaBase):
         self.__source = None
         self.__ship = None
         self.__character_proxy = None
+        self.__character_core = None
         # Eos fit will be primary point of using Eos calculation engine for
         # fit-specific data
         self._eos_fit = EosFit()
@@ -90,10 +91,9 @@ class Fit(PyfaBase):
         # There's little sense in changing proxy character, thus we assign
         # it here and it stays with fit forever
         self.__set_character_proxy(CharacterProxy())
-        char_core = self.character_core
-        # Inform character core that there's proxy it should handle
-        if char_core is not None:
-            char_core._loaded_proxies.add(self.character_proxy)
+        # Assign character core, which should handle adding
+        # all of its child objects (like skills)
+        self.character_core = self._character
 
     # Define list of source-dependent child objects, it's necessary
     # to update fit source
@@ -112,21 +112,27 @@ class Fit(PyfaBase):
     # Children getters/setters
     @property
     def character_core(self):
-        return self._character
+        return self.__character_core
 
     @character_core.setter
     def character_core(self, new_char_core):
-        old_char_core = self._character
+        old_char_core = self.__character_core
         if new_char_core is old_char_core:
             return
-        if old_char_core is not None:
-            old_char_core._loaded_proxies.discard(self.character_proxy)
+        # Update forward reference
+        self.__character_core = new_char_core
+        # Update DB
         self._character = new_char_core
-        if new_char_core is not None:
-            new_char_core._loaded_proxies.add(self.character_proxy)
+        # Handle all interactions between new character core and
+        # character proxy attached to this fit on proxy level
+        self.character_proxy._core = new_char_core
 
     @property
     def character_proxy(self):
+        """
+        For character proxy we're not providing setter because it's
+        supposed to stay with fit all the time.
+        """
         return self.__character_proxy
 
     def __set_character_proxy(self, new_char_proxy):

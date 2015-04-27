@@ -18,20 +18,26 @@
 #===============================================================================
 
 
+from itertools import chain
+
 from eos import Character as EosCharacter
 from service.data.pyfa_data.base import FitItemBase
 from service.data.pyfa_data.func import get_src_children
+from service.data.pyfa_data.skill import SkillProxy
 from util.const import Type
 from util.repr import make_repr_str
+from .container import RestrictedSet
 
 
 class CharacterProxy(FitItemBase):
 
     def __init__(self):
-        char_typeid = Type.character_static
-        FitItemBase.__init__(self, char_typeid)
+        char_type_id = Type.character_static
+        FitItemBase.__init__(self, char_type_id)
         self.__fit = None
-        self.__eos_char = EosCharacter(char_typeid)
+        self.__char_core = None
+        self.__eos_char = EosCharacter(char_type_id)
+        self.skills = RestrictedSet()
 
     # Pyfa fit item methods
     @property
@@ -47,13 +53,15 @@ class CharacterProxy(FitItemBase):
 
     @property
     def _src_children(self):
-        return ()
+        return get_src_children(chain(
+            self.skills,
+        ))
 
     # Character-specific readonly data
     @property
     def alias(self):
         try:
-            return self.__core.alias
+            return self._core.alias
         except AttributeError:
             return None
 
@@ -78,25 +86,68 @@ class CharacterProxy(FitItemBase):
 
     def  _register_on_fit(self, fit):
         if fit is not None:
+            # DB update for self & children is not needed
             # Update Eos
             fit._eos_fit.character = self.__eos_char
-            # Update DB and Eos for children
+            # Update Eos for children
+            for skill in self.skills:
+                skill._register_on_fit(fit)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
+            # DB update for self & children is not needed
             # Update Eos
             fit._eos_fit.character = None
-            # Update DB and Eos for children
+            # Update Eos for children
+            for skill in self.skills:
+                skill._unregister_on_fit(fit)
 
     @property
-    def __core(self):
-        """
-        Reference to character core.
-        """
-        try:
-            return self._fit.character_core
-        except AttributeError:
-            return None
+    def _core(self):
+        return self.__char_core
+
+    @_core.setter
+    def _core(self, new_char_core):
+        old_char_core = self.__char_core
+        # Handle proxy reference on old character core
+        if old_char_core is not None:
+            old_char_core._loaded_proxies.discard(self)
+        # Update internal reference
+        self.__char_core = new_char_core
+        # Run updates on various child objects using data from
+        # new character core
+        self.__update_skills(new_char_core)
+        # Handle proxy reference on new character core
+        if new_char_core is not None:
+            new_char_core._loaded_proxies.add(self)
+
+    def __update_skills(self, new_char_core):
+        # Gather data about skill levels
+        # {type ID: level}
+        current_levels = {}
+        new_levels = {}
+        current_skills = self.skills
+        new_skills = getattr(new_char_core, 'skills', ())
+        for skill in current_skills:
+            current_levels[skill.eve_id] = skill.level
+        for skill in new_skills:
+            new_levels[skill.eve_id] = skill.level
+        # Find out what we actually need to do
+        to_remove = set(current_levels).difference(new_levels)
+        to_change = set(filter(
+            lambda tid: current_skills[tid] != new_skills[tid],
+            set(current_levels).intersection(new_levels)
+        ))
+        to_add = set(new_levels).difference(current_levels)
+        # And finally, do the updates
+        for type_id in to_remove:
+            current_skills[type_id]._char_proxy = None
+            del current_skills[type_id]
+        for type_id in to_change:
+            current_skills[type_id].level = new_levels[type_id]
+        for type_id in to_add:
+            current_skills.add(SkillProxy(type_id, new_levels[type_id]))
+            current_skills[type_id]._char_proxy = self
 
     def __repr__(self):
         spec = ['eve_id']
