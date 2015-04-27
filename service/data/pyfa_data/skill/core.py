@@ -35,11 +35,26 @@ class Skill(PyfaBase):
 
     _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'), primary_key=True)
     eve_id = Column('type_id', Integer, primary_key=True)
-    level = Column(Integer, nullable=False)
+    _level = Column(Integer, nullable=False)
 
     def __init__(self, type_id, level=0):
         self.eve_id = type_id
-        self.level = level
+        self._level = level
+
+    @property
+    def level(self):
+        return self._level
+
+    @level.setter
+    def level(self, new_level):
+        old_level = self.level
+        if new_level == old_level:
+            return
+        # Update DB
+        self._level = new_level
+        # Update proxies of this skill
+        for char_proxy in self._character._proxy_iter():
+            char_proxy.skills[self.eve_id]._set_level(new_level)
 
     # Auxiliary methods
     def __repr__(self):

@@ -77,6 +77,10 @@ def test_chracters():
     fit.character_core = char_kp
     print('---')
     print_attrs(fit.ship)
+    for skill in fit.character_core.skills:
+        skill.level = 4
+    print('---')
+    print_attrs(fit.ship)
     fit.character_core.skills.clear()
     print('---')
     print_attrs(fit.ship)
