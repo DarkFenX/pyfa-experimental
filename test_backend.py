@@ -77,6 +77,9 @@ def test_chracters():
     fit.character_core = char_kp
     print('---')
     print_attrs(fit.ship)
+    fit.character_core.skills.clear()
+    print('---')
+    print_attrs(fit.ship)
     session_pyfadata.commit()
 
 def test_random_shit():

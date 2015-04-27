@@ -26,7 +26,7 @@ from service.data.pyfa_data.func import get_src_children
 from service.data.pyfa_data.skill import SkillProxy
 from util.const import Type
 from util.repr import make_repr_str
-from .container import RestrictedSet
+from .container import ProxySkillSet
 
 
 class CharacterProxy(FitItemBase):
@@ -37,7 +37,7 @@ class CharacterProxy(FitItemBase):
         self.__fit = None
         self.__char_core = None
         self.__eos_char = EosCharacter(char_type_id)
-        self.skills = RestrictedSet()
+        self.skills = ProxySkillSet(self)
 
     # Pyfa fit item methods
     @property
@@ -123,11 +123,11 @@ class CharacterProxy(FitItemBase):
 
     def __update_skills(self, new_char_core):
         # Gather data about skill levels
+        current_skills = self.skills
+        new_skills = getattr(new_char_core, 'skills', ())
         # {type ID: level}
         current_levels = {}
         new_levels = {}
-        current_skills = self.skills
-        new_skills = getattr(new_char_core, 'skills', ())
         for skill in current_skills:
             current_levels[skill.eve_id] = skill.level
         for skill in new_skills:
@@ -141,13 +141,11 @@ class CharacterProxy(FitItemBase):
         to_add = set(new_levels).difference(current_levels)
         # And finally, do the updates
         for type_id in to_remove:
-            current_skills[type_id]._char_proxy = None
             del current_skills[type_id]
         for type_id in to_change:
             current_skills[type_id]._set_level(new_levels[type_id])
         for type_id in to_add:
             current_skills.add(SkillProxy(type_id, new_levels[type_id]))
-            current_skills[type_id]._char_proxy = self
 
     def __repr__(self):
         spec = ['eve_id']

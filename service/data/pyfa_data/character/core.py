@@ -26,7 +26,7 @@ from sqlalchemy.orm import relationship, reconstructor
 from service.data.pyfa_data.base import PyfaBase
 from service.data.pyfa_data.func import pyfa_persist, pyfa_abandon
 from util.repr import make_repr_str
-from .container import RestrictedSet
+from .container import CoreSkillSet
 
 
 class Character(PyfaBase):
@@ -46,7 +46,7 @@ class Character(PyfaBase):
     id = Column('character_id', Integer, primary_key=True)
     alias = Column(String)
 
-    skills = relationship('Skill', collection_class=RestrictedSet, cascade='all, delete-orphan', backref='_character')
+    _skills = relationship('Skill', collection_class=set, cascade='all, delete-orphan', backref='_character')
 
     def __init__(self, alias=''):
         self.alias = alias
@@ -57,10 +57,16 @@ class Character(PyfaBase):
         self.__generic_init()
 
     def __generic_init(self):
+        self.skills = CoreSkillSet(self)
         # Set with fits which are loaded and use this character
         self._loaded_proxies = WeakSet()
 
-    def __proxy_iter(self):
+    # Miscellanea public stuff
+    persist = pyfa_persist
+    abandon = pyfa_abandon
+
+    # Auxiliary methods
+    def _proxy_iter(self):
         """
         Safe iterator over related character proxies, avoids issues
         with set size getting changed by GC during iteration.
@@ -68,11 +74,6 @@ class Character(PyfaBase):
         for char_proxy in tuple(self._loaded_proxies):
             yield char_proxy
 
-    # Miscellanea public stuff
-    persist = pyfa_persist
-    abandon = pyfa_abandon
-
-    # Auxiliary methods
     def __repr__(self):
         spec = ['id']
         return make_repr_str(self, spec)
