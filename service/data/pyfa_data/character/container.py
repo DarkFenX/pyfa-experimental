@@ -77,7 +77,7 @@ class RestrictedSkillSet(metaclass=ABCMeta):
         return repr(self._set)
 
 
-class CoreSkillSet(RestrictedSkillSet):
+class SkillCoreSet(RestrictedSkillSet):
     """
     This set is intended to be used on character cores.
     """
@@ -101,7 +101,7 @@ class CoreSkillSet(RestrictedSkillSet):
             del char_proxy.skills[skill.eve_id]
 
 
-class ProxySkillSet(RestrictedSkillSet):
+class SkillProxySet(RestrictedSkillSet):
     """
     This set is intended to be used on character proxies.
     """

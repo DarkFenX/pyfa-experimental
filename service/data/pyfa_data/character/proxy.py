@@ -26,10 +26,20 @@ from service.data.pyfa_data.func import get_src_children
 from service.data.pyfa_data.skill import SkillProxy
 from util.const import Type
 from util.repr import make_repr_str
-from .container import ProxySkillSet
+from .container import SkillProxySet
 
 
 class CharacterProxy(FitItemBase):
+    """
+    "Proxy" character class. It's directly attached to fit and carries
+    fit-specific attributes. Exposes regular fit item interface (with
+    attributes, effects and so on). On top of that, exposes some
+    of core character data.
+
+
+    Pyfa model children:
+    .RestrictedSet(skills)
+    """
 
     def __init__(self):
         char_type_id = Type.character_static
@@ -37,7 +47,7 @@ class CharacterProxy(FitItemBase):
         self.__fit = None
         self.__char_core = None
         self.__eos_char = EosCharacter(char_type_id)
-        self.skills = ProxySkillSet(self)
+        self.skills = SkillProxySet(self)
 
     # Pyfa fit item methods
     @property
@@ -57,7 +67,7 @@ class CharacterProxy(FitItemBase):
             self.skills,
         ))
 
-    # Character-specific readonly data
+    # Character core data shortcuts
     @property
     def alias(self):
         try:
@@ -135,11 +145,11 @@ class CharacterProxy(FitItemBase):
         # Find out what we actually need to do
         to_remove = set(current_levels).difference(new_levels)
         to_change = set(filter(
-            lambda tid: current_skills[tid] != new_skills[tid],
+            lambda tid: current_levels[tid] != new_levels[tid],
             set(current_levels).intersection(new_levels)
         ))
         to_add = set(new_levels).difference(current_levels)
-        # And finally, do the updates
+        # And finally, do planned updates
         for type_id in to_remove:
             del current_skills[type_id]
         for type_id in to_change:

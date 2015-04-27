@@ -26,19 +26,19 @@ from sqlalchemy.orm import relationship, reconstructor
 from service.data.pyfa_data.base import PyfaBase
 from service.data.pyfa_data.func import pyfa_persist, pyfa_abandon
 from util.repr import make_repr_str
-from .container import CoreSkillSet
+from .container import SkillCoreSet
 
 
 class Character(PyfaBase):
     """
-    "Core" character class. It will be used for managing characters (e.g.
-    in character editor). Fits will use proxy twin of the character. We
-    cannot use core because different fits carry different attributes on
-    character and all child entities (like skills, on-character implants,
-    and so on).
+    "Core" character class. It should be used for managing characters
+    (e.g. in character editor). Fits will use proxy twin of the character.
+    We cannot use core because different fits carry different attributes
+    on character and all child entities (like skills, on-character
+    implants, and so on).
 
     Pyfa model children:
-    .{skills}
+    .RestrictedSet(skills)
     """
 
     __tablename__ = 'characters'
@@ -57,7 +57,7 @@ class Character(PyfaBase):
         self.__generic_init()
 
     def __generic_init(self):
-        self.skills = CoreSkillSet(self)
+        self.skills = SkillCoreSet(self)
         # Set with fits which are loaded and use this character
         self.__loaded_proxies = WeakSet()
 

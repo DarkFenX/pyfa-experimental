@@ -40,8 +40,9 @@ class Fit(PyfaBase):
     Full pyfa model of fit:
     .fit
       .character_core (read-write fit-agnostic)
-        .{skills}
+        .RestrictedSet(skills)
       .character_proxy (read-only fit-specific)
+        .RestrictedSet(skills)
       .ship
         .stance
         .{subsystems}
@@ -124,7 +125,8 @@ class Fit(PyfaBase):
         # Update DB
         self._character = new_char_core
         # Handle all interactions between new character core and
-        # character proxy attached to this fit on proxy level
+        # character proxy (which is attached to this fit) on proxy
+        # side
         self.character_proxy._core = new_char_core
 
     @property
