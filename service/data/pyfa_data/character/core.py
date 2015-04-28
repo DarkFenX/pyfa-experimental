@@ -50,8 +50,6 @@ class Character(PyfaBase, EveItemWrapper):
     id = Column('character_id', Integer, primary_key=True)
     alias = Column(String)
 
-    _skills = relationship('Skill', collection_class=set, cascade='all, delete-orphan', backref='_character')
-
     def __init__(self, alias='', source=None):
         self.__generic_init()
         # Use default source, unless specified otherwise
@@ -65,6 +63,9 @@ class Character(PyfaBase, EveItemWrapper):
         self.__generic_init()
         # Use default source for all reconstructed characters
         self.source = SourceManager.default
+        # Restore entities which are stored on character
+        for skill in self._skills:
+            self.skill.add(skill)
 
     def __generic_init(self):
         char_type_id = Type.character_static

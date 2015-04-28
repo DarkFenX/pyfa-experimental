@@ -18,12 +18,10 @@
 #===============================================================================
 
 
-from abc import ABCMeta, abstractmethod
-
 from service.data.pyfa_data.skill import SkillProxy
 
 
-class RestrictedSkillSet(metaclass=ABCMeta):
+class RestrictedSet:
     """
     ABC for classes which provides same interface as regular
     set, but with getitem and delitem (using item type ID as
@@ -33,28 +31,24 @@ class RestrictedSkillSet(metaclass=ABCMeta):
 
     def __init__(self):
         self.__type_id_map = {}
-
-    @property
-    @abstractmethod
-    def _set(self):
-        ...
+        self.__set = set()
 
     def add(self, skill):
         type_id = skill.eve_id
         if type_id in self.__type_id_map:
             msg = 'skill with type ID {} already exists in this set'.format(type_id)
             raise ValueError(msg)
-        self._set.add(skill)
+        self.__set.add(skill)
         self.__type_id_map[type_id] = skill
 
     def remove(self, skill):
-        if skill not in self._set:
+        if skill not in self.__set:
             raise KeyError(skill)
-        self._set.remove(skill)
+        self.__set.remove(skill)
         del self.__type_id_map[skill.eve_id]
 
     def clear(self):
-        for skill in list(self._set):
+        for skill in list(self.__set):
             self.remove(skill)
 
     def __getitem__(self, eve_id):
@@ -65,26 +59,26 @@ class RestrictedSkillSet(metaclass=ABCMeta):
         self.remove(skill)
 
     def __iter__(self):
-        return self._set.__iter__()
+        return self.__set.__iter__()
 
     def __contains__(self, skill):
-        return self._set.__contains__(skill)
+        return self.__set.__contains__(skill)
 
     def __len__(self):
-        return self._set.__len__()
+        return self.__set.__len__()
 
     def __repr__(self):
-        return repr(self._set)
+        return repr(self.__set)
 
 
-class SkillCoreSet(RestrictedSkillSet):
+class SkillCoreSet(RestrictedSet):
     """
     This set is intended to be used on character cores.
     """
 
     def __init__(self, char_core):
-        self.__char_core = char_core
         super().__init__()
+        self.__char_core = char_core
 
     @property
     def _set(self):
@@ -92,6 +86,7 @@ class SkillCoreSet(RestrictedSkillSet):
 
     def add(self, skill):
         super().add(skill)
+        skill._character = self.__char_core
         for char_proxy in self.__char_core._proxy_iter():
             char_proxy.skills.add(SkillProxy(skill.eve_id, skill.level))
 
@@ -99,21 +94,17 @@ class SkillCoreSet(RestrictedSkillSet):
         super().remove(skill)
         for char_proxy in self.__char_core._proxy_iter():
             del char_proxy.skills[skill.eve_id]
+        skill._character = None
 
 
-class SkillProxySet(RestrictedSkillSet):
+class SkillProxySet(RestrictedSet):
     """
     This set is intended to be used on character proxies.
     """
 
     def __init__(self, char_proxy):
-        self.__set = set()
-        self.__char_proxy = char_proxy
         super().__init__()
-
-    @property
-    def _set(self):
-        return self.__set
+        self.__char_proxy = char_proxy
 
     def add(self, skill):
         super().add(skill)

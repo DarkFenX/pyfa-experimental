@@ -19,12 +19,14 @@
 
 
 from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy.orm import relationship, backref, reconstructor
 
-from service.data.pyfa_data.base import PyfaBase
+from eos import Skill as EosSkill
+from service.data.pyfa_data.base import PyfaBase, EveItemWrapper
 from util.repr import make_repr_str
 
 
-class Skill(PyfaBase):
+class Skill(PyfaBase, EveItemWrapper):
     """
     This is "core" skill class (e.g. it will be used for managing
     character's skills in character editor). Fits will use proxy
@@ -38,13 +40,39 @@ class Skill(PyfaBase):
     __tablename__ = 'skills'
 
     _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'), primary_key=True)
-    eve_id = Column('type_id', Integer, primary_key=True)
+    _character = relationship('Character', backref=backref(
+        '_skills', collection_class=set, cascade='all, delete-orphan'))
+
+    _type_id = Column('type_id', Integer, nullable=False)
     _level = Column(Integer, nullable=False)
 
     def __init__(self, type_id, level=0):
-        self.eve_id = type_id
+        self._type_id = type_id
         self._level = level
+        self.__generic_init()
 
+    @reconstructor
+    def _dbinit(self):
+        self.__generic_init()
+
+    def __generic_init(self):
+        EveItemWrapper.__init__(self, self._type_id)
+        self.__char_core = None
+        self.__eos_skill = EosSkill(self._type_id, level=self._level)
+
+    # EVE item wrapper methods
+    @property
+    def _source(self):
+        try:
+            return self._char_core.source
+        except AttributeError:
+            return None
+
+    @property
+    def _eos_item(self):
+        return self.__eos_skill
+
+    # Skill-specific methods
     @property
     def level(self):
         return self._level
@@ -61,6 +89,33 @@ class Skill(PyfaBase):
             char_proxy.skills[self.eve_id]._set_level(new_level)
 
     # Auxiliary methods
+    @property
+    def _char_core(self):
+        return self._character
+
+    @_char_core.setter
+    def _char_core(self, new_char_core):
+        old_char_core = self._char_core
+        # Update DB and Eos
+        self._unregister_on_char_core(old_char_core)
+        self._register_on_char_core(new_char_core)
+        # Update EVE item
+        self._update_source()
+
+    def _register_on_char_core(self, char_core):
+        if char_core is not None:
+            # Update DB
+            self._character = char_core
+            # Update Eos
+            char_core._eos_fit.skills.add(self.__eos_skill)
+
+    def _unregister_on_char_core(self, char_core):
+        if char_core is not None:
+            # Update DB
+            self._character = None
+            # Update Eos
+            char_core._eos_fit.skills.remove(self.__eos_skill)
+
     def __repr__(self):
         spec = ['eve_id', 'level']
         return make_repr_str(self, spec)

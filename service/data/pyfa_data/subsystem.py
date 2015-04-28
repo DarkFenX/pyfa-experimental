@@ -90,9 +90,6 @@ class Subsystem(PyfaBase, EveItemWrapper):
     def _register_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            # Here we can't set self._fit reference because our cascades
-            # are configured to on the parent object, and we have to use
-            # fit._subsystems to ensure proper item addition/deletion
             fit._subsystems.add(self)
             # Update Eos
             fit._eos_fit.subsystems.add(self.__eos_subsystem)
