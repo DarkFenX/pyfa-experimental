@@ -36,6 +36,9 @@ class CharacterProxy(EveItemWrapper):
     attributes, effects and so on). On top of that, exposes some
     of core character data.
 
+    Pyfa model: fit.character_proxy
+    Eos model: efit.character
+    DB model: none (CharacterCore handles it)
 
     Pyfa model children:
     .RestrictedSet(skills)

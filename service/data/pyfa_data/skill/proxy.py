@@ -25,8 +25,8 @@ from util.repr import make_repr_str
 
 class SkillProxy(EveItemWrapper):
     """
-    Pyfa model: character_proxy.{skills}
-    Eos model: efit.{skills}
+    Pyfa model: character_proxy.RestrictedSet(skills)
+    Eos model: efit.RestrictedSet(skills)
     DB model: none (SkillCore handles it)
     """
 

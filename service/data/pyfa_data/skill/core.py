@@ -29,6 +29,10 @@ class Skill(PyfaBase):
     This is "core" skill class (e.g. it will be used for managing
     character's skills in character editor). Fits will use proxy
     twin of this class to carry fit-specific attributes.
+
+    Pyfa model: character_core.RestrictedSet(skills)
+    Eos model: efit.RestrictedSet(skills)
+    DB model: character_core.{_skills}
     """
 
     __tablename__ = 'skills'
