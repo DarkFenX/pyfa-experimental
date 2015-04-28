@@ -35,7 +35,7 @@ class Stance(EveItemWrapper):
         self.__ship = None
         self.__eos_stance = EosStance(type_id)
 
-    # Pyfa fit item methods
+    # EVE item wrapper methods
     @property
     def _source(self):
         try:

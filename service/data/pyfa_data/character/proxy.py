@@ -49,7 +49,7 @@ class CharacterProxy(EveItemWrapper):
         self.__eos_char = EosCharacter(char_type_id)
         self.skills = SkillProxySet(self)
 
-    # Pyfa fit item methods
+    # EVE item wrapper methods
     @property
     def _source(self):
         try:

@@ -35,7 +35,7 @@ class SkillProxy(EveItemWrapper):
         self.__char_proxy = None
         self.__eos_skill = EosSkill(type_id, level=level)
 
-    # Pyfa fit item methods
+    # EVE item wrapper methods
     @property
     def _source(self):
         try:

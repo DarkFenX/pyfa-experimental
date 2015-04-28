@@ -56,7 +56,7 @@ class Subsystem(PyfaBase, EveItemWrapper):
         self.__ship = None
         self.__eos_subsystem = EosSubsystem(self._type_id)
 
-    # Pyfa fit item methods
+    # EVE item wrapper methods
     @property
     def _source(self):
         try:

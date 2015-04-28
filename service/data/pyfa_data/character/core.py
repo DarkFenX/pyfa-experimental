@@ -18,18 +18,22 @@
 #===============================================================================
 
 
+from itertools import chain
 from weakref import WeakSet
 
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship, reconstructor
 
-from service.data.pyfa_data.base import PyfaBase
-from service.data.pyfa_data.func import pyfa_persist, pyfa_abandon
+from eos import Fit as EosFit
+from service.data.pyfa_data.base import PyfaBase, EveItemWrapper
+from service.data.pyfa_data.func import get_src_children, pyfa_persist, pyfa_abandon
+from service.source_mgr import SourceManager, Source
+from util.const import Type
 from util.repr import make_repr_str
 from .container import SkillCoreSet
 
 
-class Character(PyfaBase):
+class Character(PyfaBase, EveItemWrapper):
     """
     "Core" character class. It should be used for managing characters
     (e.g. in character editor). Fits will use proxy twin of the character.
@@ -48,22 +52,75 @@ class Character(PyfaBase):
 
     _skills = relationship('Skill', collection_class=set, cascade='all, delete-orphan', backref='_character')
 
-    def __init__(self, alias=''):
-        self.alias = alias
+    def __init__(self, alias='', source=None):
         self.__generic_init()
+        # Use default source, unless specified otherwise
+        if source is None:
+            source = SourceManager.default
+        self.source = source
+        self.alias = alias
 
     @reconstructor
     def _dbinit(self):
         self.__generic_init()
+        # Use default source for all reconstructed characters
+        self.source = SourceManager.default
 
     def __generic_init(self):
-        self.skills = SkillCoreSet(self)
+        char_type_id = Type.character_static
+        EveItemWrapper.__init__(self, char_type_id)
+        # Attributes which store objects hidden behind properties
+        self.__source = None
         # Set with fits which are loaded and use this character
         self.__loaded_proxies = WeakSet()
+        self.skills = SkillCoreSet(self)
+        self._eos_fit = EosFit()
+
+    # EVE item wrapper methods
+    @property
+    def _source(self):
+        return self.source
+
+    @property
+    def _eos_item(self):
+        return self._eos_fit.character
+
+    @property
+    def _src_children(self):
+        return get_src_children(chain(
+            self.skills,
+        ))
 
     # Miscellanea public stuff
+    @property
+    def source(self):
+        return self.__source
+
+    @source.setter
+    def source(self, new_source):
+        # Attempt to fetch source from source manager if passed object
+        # is not instance of source class
+        if not isinstance(new_source, Source) and new_source is not None:
+            new_source = SourceManager.get(new_source)
+        old_source = self.source
+        # Do not update anything if sources are the same
+        if new_source is old_source:
+            return
+        self.__source = new_source
+        # Update eos model with new data
+        self._eos_fit.source = getattr(new_source, 'eos', None)
+        # Update pyfa model with new data
+        # Unlike fit, character represents EVE item, thus we need
+        # to update it too
+        self._update_source()
+        for src_child in self._src_children:
+            src_child._update_source()
+
     persist = pyfa_persist
     abandon = pyfa_abandon
+
+    def validate(self):
+        self._eos_fit.validate()
 
     # Auxiliary methods
     def _proxy_iter(self):

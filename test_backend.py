@@ -65,12 +65,8 @@ def make_character():
 
 
 def test_random_shit():
-    fit = make_confessor()
-    print_attrs(fit.ship)
-    fit.character_core = make_character()
-    print_attrs(fit.ship)
-    fit.persist()
-    session_pyfadata.commit()
+    char = make_character()
+    print_attrs(char)
 
 
 test_random_shit()
