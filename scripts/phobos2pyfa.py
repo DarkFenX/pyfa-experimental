@@ -93,7 +93,7 @@ def load_table(json_path, json_name):
     """
     Load JSON file related to specified table and return it.
     """
-    with open(os.path.join(json_path, '{}.json'.format(json_name))) as f:
+    with open(os.path.join(json_path, '{}.json'.format(json_name)), encoding="utf8") as f:
         return json.load(f)
 
 
