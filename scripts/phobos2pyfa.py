@@ -63,7 +63,7 @@ tables = {
     ),
     'invgroups': (
         service.data.eve_data.InvGroup,
-        {}
+        {'groupName': 'groupName_en-us'}
     ),
     'invtypes': (
         service.data.eve_data.InvType,
@@ -94,7 +94,10 @@ def load_table(json_path, json_name):
     Load JSON file related to specified table and return it.
     """
     with open(os.path.join(json_path, '{}.json'.format(json_name)), encoding="utf8") as f:
-        return json.load(f)
+        table_data = json.load(f)
+        if isinstance(table_data, dict):
+            table_data = table_data.values()
+        return table_data
 
 
 def write_table(edb_session, json_name, table_data):
