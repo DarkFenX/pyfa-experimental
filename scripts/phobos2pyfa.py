@@ -91,10 +91,13 @@ def process_table(edb_session, json_path, json_name):
 
 def load_table(json_path, json_name):
     """
-    Load JSON file related to specified table and return it.
+    Load list of rows from JSON file related to specified
+    table and return it.
     """
     with open(os.path.join(json_path, '{}.json'.format(json_name)), encoding="utf8") as f:
         table_data = json.load(f)
+        # Many tables are dumped as dicts keyed against entity IDs
+        # by phobos, make sure to take just list of rows
         if isinstance(table_data, dict):
             table_data = table_data.values()
         return table_data
@@ -137,14 +140,27 @@ def move_basic_attribs(edb_session, json_path):
         'volume': Attribute.volume,
         'radius': Attribute.radius
     }
+    # Compose auxiliary set with type ID - basic attr ID pairs, which
+    # are already defined in dgmtypeattribs (already existing values
+    # have priority)
+    # Format: {(type ID, attr ID), ...}
+    defined_basics = set()
+    for row in load_table(json_path, 'dgmtypeattribs'):
+        attribute_id = row['attributeID']
+        if attribute_id in basic_attributes.values():
+            defined_basics.add((row['typeID'], attribute_id))
     for row in load_table(json_path, 'invtypes'):
         for invtypes_name, attribute_id in basic_attributes.items():
             attribute_value = row.get(invtypes_name)
             # Skip empty values (never seen empty though)
             if attribute_value is None:
                 continue
+            type_id = row['typeID']
+            # Skip values already defined in dgmtypeattribs
+            if (type_id, attribute_id) in defined_basics:
+                continue
             dta = service.data.eve_data.DgmTypeAttribute()
-            dta.type_id = row['typeID']
+            dta.type_id = type_id
             dta.attribute_id = attribute_id
             dta.value = attribute_value
             edb_session.add(dta)
