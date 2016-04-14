@@ -74,7 +74,7 @@ class SubsystemSet:
             cmd_mgr.do(command)
 
     def _remove_from_set(self, subsystem):
-        if subsystem._ship is None:
+        if subsystem._ship is not self.__ship:
             raise ItemRemovalConsistencyError(subsystem)
         subsystem._ship = None
         self.__set.remove(subsystem)
@@ -93,7 +93,7 @@ class SubsystemSet:
 
     def _clear_set(self):
         for subsystem in self.__set:
-            if subsystem._ship is None:
+            if subsystem._ship is not self.__ship:
                 raise ItemRemovalConsistencyError(subsystem)
             subsystem._ship = None
         self.__set.clear()
