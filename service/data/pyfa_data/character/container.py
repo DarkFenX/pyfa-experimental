@@ -18,8 +18,8 @@
 #===============================================================================
 
 
+from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from service.data.pyfa_data.skill import SkillProxy
-
 
 class RestrictedSet:
     """
@@ -85,12 +85,16 @@ class SkillCoreSet(RestrictedSet):
         return self.__char_core._skills
 
     def add(self, skill):
+        if skill._character is not None:
+            raise ItemAlreadyUsedError(skill)
         super().add(skill)
         skill._character = self.__char_core
         for char_proxy in self.__char_core._proxy_iter():
             char_proxy.skills.add(SkillProxy(skill.eve_id, skill.level))
 
     def remove(self, skill):
+        if skill._character is not self.__char_core:
+            raise ItemRemovalConsistencyError(skill)
         super().remove(skill)
         for char_proxy in self.__char_core._proxy_iter():
             del char_proxy.skills[skill.eve_id]
@@ -107,9 +111,13 @@ class SkillProxySet(RestrictedSet):
         self.__char_proxy = char_proxy
 
     def add(self, skill):
+        if skill._char_proxy is not None:
+            raise ItemAlreadyUsedError(skill)
         super().add(skill)
         skill._char_proxy = self.__char_proxy
 
     def remove(self, skill):
+        if skill._char_proxy is not self.__char_proxy:
+            raise ItemRemovalConsistencyError(skill)
         super().remove(skill)
         skill._char_proxy = None
