@@ -51,12 +51,12 @@ class Character(PyfaBase, EveItemWrapper):
     alias = Column(String)
 
     def __init__(self, alias='', source=None):
+        self.alias = alias
         self.__generic_init()
         # Use default source, unless specified otherwise
         if source is None:
             source = SourceManager.default
         self.source = source
-        self.alias = alias
 
     @reconstructor
     def _dbinit(self):

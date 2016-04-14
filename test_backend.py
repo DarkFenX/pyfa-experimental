@@ -12,11 +12,12 @@ from service.data.pyfa_data import PyfaDataManager
 from service.source_mgr import SourceManager
 
 eve_dbpath_tq = os.path.join(script_dir, 'staticdata', 'tranquility.db')
+eve_dbpath_sisi = os.path.join(script_dir, 'staticdata', 'singularity.db')
 pyfa_dbpath = os.path.join(script_dir, 'userdata', 'pyfadata.db')
 
 # Initialize databases with eve data
 SourceManager.add('tq', eve_dbpath_tq, make_default=True)
-SourceManager.add('sisi', eve_dbpath_tq)
+SourceManager.add('sisi', eve_dbpath_sisi)
 
 # (Re-)Initialize database for pyfa save data
 if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
@@ -24,10 +25,14 @@ PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
 session_pyfadata = PyfaDataManager.session
 
 
-def print_attrs(item):
-    print(item.eve_name)
-    for k in sorted(item.attributes, key=lambda i: i.name):
-        print('  {}: {}'.format(k.name, item.attributes[k]))
+def print_attrs(item, orig=False):
+    print('---{}---'.format(item.eve_name))
+    if orig:
+        attrs = item.attributes_original
+    else:
+        attrs = item.attributes
+    for k in sorted(attrs, key=lambda i: i.name):
+        print('  {}: {}'.format(k.name, attrs[k]))
 
 
 CRUSADER = 11184
@@ -65,8 +70,30 @@ def make_character():
 
 
 def test_random_shit():
-    char = make_character()
-    print_attrs(char)
+    pass
 
 
-test_random_shit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+def test_char_source_switch():
+    warp_accu_tq = query_attribute(SourceManager.get('tq').edb, 1021)
+    warp_accu_sisi = query_attribute(SourceManager.get('sisi').edb, 1021)
+    char = Character(alias='test char 1')
+    assert char.attributes[warp_accu_tq] == 15000
+    assert char.attributes_original[warp_accu_tq] == 15000
+    char.source = 'sisi'
+    assert char.attributes[warp_accu_sisi] == 101
+    assert char.attributes_original[warp_accu_sisi] == 202
+
+test_char_source_switch()
