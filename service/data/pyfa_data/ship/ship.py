@@ -116,7 +116,7 @@ class Ship(EveItemWrapper):
         for src_child in self._src_children:
             src_child._update_source()
 
-    def  _register_on_fit(self, fit):
+    def _register_on_fit(self, fit):
         if fit is not None:
             # Update DB
             fit._ship_type_id = self.eve_id

@@ -97,7 +97,7 @@ class CharacterProxy(EveItemWrapper):
         for src_child in self._src_children:
             src_child._update_source()
 
-    def  _register_on_fit(self, fit):
+    def _register_on_fit(self, fit):
         if fit is not None:
             # DB update for self & children is not needed
             # Update Eos
