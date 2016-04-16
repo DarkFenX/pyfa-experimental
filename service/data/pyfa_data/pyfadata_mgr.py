@@ -36,7 +36,8 @@ class PyfaDataManager:
     @classmethod
     def set_pyfadb_path(cls, pyfadb_path):
         pyfadb_folder = os.path.dirname(pyfadb_path)
-        os.makedirs(pyfadb_folder, mode=0o755)
+        if os.path.isdir(pyfadb_folder) is not True:
+            os.makedirs(pyfadb_folder, mode=0o755)
         pyfadb_engine = sqlalchemy.create_engine('sqlite:///{}'.format(pyfadb_path), echo=False)
         PyfaBase.metadata.create_all(pyfadb_engine)
         cls.session = sessionmaker(bind=pyfadb_engine)()
