@@ -28,12 +28,13 @@ from service.source_mgr import SourceManager
 from tests.pyfa_testcase import PyfaTestCase
 
 
-class TestConversionEffect(PyfaTestCase):
+class TestPyfaService(PyfaTestCase):
+
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     @patch('service.source_mgr.EosSourceManager')
-    def test_ship(self, eos_srcmgr, eos_fit, eos_ship):
+    def test_fit(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
         test_dir = os.path.dirname(os.path.abspath(__file__))
         eve_dbpath = os.path.join(test_dir, '..', '..', 'staticdata', 'tranquility.db')
@@ -73,3 +74,44 @@ class TestConversionEffect(PyfaTestCase):
         self.assertEqual(kwargs, {})
 
 
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
+    @patch('service.data.pyfa_data.fit.fit.EosFit')
+    @patch('service.source_mgr.EosSourceManager')
+    def test_ship(self, eos_srcmgr, eos_fit, eos_ship):
+        # Prep steps
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        eve_dbpath = os.path.join(test_dir, '..', '..', 'staticdata', 'tranquility.db')
+        pyfa_dbpath = os.path.join(test_dir, 'pyfadata.db')
+
+        SourceManager.add('tq', eve_dbpath, make_default=True)
+
+        if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
+        PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
+        fit = Fit(name='test fit 1')
+        ship = Ship(1)
+        fit.ship = ship
+        # Checking Pyfa model
+        self.assertEqual(fit.name, 'test fit 1')
+        self.assertIs(fit.source, SourceManager.default)
+        # Checking Eos model
+        self.assertEqual(len(eos_fit.mock_calls), 1)
+        name, args, kwargs = eos_fit.mock_calls[0]
+        self.assertEqual(name, '')
+        self.assertEqual(args, ())
+        self.assertEqual(kwargs, {})
+        # Checking DB model (via persistence check)
+        fit.persist()
+        PyfaDataManager.commit()
+        del fit
+        fits = query_all_fits()
+        self.assertEqual(len(fits), 1)
+        fit = fits[0]
+        # Checking Pyfa model
+        self.assertEqual(fit.name, 'test fit 1')
+        self.assertIs(fit.source, SourceManager.default)
+        # Checking Eos model
+        self.assertEqual(len(eos_fit.mock_calls), 1)
+        name, args, kwargs = eos_fit.mock_calls[0]
+        self.assertEqual(name, '')
+        self.assertEqual(args, ())
+        self.assertEqual(kwargs, {})
