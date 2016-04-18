@@ -29,8 +29,10 @@ from tests.pyfa_testcase import PyfaTestCase
 
 class TestConversionEffect(PyfaTestCase):
 
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
+    @patch('service.data.pyfa_data.fit.fit.EosFit')
     @patch('service.source_mgr.EosSourceManager')
-    def test_ship(self, eos_srcmgr):
+    def test_ship(self, eos_srcmgr, eos_fit, eos_ship):
         test_dir = os.path.dirname(os.path.abspath(__file__))
         eve_dbpath = os.path.join(test_dir, '..', '..', 'staticdata', 'tranquility.db')
         pyfa_dbpath = os.path.join(test_dir, 'pyfadata.db')
@@ -41,6 +43,10 @@ class TestConversionEffect(PyfaTestCase):
         PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
         session_pyfadata = PyfaDataManager.session
 
-
+        # Checking Pyfa model
         fit = Fit(name='test fit 1')
-        fit.ship = Ship(29984)
+        # Checking Eos model
+        print(fit._eos_fit)
+        # Checking DB model (via persistence check?)
+        fit.persist()
+        # Checking EVE item
