@@ -18,25 +18,22 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
 
 from util.repr import make_repr_str
 from .base import EveBase
 
 
-class InvMarketGroup(EveBase):
+class EveGroup(EveBase):
     """
-    Market Group with all its properties. Directly accessible by pyfa.
+    Group with all its properties. Directly accessible by pyfa.
     """
 
-    __tablename__ = 'invmarketgroups'
+    __tablename__ = 'evegroups'
 
-    id = Column('marketGroupID', Integer, primary_key=True)
-    name = Column('marketGroupName', String)
-
-    _parent_id = Column('parentGroupID', Integer, ForeignKey('invmarketgroups.marketGroupID'))
-    parent = relationship('InvMarketGroup', backref="children", remote_side=[id])
+    id = Column('groupID', Integer, primary_key=True)
+    name = Column('groupName_en-us', String)
+    _category_id = Column('categoryID', Integer, nullable=False)
 
     def __repr__(self):
         spec = ['id']

@@ -21,19 +21,19 @@
 from sqlalchemy import and_
 
 from eos.const.eve import Category as ConstCategory
-from .invgroup import InvGroup
-from .invtype import InvType
 from .dgmattribute import DgmAttribute
 from .dgmeffect import DgmEffect
+from .evegroup import EveGroup
+from .evetype import EveType
 
 
 def query_type(evedata_session, type_id):
-    type_ = evedata_session.query(InvType).get(type_id)
+    type_ = evedata_session.query(EveType).get(type_id)
     return type_
 
 
 def query_types(evedata_session, type_ids):
-    types = evedata_session.query(InvType).filter(InvType.id.in_(type_ids)).all()
+    types = evedata_session.query(EveType).filter(EveType.id.in_(type_ids)).all()
     return types
 
 
@@ -58,8 +58,8 @@ def query_effects(evedata_session, effect_ids):
 
 
 def query_published_skills(evedata_session):
-    skills = evedata_session.query(InvType).join(InvGroup).filter(
-        and_(InvGroup._category_id == ConstCategory.skill, InvType.published == True))
+    skills = evedata_session.query(EveType).join(EveGroup).filter(
+        and_(EveGroup._category_id == ConstCategory.skill, EveType.published == True))
     return skills
 
 

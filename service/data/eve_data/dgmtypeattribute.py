@@ -34,8 +34,8 @@ class DgmTypeAttribute(EveBase):
 
     __tablename__ = 'dgmtypeattribs'
 
-    type_id = Column('typeID', Integer, ForeignKey('invtypes.typeID'), primary_key=True)
-    type_ = relationship('InvType', backref=backref(
+    type_id = Column('typeID', Integer, ForeignKey('evetypes.typeID'), primary_key=True)
+    type_ = relationship('EveType', backref=backref(
         '_dgmtypeattribs', collection_class=attribute_mapped_collection('attribute'), cascade='all, delete-orphan'))
 
     attribute_id = Column('attributeID', Integer, ForeignKey('dgmattribs.attributeID'), primary_key=True)

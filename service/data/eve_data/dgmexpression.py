@@ -43,11 +43,11 @@ class DgmExpression(EveBase):
 
     expression_value = Column('expressionValue', String)
 
-    _expression_type_id = Column('expressionTypeID', Integer, ForeignKey('invtypes.typeID'))
-    expression_type = relationship('InvType')
+    _expression_type_id = Column('expressionTypeID', Integer, ForeignKey('evetypes.typeID'))
+    expression_type = relationship('EveType')
 
-    _expression_group_id = Column('expressionGroupID', Integer, ForeignKey('invgroups.groupID'))
-    expression_group = relationship('InvGroup')
+    _expression_group_id = Column('expressionGroupID', Integer, ForeignKey('evegroups.groupID'))
+    expression_group = relationship('EveGroup')
 
     _expression_attribute_id = Column('expressionAttributeID', Integer, ForeignKey('dgmattribs.attributeID'))
     expression_attribute = relationship('DgmAttribute')

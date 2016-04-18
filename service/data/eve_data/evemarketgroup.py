@@ -18,34 +18,25 @@
 #===============================================================================
 
 
-from sqlalchemy import Column, ForeignKey, Integer, Float, Boolean, String
-from sqlalchemy.orm import Session, relationship
-from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from util.repr import make_repr_str
 from .base import EveBase
 
 
-class InvType(EveBase):
+class EveMarketGroup(EveBase):
     """
-    Type (aka eve item) with all its properties. Directly accessible by pyfa.
+    Market Group with all its properties. Directly accessible by pyfa.
     """
 
-    __tablename__ = 'invtypes'
+    __tablename__ = 'evemarketgroups'
 
-    id = Column('typeID', Integer, primary_key=True)
-    name = Column('typeName', String)
+    id = Column('marketGroupID', Integer, primary_key=True)
+    name = Column('marketGroupName_en-us', String)
 
-    _group_id = Column('groupID', Integer, ForeignKey('invgroups.groupID'))
-    group = relationship('InvGroup')
-
-    published = Column(Boolean)
-
-    _market_group_id = Column('marketGroupID', Integer, ForeignKey('invmarketgroups.marketGroupID'))
-    market_group = relationship('InvMarketGroup')
-
-    attributes = association_proxy('_dgmtypeattribs', 'value')
-    effects = association_proxy('_dgmtypeeffects', 'effect')
+    _parent_id = Column('parentGroupID', Integer, ForeignKey('evemarketgroups.marketGroupID'))
+    parent = relationship('EveMarketGroup', backref='children', remote_side=[id])
 
     def __repr__(self):
         spec = ['id']

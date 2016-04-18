@@ -50,7 +50,7 @@ stance aka t3 tactical mode is stored on:
   Eos: efit.stance (efit is eos fit, which is stored on pyfa fit)
 
 There's additional thing which needs to be processed, most pyfa items carry
-reference to corresponding eve item (InvType), it also needs to be updated.
+reference to corresponding eve item (EveType), it also needs to be updated.
 
 Thus, when we assign stance to ship, we should update reference to stance
 on ship, and update DB/Eos stuff on fit level. The convention is to set

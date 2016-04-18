@@ -61,17 +61,17 @@ tables = {
         service.data.eve_data.DgmExpression,
         {}
     ),
-    'invgroups': (
-        service.data.eve_data.InvGroup,
-        {'groupName': 'groupName_en-us'}
+    'evegroups': (
+        service.data.eve_data.EveGroup,
+        {}
     ),
-    'invtypes': (
-        service.data.eve_data.InvType,
-        {'typeName': 'typeName_en-us'}
+    'evetypes': (
+        service.data.eve_data.EveType,
+        {}
     ),
     'mapbulk_marketGroups': (
-        service.data.eve_data.InvMarketGroup,
-        {'marketGroupName': 'marketGroupName_en-us'}
+        service.data.eve_data.EveMarketGroup,
+        {}
     ),
     'phbmetadata': (
         service.data.eve_data.PhbMetaData,
@@ -133,7 +133,7 @@ def write_table(edb_session, json_name, table_data):
 
 
 def move_basic_attribs(edb_session, json_path):
-    # {Attribute name in invtypes: attribute ID}
+    # {Attribute name in evetypes: attribute ID}
     basic_attributes = {
         'mass': Attribute.mass,
         'capacity': Attribute.capacity,
@@ -149,9 +149,9 @@ def move_basic_attribs(edb_session, json_path):
         attribute_id = row['attributeID']
         if attribute_id in basic_attributes.values():
             defined_basics.add((row['typeID'], attribute_id))
-    for row in load_table(json_path, 'invtypes'):
-        for invtypes_name, attribute_id in basic_attributes.items():
-            attribute_value = row.get(invtypes_name)
+    for row in load_table(json_path, 'evetypes'):
+        for evetypes_name, attribute_id in basic_attributes.items():
+            attribute_value = row.get(evetypes_name)
             # Skip empty values (never seen empty though)
             if attribute_value is None:
                 continue
@@ -191,6 +191,12 @@ if __name__ == '__main__':
     # Check if there's a file at DB path, remove it
     if os.path.isfile(db_path):
         os.remove(db_path)
+    # Otherwise check if all the folders for database exist, and
+    # if don't, create them
+    else:
+        db_folder = os.path.dirname(db_path)
+        if os.path.isdir(db_folder) is not True:
+            os.makedirs(db_folder, mode=0o755)
 
     edb_session = service.data.eve_data.make_evedata_session(db_path)
 

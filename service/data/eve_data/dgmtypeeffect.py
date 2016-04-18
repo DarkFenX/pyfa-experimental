@@ -33,8 +33,8 @@ class DgmTypeEffect(EveBase):
 
     __tablename__ = 'dgmtypeeffects'
 
-    type_id = Column('typeID', Integer, ForeignKey('invtypes.typeID'), primary_key=True)
-    type_ = relationship('InvType', backref=backref(
+    type_id = Column('typeID', Integer, ForeignKey('evetypes.typeID'), primary_key=True)
+    type_ = relationship('EveType', backref=backref(
         '_dgmtypeeffects', collection_class=set, cascade='all, delete-orphan'))
 
     effect_id = Column('effectID', Integer, ForeignKey('dgmeffects.effectID'), primary_key=True)

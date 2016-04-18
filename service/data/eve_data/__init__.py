@@ -25,9 +25,9 @@ from .base import EveBase
 from .dgmattribute import DgmAttribute
 from .dgmeffect import DgmEffect
 from .dgmexpression import DgmExpression
-from .invgroup import InvGroup
-from .invmarketgroup import InvMarketGroup
-from .invtype import InvType
+from .evegroup import EveGroup
+from .evemarketgroup import EveMarketGroup
+from .evetype import EveType
 from .phbmetadata import PhbMetaData
 # Just for initialization
 from .dgmtypeattribute import DgmTypeAttribute
@@ -38,9 +38,9 @@ __all__ = [
     'DgmAttribute',
     'DgmEffect',
     'DgmExpression',
-    'InvGroup',
-    'InvMarketGroup',
-    'InvType',
+    'EveGroup',
+    'EveMarketGroup',
+    'EveType',
     'PhbMetaData'
 ]
 
