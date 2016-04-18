@@ -41,3 +41,7 @@ class PyfaDataManager:
         pyfadb_engine = sqlalchemy.create_engine('sqlite:///{}'.format(pyfadb_path), echo=False)
         PyfaBase.metadata.create_all(pyfadb_engine)
         cls.session = sessionmaker(bind=pyfadb_engine)()
+
+    @classmethod
+    def commit(cls):
+        cls.session.commit()
