@@ -22,7 +22,7 @@ from collections import namedtuple
 
 from eos import SourceManager as EosSourceManager, SQLiteDataHandler, JsonCacheHandler
 from .data.eve_data import make_evedata_session
-from .exception import UnknownSourceError
+from .exception import ExistingSourceError, UnknownSourceError
 
 
 Source = namedtuple('Source', ('alias', 'edb', 'eos'))
@@ -61,6 +61,8 @@ class SourceManager:
         by default for some actions, like fit initialization, unless
         specified explicitly
         """
+        if alias in cls._sources:
+            raise ExistingSourceError(alias)
         # Database session
         edb_session = make_evedata_session(db_path)
         # Eos source

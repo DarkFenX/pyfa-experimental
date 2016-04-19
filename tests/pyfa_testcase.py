@@ -91,7 +91,7 @@ class PyfaTestCase(TestCase):
         return os.path.join(runner_dir, '..', 'staticdata', 'canned_tq.db')
 
     @property
-    def evedb_path_tq(self):
+    def evedb_path_sisi(self):
         return os.path.join(runner_dir, '..', 'staticdata', 'canned_sisi.db')
 
     @property

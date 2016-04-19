@@ -28,3 +28,11 @@ class UnknownSourceError(PyfaError):
     cannot be found.
     """
     pass
+
+
+class ExistingSourceError(PyfaError):
+    """
+    Raised on attempt to add source with alias which
+    already exists.
+    """
+    pass
