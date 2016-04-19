@@ -37,7 +37,7 @@ class TestPyfaService(PyfaTestCase):
     def test_fit(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
         test_dir = os.path.dirname(os.path.abspath(__file__))
-        eve_dbpath = os.path.join(test_dir, '..', '..', 'staticdata', 'tranquility.db')
+        eve_dbpath = os.path.join(test_dir, '..', '..', 'staticdata', 'canned.db')
         pyfa_dbpath = os.path.join(test_dir, 'pyfadata.db')
 
         SourceManager.add('tq', eve_dbpath, make_default=True)
@@ -80,7 +80,7 @@ class TestPyfaService(PyfaTestCase):
     def test_ship(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
         test_dir = os.path.dirname(os.path.abspath(__file__))
-        eve_dbpath = os.path.join(test_dir, '..', '..', 'staticdata', 'tranquility.db')
+        eve_dbpath = os.path.join(test_dir, '..', '..', 'staticdata', 'canned.db')
         pyfa_dbpath = os.path.join(test_dir, 'pyfadata.db')
 
         SourceManager.add('tq', eve_dbpath, make_default=True)

@@ -41,5 +41,4 @@ def make_eve_canneddata(db_path):
         item = EveType(id=i, name='Item {}'.format(i))
         edb_session.add(item)
 
-
     edb_session.commit()
