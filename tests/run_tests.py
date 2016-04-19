@@ -19,16 +19,20 @@
 #===============================================================================
 
 
-import argparse
 import os.path
 import sys
-import unittest
 
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 # Add Pyfa paths to python paths
 sys.path.append(os.path.realpath(os.path.join(script_dir, '..')))
 sys.path.append(os.path.realpath(os.path.join(script_dir, '..', 'external')))
+
+
+import argparse
+import unittest
+
+from tests.canned_evedata import make_eve_canneddata
 
 
 if __name__ == '__main__':
@@ -45,6 +49,10 @@ if __name__ == '__main__':
         default=script_dir
     )
     args = parser.parse_args()
+
+    db_path = os.path.join(script_dir, 'canned.db')
+    make_eve_canneddata(db_path)
+
     # Get all tests into suite
     tests = unittest.TestLoader().discover(args.suite, 'test_*.py')
     # Run them

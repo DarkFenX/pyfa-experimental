@@ -94,7 +94,7 @@ def load_table(json_path, json_name):
     Load list of rows from JSON file related to specified
     table and return it.
     """
-    with open(os.path.join(json_path, '{}.json'.format(json_name)), encoding="utf8") as f:
+    with open(os.path.join(json_path, '{}.json'.format(json_name)), encoding='utf8') as f:
         table_data = json.load(f)
         # Many tables are dumped as dicts keyed against entity IDs
         # by phobos, make sure to take just list of rows
