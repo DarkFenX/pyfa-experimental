@@ -30,7 +30,6 @@ from tests.model_structure.model_testcase import ModelTestCase
 
 class TestPyfaService(ModelTestCase):
 
-
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     @patch('service.source_mgr.EosSourceManager')
@@ -38,7 +37,6 @@ class TestPyfaService(ModelTestCase):
         # Prep steps
         fit = Fit(name='test fit 1')
         fit.ship = Ship(1)  # Assign ship just because we have to, there can be no fit w/o ship
-
         # Checking Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, SourceManager.default)
@@ -64,7 +62,6 @@ class TestPyfaService(ModelTestCase):
         self.assertEqual(name, '')
         self.assertEqual(args, ())
         self.assertEqual(kwargs, {})
-
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')

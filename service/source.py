@@ -21,6 +21,7 @@
 from collections import namedtuple
 
 from eos import SourceManager as EosSourceManager, SQLiteDataHandler, JsonCacheHandler
+from util.repr import make_repr_str
 from .data.eve_data import make_evedata_session
 from .exception import ExistingSourceError, UnknownSourceError
 
@@ -103,10 +104,18 @@ class SourceManager:
         alias -- alias of source to remove
         """
         try:
-            del cls._sources[alias]
+            source = cls._sources[alias]
         except KeyError:
             raise UnknownSourceError(alias)
+        else:
+            EosSourceManager.remove(alias)
+            source.edb_session.close()
 
     @classmethod
     def list(cls):
         return list(cls._sources.keys())
+
+    @classmethod
+    def __repr__(cls):
+        spec = [['sources', '_sources']]
+        return make_repr_str(cls, spec)
