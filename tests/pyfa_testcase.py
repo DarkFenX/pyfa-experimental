@@ -18,9 +18,14 @@
 #===============================================================================
 
 
+import os
+import sys
 from logging import getLogger, DEBUG
 from logging.handlers import BufferingHandler
 from unittest import TestCase
+
+
+runner_dir = os.path.dirname(os.path.abspath(sys.modules['__main__'].__file__))
 
 
 class TestLogHandler(BufferingHandler):
@@ -80,3 +85,11 @@ class PyfaTestCase(TestCase):
     @property
     def log(self):
         return self.__test_log_handler.buffer
+
+    @property
+    def evedb_path(self):
+        return os.path.join(runner_dir, '..', 'staticdata', 'canned.db')
+
+    @property
+    def pyfadb_path(self):
+        return os.path.join(runner_dir, '..', 'userdata', 'tests.db')

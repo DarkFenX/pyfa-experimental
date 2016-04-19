@@ -36,14 +36,10 @@ class TestPyfaService(PyfaTestCase):
     @patch('service.source_mgr.EosSourceManager')
     def test_fit(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
-        test_dir = os.path.dirname(os.path.abspath(__file__))
-        eve_dbpath = os.path.join(test_dir, '..', '..', 'staticdata', 'canned.db')
-        pyfa_dbpath = os.path.join(test_dir, 'pyfadata.db')
+        SourceManager.add('tq', self.evedb_path, make_default=True)
 
-        SourceManager.add('tq', eve_dbpath, make_default=True)
-
-        if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
-        PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
+        if os.path.isfile(self.pyfadb_path): os.remove(self.pyfadb_path)
+        PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
         fit = Fit(name='test fit 1')
         fit.ship = Ship(1)  # Assign ship just because we have to, there can be no fit w/o ship
 
@@ -79,14 +75,10 @@ class TestPyfaService(PyfaTestCase):
     @patch('service.source_mgr.EosSourceManager')
     def test_ship(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
-        test_dir = os.path.dirname(os.path.abspath(__file__))
-        eve_dbpath = os.path.join(test_dir, '..', '..', 'staticdata', 'canned.db')
-        pyfa_dbpath = os.path.join(test_dir, 'pyfadata.db')
+        SourceManager.add('tq', self.evedb_path, make_default=True)
 
-        SourceManager.add('tq', eve_dbpath, make_default=True)
-
-        if os.path.isfile(pyfa_dbpath): os.remove(pyfa_dbpath)
-        PyfaDataManager.set_pyfadb_path(pyfa_dbpath)
+        if os.path.isfile(self.pyfadb_path): os.remove(self.pyfadb_path)
+        PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
         fit = Fit(name='test fit 1')
         ship = Ship(1)
         fit.ship = ship

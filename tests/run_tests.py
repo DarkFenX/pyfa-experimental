@@ -38,6 +38,7 @@ from tests.canned_evedata import make_eve_canneddata
 def canned_eve_setup(db_path):
     make_eve_canneddata(db_path)
 
+
 def canned_eve_teardown(db_path):
     if os.path.isfile(db_path):
         os.remove(db_path)
