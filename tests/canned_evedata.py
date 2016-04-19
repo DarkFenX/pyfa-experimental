@@ -20,6 +20,7 @@
 
 import os
 
+from service.data.eve_data import *
 from service.data.eve_data import make_evedata_session
 
 
@@ -35,4 +36,10 @@ def _prep_path(db_path):
 def make_eve_canneddata(db_path):
     _prep_path(db_path)
     edb_session = make_evedata_session(db_path)
+
+    for i in range(1, 11):
+        item = EveType(id=i, name='Item {}'.format(i))
+        edb_session.add(item)
+
+
     edb_session.commit()
