@@ -93,3 +93,20 @@ class SourceManager:
             return cls._sources[alias]
         except KeyError:
             raise UnknownSourceError(alias)
+
+    @classmethod
+    def remove(cls, alias):
+        """
+        Remove source by alias.
+
+        Required arguments:
+        alias -- alias of source to remove
+        """
+        try:
+            del cls._sources[alias]
+        except KeyError:
+            raise UnknownSourceError(alias)
+
+    @classmethod
+    def list(cls):
+        return list(cls._sources.keys())

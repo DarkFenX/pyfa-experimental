@@ -25,10 +25,10 @@ from service.data.pyfa_data import *
 from service.data.pyfa_data import PyfaDataManager
 from service.data.pyfa_data.query import *
 from service.source_mgr import SourceManager
-from tests.pyfa_testcase import PyfaTestCase
+from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestPyfaService(PyfaTestCase):
+class TestPyfaService(ModelTestCase):
 
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
@@ -36,10 +36,6 @@ class TestPyfaService(PyfaTestCase):
     @patch('service.source_mgr.EosSourceManager')
     def test_fit(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
-        SourceManager.add('tq', self.evedb_path_tq, make_default=True)
-
-        if os.path.isfile(self.pyfadb_path): os.remove(self.pyfadb_path)
-        PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
         fit = Fit(name='test fit 1')
         fit.ship = Ship(1)  # Assign ship just because we have to, there can be no fit w/o ship
 
@@ -75,10 +71,6 @@ class TestPyfaService(PyfaTestCase):
     @patch('service.source_mgr.EosSourceManager')
     def test_ship(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
-        SourceManager.add('tq', self.evedb_path_tq, make_default=True)
-
-        if os.path.isfile(self.pyfadb_path): os.remove(self.pyfadb_path)
-        PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
         fit = Fit(name='test fit 1')
         ship = Ship(1)
         fit.ship = ship

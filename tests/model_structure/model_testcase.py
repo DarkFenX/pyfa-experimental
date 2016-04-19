@@ -20,6 +20,7 @@
 
 import os
 from tests.pyfa_testcase import PyfaTestCase
+from unittest.mock import patch
 
 from service.data.pyfa_data import PyfaDataManager
 from service.source_mgr import SourceManager
@@ -34,7 +35,8 @@ class ModelTestCase(PyfaTestCase):
     of passed fit are clear
     """
 
-    def setUp(self):
+    @patch('service.source_mgr.EosSourceManager')
+    def setUp(self, eos_srcman):
         super().setUp()
         # Prepare EVE data
         SourceManager.add('tq', self.evedb_path_tq, make_default=True)
@@ -45,8 +47,12 @@ class ModelTestCase(PyfaTestCase):
         PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
 
     def tearDown(self):
+        # Clean up pyfa database
         if os.path.isfile(self.pyfadb_path):
             os.remove(self.pyfadb_path)
+        # Clean up EVE data
+        SourceManager.remove('tq')
+        SourceManager.remove('sisi')
         super().tearDown()
 
     @property
