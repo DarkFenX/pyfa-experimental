@@ -36,7 +36,7 @@ class TestPyfaService(PyfaTestCase):
     @patch('service.source_mgr.EosSourceManager')
     def test_fit(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
-        SourceManager.add('tq', self.evedb_path, make_default=True)
+        SourceManager.add('tq', self.evedb_path_tq, make_default=True)
 
         if os.path.isfile(self.pyfadb_path): os.remove(self.pyfadb_path)
         PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
@@ -75,7 +75,7 @@ class TestPyfaService(PyfaTestCase):
     @patch('service.source_mgr.EosSourceManager')
     def test_ship(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
-        SourceManager.add('tq', self.evedb_path, make_default=True)
+        SourceManager.add('tq', self.evedb_path_tq, make_default=True)
 
         if os.path.isfile(self.pyfadb_path): os.remove(self.pyfadb_path)
         PyfaDataManager.set_pyfadb_path(self.pyfadb_path)

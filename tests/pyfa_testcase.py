@@ -87,8 +87,12 @@ class PyfaTestCase(TestCase):
         return self.__test_log_handler.buffer
 
     @property
-    def evedb_path(self):
-        return os.path.join(runner_dir, '..', 'staticdata', 'canned.db')
+    def evedb_path_tq(self):
+        return os.path.join(runner_dir, '..', 'staticdata', 'canned_tq.db')
+
+    @property
+    def evedb_path_tq(self):
+        return os.path.join(runner_dir, '..', 'staticdata', 'canned_sisi.db')
 
     @property
     def pyfadb_path(self):

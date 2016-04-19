@@ -35,13 +35,13 @@ import unittest
 from tests.canned_evedata import make_eve_canneddata
 
 
-def canned_eve_setup(db_path):
-    make_eve_canneddata(db_path)
+def canned_eve_setup(evedb_path):
+    make_eve_canneddata(evedb_path)
 
 
-def canned_eve_teardown(db_path):
-    if os.path.isfile(db_path):
-        os.remove(db_path)
+def canned_eve_teardown(evedb_path):
+    if os.path.isfile(evedb_path):
+        os.remove(evedb_path)
 
 
 if __name__ == '__main__':
@@ -59,12 +59,15 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    db_path = os.path.join(script_dir, '..', 'staticdata',  'canned.db')
-    canned_eve_setup(db_path)
+    evedb_path_tq = os.path.join(script_dir, '..', 'staticdata',  'canned_tq.db')
+    evedb_path_sisi = os.path.join(script_dir, '..', 'staticdata', 'canned_sisi.db')
+    canned_eve_setup(evedb_path_tq)
+    canned_eve_setup(evedb_path_sisi)
 
     # Get all tests into suite
     tests = unittest.TestLoader().discover(args.suite, 'test_*.py')
     # Run them
     unittest.TextTestRunner().run(tests)
 
-    canned_eve_teardown(db_path)
+    canned_eve_teardown(evedb_path_tq)
+    canned_eve_teardown(evedb_path_sisi)
