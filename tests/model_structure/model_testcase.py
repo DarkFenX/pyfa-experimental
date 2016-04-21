@@ -30,14 +30,13 @@ class ModelTestCase(PyfaTestCase):
     """
     Additional functionality provided:
 
-    setting up and cleaning 2 pyfa sources for each test,
-    including mock Eos source and pyfa database
+    Provides setup and cleanup for:
+      two pyfa sources (default TQ and secondary SiSi)
+      pyfa data session, to not let data persist between tests
 
+    self.pyfadb_force_reload - reinitializes access to pyfa db
     self.source_tq -- primary pyfa source
     self.source_sisi -- secondary pyfa source
-    self.source_default -- default pyfa source (tq)
-    self.pyfa_commit -- method which writes changes to
-    pyfa database
     """
 
     @patch('service.source.EosSourceManager')
@@ -47,23 +46,32 @@ class ModelTestCase(PyfaTestCase):
         SourceManager.add('tq', self.evedb_path_tq, make_default=True)
         SourceManager.add('sisi', self.evedb_path_sisi)
         # Prepare pyfa database
-        if os.path.isfile(self.pyfadb_path):
-            os.remove(self.pyfadb_path)
+        self.__remove_pyfa_db()
         PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
 
     @patch('service.source.EosSourceManager')
     def tearDown(self, eos_srcman):
         # Clean up pyfa database
-        if os.path.isfile(self.pyfadb_path):
-            os.remove(self.pyfadb_path)
+        PyfaDataManager.commit()
+        PyfaDataManager.close_session()
+        self.__remove_pyfa_db()
         # Clean up EVE data
         SourceManager.remove('tq')
         SourceManager.remove('sisi')
         super().tearDown()
 
-    @property
-    def source_default(self):
-        return SourceManager.default
+    def pyfadb_force_reload(self):
+        """
+        Commit current changes, and recreate session. Should be
+        used to run persistence checks.
+        """
+        PyfaDataManager.commit()
+        PyfaDataManager.close_session()
+        PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
+
+    def __remove_pyfa_db(self):
+        if os.path.isfile(self.pyfadb_path):
+            os.remove(self.pyfadb_path)
 
     @property
     def source_tq(self):
@@ -72,6 +80,3 @@ class ModelTestCase(PyfaTestCase):
     @property
     def source_sisi(self):
         return SourceManager.get('sisi')
-
-    def pyfa_commit(self):
-        PyfaDataManager.commit()

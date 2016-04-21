@@ -24,6 +24,7 @@ import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
 from .base import PyfaBase
+from .exception import SessionExistsError
 
 
 class PyfaDataManager:
@@ -35,6 +36,15 @@ class PyfaDataManager:
 
     @classmethod
     def set_pyfadb_path(cls, pyfadb_path):
+        """
+        Initialize pyfa data session and create SQLite database
+        at specified path. Once complete, SQL Alchemy session
+        is avalable via PyfaDataManager.session.
+
+        pyfadb_path -- path to the SQLite database
+        """
+        if cls.session is not None:
+            raise SessionExistsError
         pyfadb_folder = os.path.dirname(pyfadb_path)
         if os.path.isdir(pyfadb_folder) is not True:
             os.makedirs(pyfadb_folder, mode=0o755)
@@ -44,4 +54,12 @@ class PyfaDataManager:
 
     @classmethod
     def commit(cls):
+        """
+        Convenience shortcut for flushing changes into the database.
+        """
         cls.session.commit()
+
+    @classmethod
+    def close_session(cls):
+        cls.session.close()
+        cls.session = None

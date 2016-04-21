@@ -21,6 +21,14 @@
 from exception import PyfaError
 
 
+class SessionExistsError(PyfaError):
+    """
+    Raised when someone attempts to set up
+    pyfa data manager for 2nd time.
+    """
+    pass
+
+
 class ItemAlreadyUsedError(PyfaError):
     """
     Raised on attempt to add any item to the parent if it's

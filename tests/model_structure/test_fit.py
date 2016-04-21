@@ -22,9 +22,7 @@ import os
 from unittest.mock import patch
 
 from service.data.pyfa_data import *
-from service.data.pyfa_data import PyfaDataManager
 from service.data.pyfa_data.query import *
-from service.source import SourceManager
 from tests.model_structure.model_testcase import ModelTestCase
 
 
@@ -37,7 +35,7 @@ class TestModelFit(ModelTestCase):
         fit.ship = Ship(1)
         # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
-        self.assertIs(fit.source, SourceManager.default)
+        self.assertIs(fit.source, self.source_tq)
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         name, args, kwargs = eos_fit.mock_calls[0]
@@ -46,14 +44,13 @@ class TestModelFit(ModelTestCase):
         self.assertEqual(kwargs, {})
         # Reload model via persistence (DB check)
         fit.persist()
-        PyfaDataManager.commit()
-        del fit
+        self.pyfadb_force_reload()
         fits = query_all_fits()
         self.assertEqual(len(fits), 1)
         fit = fits[0]
         # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
-        self.assertIs(fit.source, SourceManager.default)
+        self.assertIs(fit.source, self.source_tq)
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         name, args, kwargs = eos_fit.mock_calls[0]
@@ -79,14 +76,13 @@ class TestModelFit(ModelTestCase):
         self.assertEqual(kwargs, {})
         # Reload model via persistence (DB check)
         fit.persist()
-        PyfaDataManager.commit()
-        del fit
+        self.pyfadb_force_reload()
         fits = query_all_fits()
         self.assertEqual(len(fits), 1)
         fit = fits[0]
         # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
-        self.assertIs(fit.source, SourceManager.default)
+        self.assertIs(fit.source, self.source_tq)
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         name, args, kwargs = eos_fit.mock_calls[0]
