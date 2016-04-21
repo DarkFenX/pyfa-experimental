@@ -60,5 +60,13 @@ class ModelTestCase(PyfaTestCase):
     def source_default(self):
         return SourceManager.default
 
+    @property
+    def source_tq(self):
+        return SourceManager['tq']
+
+    @property
+    def source_sisi(self):
+        return SourceManager['sisi']
+
     def pyfa_commit(self):
         PyfaDataManager.commit()
