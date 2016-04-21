@@ -30,9 +30,14 @@ class ModelTestCase(PyfaTestCase):
     """
     Additional functionality provided:
 
-    self.fit -- precreated fit with self.ch used as cache handler
-    self.assert_link_buffers_empty -- checks if link tracker buffers
-    of passed fit are clear
+    setting up and cleaning 2 pyfa sources for each test,
+    including mock Eos source and pyfa database
+
+    self.source_tq -- primary pyfa source
+    self.source_sisi -- secondary pyfa source
+    self.source_default -- default pyfa source (tq)
+    self.pyfa_commit -- method which writes changes to
+    pyfa database
     """
 
     @patch('service.source.EosSourceManager')
