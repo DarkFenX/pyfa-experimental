@@ -192,6 +192,14 @@ class Fit(PyfaBase):
     def redo(self):
         self._cmd_mgr.redo()
 
+    def purge_commands(self):
+        """
+        Purge all undos/redos fit currently has. Useful when you want to
+        do some initial setup on the fit, and then purge commands to present
+        fit without undo queue.
+        """
+        self._cmd_mgr.purge()
+
     # Miscellanea public stuff
     @property
     def source(self):

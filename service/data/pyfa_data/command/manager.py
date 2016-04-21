@@ -71,6 +71,13 @@ class CommandManager:
         command.run()
         self._limited_append(self._undos, command)
 
+    def purge(self):
+        """
+        Purge all the data on existing commands.
+        """
+        self._undos.clear()
+        self._redos.clear()
+
     def _limited_append(self, container, command):
         """
         Append element to the list, not allowing length of list
