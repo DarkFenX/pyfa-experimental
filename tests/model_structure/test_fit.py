@@ -30,8 +30,7 @@ class TestModelFit(ModelTestCase):
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_fit_construction(self, eos_fit, eos_ship):
-        fit = Fit(name='test fit 1')
-        fit.ship = Ship(1)
+        fit = Fit(name='test fit 1', ship=Ship(1))
         # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, self.source_tq)
@@ -54,8 +53,7 @@ class TestModelFit(ModelTestCase):
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_fit_src_switch(self, eos_fit, eos_ship):
-        fit = Fit(name='test fit 1')
-        fit.ship = Ship(1)
+        fit = Fit(name='test fit 1', ship=Ship(1))
         # Action
         fit.source = self.source_sisi
         # Pyfa model
@@ -72,6 +70,7 @@ class TestModelFit(ModelTestCase):
         fit = fits[0]
         # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
+        # We do not save fit's source into DB
         self.assertIs(fit.source, self.source_tq)
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 2)

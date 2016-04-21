@@ -58,12 +58,13 @@ class Fit(PyfaBase):
     _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'))
     _character = relationship('Character')
 
-    def __init__(self, name='', source=None):
+    def __init__(self, name='', source=None, ship=None):
         self.__generic_init()
         # Use default source, unless specified otherwise
         if source is None:
             source = SourceManager.default
         self._set_source(source)
+        self._set_ship(ship)
         self.name = name
 
     @reconstructor
