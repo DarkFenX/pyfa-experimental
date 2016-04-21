@@ -23,7 +23,7 @@ from tests.pyfa_testcase import PyfaTestCase
 from unittest.mock import patch
 
 from service.data.pyfa_data import PyfaDataManager
-from service.source_mgr import SourceManager
+from service.source import SourceManager
 
 
 class ModelTestCase(PyfaTestCase):
@@ -35,7 +35,7 @@ class ModelTestCase(PyfaTestCase):
     of passed fit are clear
     """
 
-    @patch('service.source_mgr.EosSourceManager')
+    @patch('service.source.EosSourceManager')
     def setUp(self, eos_srcman):
         super().setUp()
         # Prepare EVE data

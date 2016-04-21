@@ -24,7 +24,7 @@ from unittest.mock import patch
 from service.data.pyfa_data import *
 from service.data.pyfa_data import PyfaDataManager
 from service.data.pyfa_data.query import *
-from service.source_mgr import SourceManager
+from service.source import SourceManager
 from tests.model_structure.model_testcase import ModelTestCase
 
 
@@ -32,7 +32,7 @@ class TestPyfaService(ModelTestCase):
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
-    @patch('service.source_mgr.EosSourceManager')
+    @patch('service.source.EosSourceManager')
     def test_fit(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
         fit = Fit(name='test fit 1')
@@ -65,7 +65,7 @@ class TestPyfaService(ModelTestCase):
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
-    @patch('service.source_mgr.EosSourceManager')
+    @patch('service.source.EosSourceManager')
     def test_ship(self, eos_srcmgr, eos_fit, eos_ship):
         # Prep steps
         fit = Fit(name='test fit 1')
