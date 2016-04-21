@@ -109,7 +109,8 @@ class SourceManager:
             raise UnknownSourceError(alias)
         else:
             EosSourceManager.remove(alias)
-            source.edb_session.close()
+            source.edb.close()
+            del cls._sources[alias]
 
     @classmethod
     def list(cls):

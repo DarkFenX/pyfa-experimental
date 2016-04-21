@@ -46,7 +46,8 @@ class ModelTestCase(PyfaTestCase):
             os.remove(self.pyfadb_path)
         PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
 
-    def tearDown(self):
+    @patch('service.source.EosSourceManager')
+    def tearDown(self, eos_srcman):
         # Clean up pyfa database
         if os.path.isfile(self.pyfadb_path):
             os.remove(self.pyfadb_path)
