@@ -18,8 +18,7 @@
 #===============================================================================
 
 
-import os
-from unittest.mock import patch
+from unittest.mock import patch, call
 
 from service.data.pyfa_data import *
 from service.data.pyfa_data.query import *
@@ -38,10 +37,7 @@ class TestModelFit(ModelTestCase):
         self.assertIs(fit.source, self.source_tq)
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
-        name, args, kwargs = eos_fit.mock_calls[0]
-        self.assertEqual(name, '')
-        self.assertEqual(args, ())
-        self.assertEqual(kwargs, {})
+        self.assertEqual(eos_fit.mock_calls[0], call())
         # Reload model via persistence (DB check)
         fit.persist()
         self.pyfadb_force_reload()
@@ -52,11 +48,8 @@ class TestModelFit(ModelTestCase):
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, self.source_tq)
         # Eos model
-        self.assertEqual(len(eos_fit.mock_calls), 1)
-        name, args, kwargs = eos_fit.mock_calls[0]
-        self.assertEqual(name, '')
-        self.assertEqual(args, ())
-        self.assertEqual(kwargs, {})
+        self.assertEqual(len(eos_fit.mock_calls), 2)
+        self.assertEqual(eos_fit.mock_calls[0], call())
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
@@ -70,10 +63,7 @@ class TestModelFit(ModelTestCase):
         self.assertIs(fit.source, self.source_sisi)
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
-        name, args, kwargs = eos_fit.mock_calls[0]
-        self.assertEqual(name, '')
-        self.assertEqual(args, ())
-        self.assertEqual(kwargs, {})
+        self.assertEqual(eos_fit.mock_calls[0], call())
         # Reload model via persistence (DB check)
         fit.persist()
         self.pyfadb_force_reload()
@@ -84,8 +74,5 @@ class TestModelFit(ModelTestCase):
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, self.source_tq)
         # Eos model
-        self.assertEqual(len(eos_fit.mock_calls), 1)
-        name, args, kwargs = eos_fit.mock_calls[0]
-        self.assertEqual(name, '')
-        self.assertEqual(args, ())
-        self.assertEqual(kwargs, {})
+        self.assertEqual(len(eos_fit.mock_calls), 2)
+        self.assertEqual(eos_fit.mock_calls[0], call())
