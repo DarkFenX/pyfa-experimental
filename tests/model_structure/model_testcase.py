@@ -49,9 +49,9 @@ class ModelTestCase(PyfaTestCase):
     def setUp(self, eos_srcman):
         super().setUp()
         # Prepare EVE data
-        self.eos_src_tq = Mock()
-        self.eos_src_sisi = Mock()
-        eos_srcman.get.side_effect = lambda alias: {'tq': self.eos_src_tq, 'sisi': self.eos_src_sisi}[alias]
+        self.eos_source_tq = Mock()
+        self.eos_source_sisi = Mock()
+        eos_srcman.get.side_effect = lambda alias: {'tq': self.eos_source_tq, 'sisi': self.eos_source_sisi}[alias]
         SourceManager.add('tq', self.evedb_path_tq, make_default=True)
         SourceManager.add('sisi', self.evedb_path_sisi)
         # Prepare pyfa database

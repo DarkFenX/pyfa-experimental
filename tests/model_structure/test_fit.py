@@ -37,8 +37,8 @@ class TestModelFit(ModelTestCase):
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         self.assertEqual(eos_fit.mock_calls[0], call())
-        self.assertIs(fit._eos_fit.source, self.eos_src_tq)
-        # Check that commands are empty by default
+        self.assertIs(fit._eos_fit.source, self.eos_source_tq)
+        # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
         # Reload model via persistence (DB check)
@@ -66,7 +66,7 @@ class TestModelFit(ModelTestCase):
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         self.assertEqual(eos_fit.mock_calls[0], call())
-        self.assertIs(fit._eos_fit.source, self.eos_src_sisi)
+        self.assertIs(fit._eos_fit.source, self.eos_source_sisi)
         # Reload model via persistence (DB check)
         fit.persist()
         self.pyfadb_force_reload()
@@ -80,10 +80,53 @@ class TestModelFit(ModelTestCase):
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 2)
         self.assertEqual(eos_fit.mock_calls[0], call())
-        self.assertIs(fit._eos_fit.source, self.eos_src_tq)
+        self.assertIs(fit._eos_fit.source, self.eos_source_tq)
 
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
-    def test_fit_src_switch_commands(self, eos_fit, eos_ship):
-        pass
+    def test_fit_src_switch_undo(self, eos_fit, eos_ship):
+        fit = Fit(name='test fit 1', ship=Ship(1))
+        fit.source = self.source_sisi
+        # Pyfa model
+        self.assertIs(fit.source, self.source_sisi)
+        # Eos model
+        self.assertIs(fit._eos_fit.source, self.eos_source_sisi)
+        # Command queues
+        self.assertIs(fit.has_undo, True)
+        self.assertIs(fit.has_redo, False)
+        # Action
+        fit.undo()
+        # Pyfa model
+        self.assertIs(fit.source, self.source_tq)
+        # Eos model
+        self.assertIs(fit._eos_fit.source, self.eos_source_tq)
+        # Command queues
+        self.assertIs(fit.has_undo, False)
+        self.assertIs(fit.has_redo, True)
+        # We do not check persistence because source is not saved into DB
+
+
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
+    @patch('service.data.pyfa_data.fit.fit.EosFit')
+    def test_fit_src_switch_redo(self, eos_fit, eos_ship):
+        fit = Fit(name='test fit 1', ship=Ship(1))
+        fit.source = self.source_sisi
+        fit.undo()
+        # Pyfa model
+        self.assertIs(fit.source, self.source_tq)
+        # Eos model
+        self.assertIs(fit._eos_fit.source, self.eos_source_tq)
+        # Command queues
+        self.assertIs(fit.has_undo, False)
+        self.assertIs(fit.has_redo, True)
+        # Action
+        fit.redo()
+        # Pyfa model
+        self.assertIs(fit.source, self.source_sisi)
+        # Eos model
+        self.assertIs(fit._eos_fit.source, self.eos_source_sisi)
+        # Command queues
+        self.assertIs(fit.has_undo, True)
+        self.assertIs(fit.has_redo, False)
+        # We do not check persistence because source is not saved into DB
