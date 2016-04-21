@@ -28,12 +28,11 @@ from service.source import SourceManager
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestPyfaService(ModelTestCase):
+class TestModelFit(ModelTestCase):
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
-    @patch('service.source.EosSourceManager')
-    def test_fit(self, eos_srcmgr, eos_fit, eos_ship):
+    def test_fit(self, eos_fit, eos_ship):
         # Prep steps
         fit = Fit(name='test fit 1')
         fit.ship = Ship(1)  # Assign ship just because we have to, there can be no fit w/o ship
@@ -65,8 +64,7 @@ class TestPyfaService(ModelTestCase):
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
-    @patch('service.source.EosSourceManager')
-    def test_ship(self, eos_srcmgr, eos_fit, eos_ship):
+    def test_ship(self, eos_fit, eos_ship):
         # Prep steps
         fit = Fit(name='test fit 1')
         ship = Ship(1)
