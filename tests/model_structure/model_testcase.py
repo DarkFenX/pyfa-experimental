@@ -20,7 +20,7 @@
 
 import os
 from tests.pyfa_testcase import PyfaTestCase
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from service.data.pyfa_data import PyfaDataManager
 from service.source import SourceManager
@@ -37,12 +37,21 @@ class ModelTestCase(PyfaTestCase):
     self.pyfadb_force_reload - reinitializes access to pyfa db
     self.source_tq -- primary pyfa source
     self.source_sisi -- secondary pyfa source
+    self.eos_src_tq -- mock which is used as TQ eos source
+    self.eos_src_sisi -- mock which is used as SiSi eos source
+
+    We need last two because mock_calls do not support __setattr__,
+    and we set eos source via property setter. To check it, we need
+    some values to compare against, and these mocks are the values.
     """
 
     @patch('service.source.EosSourceManager')
     def setUp(self, eos_srcman):
         super().setUp()
         # Prepare EVE data
+        self.eos_src_tq = Mock()
+        self.eos_src_sisi = Mock()
+        eos_srcman.get.side_effect = lambda alias: {'tq': self.eos_src_tq, 'sisi': self.eos_src_sisi}[alias]
         SourceManager.add('tq', self.evedb_path_tq, make_default=True)
         SourceManager.add('sisi', self.evedb_path_sisi)
         # Prepare pyfa database

@@ -37,6 +37,7 @@ class TestModelFit(ModelTestCase):
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         self.assertEqual(eos_fit.mock_calls[0], call())
+        self.assertIs(fit._eos_fit.source, self.eos_src_tq)
         # Check that commands are empty by default
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
@@ -65,6 +66,7 @@ class TestModelFit(ModelTestCase):
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         self.assertEqual(eos_fit.mock_calls[0], call())
+        self.assertIs(fit._eos_fit.source, self.eos_src_sisi)
         # Reload model via persistence (DB check)
         fit.persist()
         self.pyfadb_force_reload()
@@ -78,6 +80,7 @@ class TestModelFit(ModelTestCase):
         # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 2)
         self.assertEqual(eos_fit.mock_calls[0], call())
+        self.assertIs(fit._eos_fit.source, self.eos_src_tq)
 
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
