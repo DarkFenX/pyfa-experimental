@@ -32,30 +32,29 @@ class TestModelFit(ModelTestCase):
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
-    def test_fit(self, eos_fit, eos_ship):
-        # Prep steps
+    def test_fit_construction(self, eos_fit, eos_ship):
         fit = Fit(name='test fit 1')
-        fit.ship = Ship(1)  # Assign ship just because we have to, there can be no fit w/o ship
-        # Checking Pyfa model
+        fit.ship = Ship(1)
+        # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, SourceManager.default)
-        # Checking Eos model
+        # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         name, args, kwargs = eos_fit.mock_calls[0]
         self.assertEqual(name, '')
         self.assertEqual(args, ())
         self.assertEqual(kwargs, {})
-        # Checking DB model (via persistence check)
+        # Reload model via persistence (DB check)
         fit.persist()
         PyfaDataManager.commit()
         del fit
         fits = query_all_fits()
         self.assertEqual(len(fits), 1)
         fit = fits[0]
-        # Checking Pyfa model
+        # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, SourceManager.default)
-        # Checking Eos model
+        # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         name, args, kwargs = eos_fit.mock_calls[0]
         self.assertEqual(name, '')
@@ -64,31 +63,31 @@ class TestModelFit(ModelTestCase):
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
-    def test_ship(self, eos_fit, eos_ship):
-        # Prep steps
+    def test_fit_src_switch(self, eos_fit, eos_ship):
         fit = Fit(name='test fit 1')
-        ship = Ship(1)
-        fit.ship = ship
-        # Checking Pyfa model
+        fit.ship = Ship(1)
+        # Action
+        fit.source = self.source_sisi
+        # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
-        self.assertIs(fit.source, SourceManager.default)
-        # Checking Eos model
+        self.assertIs(fit.source, self.source_sisi)
+        # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         name, args, kwargs = eos_fit.mock_calls[0]
         self.assertEqual(name, '')
         self.assertEqual(args, ())
         self.assertEqual(kwargs, {})
-        # Checking DB model (via persistence check)
+        # Reload model via persistence (DB check)
         fit.persist()
         PyfaDataManager.commit()
         del fit
         fits = query_all_fits()
         self.assertEqual(len(fits), 1)
         fit = fits[0]
-        # Checking Pyfa model
+        # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, SourceManager.default)
-        # Checking Eos model
+        # Eos model
         self.assertEqual(len(eos_fit.mock_calls), 1)
         name, args, kwargs = eos_fit.mock_calls[0]
         self.assertEqual(name, '')

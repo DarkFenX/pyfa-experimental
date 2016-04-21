@@ -67,11 +67,11 @@ class ModelTestCase(PyfaTestCase):
 
     @property
     def source_tq(self):
-        return SourceManager['tq']
+        return SourceManager.get('tq')
 
     @property
     def source_sisi(self):
-        return SourceManager['sisi']
+        return SourceManager.get('sisi')
 
     def pyfa_commit(self):
         PyfaDataManager.commit()
