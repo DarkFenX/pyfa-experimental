@@ -23,6 +23,7 @@ from tests.pyfa_testcase import PyfaTestCase
 from unittest.mock import Mock, patch
 
 from service.data.pyfa_data import PyfaDataManager
+from service.data.pyfa_data.query import *
 from service.source import SourceManager
 
 
@@ -34,7 +35,8 @@ class ModelTestCase(PyfaTestCase):
       two pyfa sources (default TQ and secondary SiSi)
       pyfa data session, to not let data persist between tests
 
-    self.pyfadb_force_reload - reinitializes access to pyfa db
+    self.pyfadb_force_reload -- reinitializes access to pyfa db
+    self.query_fits -- return list of fits currently in session
     self.source_tq -- primary pyfa source
     self.source_sisi -- secondary pyfa source
     self.eos_src_tq -- mock which is used as TQ eos source
@@ -77,6 +79,9 @@ class ModelTestCase(PyfaTestCase):
         PyfaDataManager.commit()
         PyfaDataManager.close_session()
         PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
+
+    def query_fits(self):
+        return query_all_fits()
 
     def __remove_pyfa_db(self):
         if os.path.isfile(self.pyfadb_path):
