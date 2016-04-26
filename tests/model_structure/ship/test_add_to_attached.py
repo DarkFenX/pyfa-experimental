@@ -18,30 +18,30 @@
 #===============================================================================
 
 
-from unittest.mock import patch, call
+from unittest.mock import patch
 
 from service.data.pyfa_data import *
+from service.data.pyfa_data.ship.ship import EosShip
 from tests.model_structure.model_testcase import ModelTestCase
 
 
 class TestModelShipAddToAttached(ModelTestCase):
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip')
+    @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_do(self, eos_fit, eos_ship):
-        fit = Fit(name='test fit 1')
+        ship_old = Ship(1)
+        fit = Fit(name='test fit 1', ship=None)
         ship = Ship(7)
         # Action
         fit.ship = ship
         # Pyfa model
-        self.assertEqual(fit.ship.eve_id, 7)
-        self.assertEqual(fit.ship.eve_name, 'Item 7 (TQ)')
         self.assertIs(fit.ship, ship)
+        self.assertEqual(ship.eve_id, 7)
+        self.assertEqual(ship.eve_name, 'Item 7 (TQ)')
         # Eos model
-        self.assertEqual(len(eos_ship.mock_calls), 1)
-        self.assertEqual(eos_ship.mock_calls[0], call(7))
-        # TODO: find a way to test that instantiated object was assigned to Eos fit
-        #self.assertEqual(fit._eos_fit.ship, eos_ship)
+        self.assertIsInstance(fit._eos_fit.ship, EosShip)
+        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
         # Command queue
         self.assertIs(fit.has_undo, True)
         self.assertIs(fit.has_redo, False)
@@ -55,5 +55,35 @@ class TestModelShipAddToAttached(ModelTestCase):
         self.assertEqual(fit.ship.eve_id, 7)
         self.assertEqual(fit.ship.eve_name, 'Item 7 (TQ)')
         # Eos model
-        self.assertEqual(len(eos_ship.mock_calls), 2)
-        self.assertEqual(eos_ship.mock_calls[1], call(7))
+        self.assertIsInstance(fit._eos_fit.ship, EosShip)
+        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
+
+
+    @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
+    @patch('service.data.pyfa_data.fit.fit.EosFit')
+    def test_undo(self, eos_fit, eos_ship):
+        fit = Fit(name='test fit 1')
+        ship = Ship(7)
+        fit.ship = ship
+        # Action
+        fit.undo()
+        # Pyfa model
+        self.assertIs(fit.ship, None)
+        self.assertEqual(ship.eve_id, 7)
+        self.assertIs(ship.eve_name, None)
+        # Eos model
+        self.assertIs(isinstance(fit._eos_fit.ship, EosShip), False)
+        self.assertIsNot(fit._eos_fit.ship, ship._eos_item)
+        # Command queue
+        self.assertIs(fit.has_undo, False)
+        self.assertIs(fit.has_redo, True)
+        # Reload model via persistence (DB check)
+        #fit.persist()
+        #self.pyfadb_force_reload()
+        #fits = self.query_fits()
+        #self.assertEqual(len(fits), 1)
+        #fit = fits[0]
+        # Pyfa model
+        #self.assertIs(fit.ship, None)
+        # Eos model
+        #self.assertIsInstance(fit._eos_fit.ship, EosShip)

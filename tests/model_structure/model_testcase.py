@@ -20,7 +20,7 @@
 
 import os
 from tests.pyfa_testcase import PyfaTestCase
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, sentinel
 
 from service.data.pyfa_data import PyfaDataManager
 from service.data.pyfa_data.query import *
@@ -51,8 +51,8 @@ class ModelTestCase(PyfaTestCase):
     def setUp(self, eos_srcman):
         super().setUp()
         # Prepare EVE data
-        self.eos_source_tq = Mock()
-        self.eos_source_sisi = Mock()
+        self.eos_source_tq = sentinel.eos_source_tq
+        self.eos_source_sisi = sentinel.eos_source_sisi
         eos_srcman.get.side_effect = lambda alias: {'tq': self.eos_source_tq, 'sisi': self.eos_source_sisi}[alias]
         SourceManager.add('tq', self.evedb_path_tq, make_default=True)
         SourceManager.add('sisi', self.evedb_path_sisi)
