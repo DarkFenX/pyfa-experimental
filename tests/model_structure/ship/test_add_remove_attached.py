@@ -25,7 +25,7 @@ from service.data.pyfa_data.ship.ship import EosShip
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestModelShipAddToAttached(ModelTestCase):
+class TestModelShipAddRemoveAttached(ModelTestCase):
 
     @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
     @patch('service.data.pyfa_data.fit.fit.EosFit')
@@ -75,7 +75,7 @@ class TestModelShipAddToAttached(ModelTestCase):
         self.assertEqual(ship_new.eve_id, 7)
         self.assertIs(ship_new.eve_name, None)
         # Eos model
-        self.assertIs(fit._eos_fit.ship, ship_old._eos_item)
+        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
         # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, True)
@@ -109,7 +109,7 @@ class TestModelShipAddToAttached(ModelTestCase):
         self.assertEqual(ship_new.eve_id, 7)
         self.assertEqual(ship_new.eve_name, 'Item 7 (TQ)')
         # Eos model
-        self.assertIs(fit._eos_fit.ship, ship_new._eos_item)
+        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
         # Command queue
         self.assertIs(fit.has_undo, True)
         self.assertIs(fit.has_redo, False)
