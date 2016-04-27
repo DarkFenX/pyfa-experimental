@@ -26,13 +26,12 @@ from tests.model_structure.model_testcase import ModelTestCase
 
 class TestModelFitGeneric(ModelTestCase):
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
-    def test_instantiation(self, eos_fit, eos_ship):
+    def test_instantiation(self, eos_fit):
         eos_fit.return_value = sentinel.efit
-        efit_calls_before = len(eos_ship.mock_calls)
-        fit = Fit(name='test fit 1', ship=Ship(1))
-        efit_calls_after = len(eos_ship.mock_calls)
+        efit_calls_before = len(eos_fit.mock_calls)
+        fit = Fit(name='test fit 1')
+        efit_calls_after = len(eos_fit.mock_calls)
         # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, self.source_tq)
@@ -45,19 +44,18 @@ class TestModelFitGeneric(ModelTestCase):
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
-    def test_persistence(self, eos_fit, eos_ship):
+    def test_persistence(self, eos_fit):
         eos_fit.return_value = sentinel.efit
-        fit = Fit(name='test fit 1', ship=Ship(1))
+        fit = Fit(name='test fit 1')
         # Reload model via persistence (DB check)
         fit.persist()
-        efit_calls_before = len(eos_ship.mock_calls)
+        efit_calls_before = len(eos_fit.mock_calls)
         self.pyfadb_force_reload()
         fits = self.query_fits()
         self.assertEqual(len(fits), 1)
         fit = fits[0]
-        efit_calls_after = len(eos_ship.mock_calls)
+        efit_calls_after = len(eos_fit.mock_calls)
         # Pyfa model
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, self.source_tq)
