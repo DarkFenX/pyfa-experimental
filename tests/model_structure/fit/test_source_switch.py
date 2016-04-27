@@ -24,34 +24,7 @@ from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestModelFit(ModelTestCase):
-
-    @patch('service.data.pyfa_data.ship.ship.EosShip')
-    @patch('service.data.pyfa_data.fit.fit.EosFit')
-    def test_fit_construction(self, eos_fit, eos_ship):
-        fit = Fit(name='test fit 1', ship=Ship(1))
-        # Pyfa model
-        self.assertEqual(fit.name, 'test fit 1')
-        self.assertIs(fit.source, self.source_tq)
-        # Eos model
-        self.assertEqual(len(eos_fit.mock_calls), 1)
-        self.assertEqual(eos_fit.mock_calls[0], call())
-        self.assertIs(fit._eos_fit.source, self.eos_source_tq)
-        # Command queue
-        self.assertIs(fit.has_undo, False)
-        self.assertIs(fit.has_redo, False)
-        # Reload model via persistence (DB check)
-        fit.persist()
-        self.pyfadb_force_reload()
-        fits = self.query_fits()
-        self.assertEqual(len(fits), 1)
-        fit = fits[0]
-        # Pyfa model
-        self.assertEqual(fit.name, 'test fit 1')
-        self.assertIs(fit.source, self.source_tq)
-        # Eos model
-        self.assertEqual(len(eos_fit.mock_calls), 2)
-        self.assertEqual(eos_fit.mock_calls[1], call())
+class TestModelFitSourceSwitch(ModelTestCase):
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
@@ -63,8 +36,6 @@ class TestModelFit(ModelTestCase):
         self.assertEqual(fit.name, 'test fit 1')
         self.assertIs(fit.source, self.source_sisi)
         # Eos model
-        self.assertEqual(len(eos_fit.mock_calls), 1)
-        self.assertEqual(eos_fit.mock_calls[0], call())
         self.assertIs(fit._eos_fit.source, self.eos_source_sisi)
         # Reload model via persistence (DB check)
         fit.persist()
@@ -77,10 +48,7 @@ class TestModelFit(ModelTestCase):
         # We do not save fit's source into DB
         self.assertIs(fit.source, self.source_tq)
         # Eos model
-        self.assertEqual(len(eos_fit.mock_calls), 2)
-        self.assertEqual(eos_fit.mock_calls[1], call())
         self.assertIs(fit._eos_fit.source, self.eos_source_tq)
-
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
@@ -104,7 +72,6 @@ class TestModelFit(ModelTestCase):
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, True)
         # We do not check persistence because source is not saved into DB
-
 
     @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')

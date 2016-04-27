@@ -21,54 +21,47 @@
 from unittest.mock import patch, call, sentinel
 
 from service.data.pyfa_data import *
-from service.data.pyfa_data.ship.ship import EosShip
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestModelShipGeneric(ModelTestCase):
+class TestModelFitGeneric(ModelTestCase):
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_instantiation(self, eos_fit, eos_ship):
-        eos_ship.side_effect = [sentinel.eship_old, sentinel.eship_new]
-        ship_old = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship_old)
-        eship_calls_before = len(eos_ship.mock_calls)
-        ship_new = Ship(7)
-        eship_calls_after = len(eos_ship.mock_calls)
+        eos_fit.return_value = sentinel.efit
+        efit_calls_before = len(eos_ship.mock_calls)
+        fit = Fit(name='test fit 1', ship=Ship(1))
+        efit_calls_after = len(eos_ship.mock_calls)
         # Pyfa model
-        self.assertEqual(ship_new.eve_id, 7)
-        self.assertIs(ship_new.eve_name, None)
+        self.assertEqual(fit.name, 'test fit 1')
+        self.assertIs(fit.source, self.source_tq)
         # Eos model
-        self.assertEqual(eship_calls_after - eship_calls_before, 1)
-        self.assertEqual(eos_ship.mock_calls[-1], call(7))
-        self.assertIs(fit._eos_fit.ship, sentinel.eship_old)
-        self.assertIs(ship_new._eos_item, sentinel.eship_new)
+        self.assertEqual(efit_calls_after - efit_calls_before, 1)
+        self.assertEqual(eos_fit.mock_calls[-1], call())
+        self.assertIs(fit._eos_fit, sentinel.efit)
+        self.assertIs(fit._eos_fit.source, self.eos_source_tq)
         # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_persistence(self, eos_fit, eos_ship):
-        eos_ship.return_value = sentinel.eship
-        ship = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship)
+        eos_fit.return_value = sentinel.efit
+        fit = Fit(name='test fit 1', ship=Ship(1))
         # Reload model via persistence (DB check)
         fit.persist()
-        eship_calls_before = len(eos_ship.mock_calls)
+        efit_calls_before = len(eos_ship.mock_calls)
         self.pyfadb_force_reload()
         fits = self.query_fits()
         self.assertEqual(len(fits), 1)
         fit = fits[0]
-        eship_calls_after = len(eos_ship.mock_calls)
+        efit_calls_after = len(eos_ship.mock_calls)
         # Pyfa model
-        self.assertEqual(fit.ship.eve_id, 1)
-        self.assertEqual(fit.ship.eve_name, 'Item 1 (TQ)')
+        self.assertEqual(fit.name, 'test fit 1')
+        self.assertIs(fit.source, self.source_tq)
         # Eos model
-        self.assertEqual(eship_calls_after - eship_calls_before, 1)
-        self.assertEqual(eos_ship.mock_calls[-1], call(1))
-        self.assertIs(fit._eos_fit.ship, sentinel.eship)
-        # Command queue
-        self.assertIs(fit.has_undo, False)
-        self.assertIs(fit.has_redo, False)
+        self.assertEqual(efit_calls_after - efit_calls_before, 1)
+        self.assertEqual(eos_fit.mock_calls[-1], call())
+        self.assertIs(fit._eos_fit, sentinel.efit)
