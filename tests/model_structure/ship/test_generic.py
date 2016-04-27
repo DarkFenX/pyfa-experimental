@@ -47,16 +47,6 @@ class TestModelShipGeneric(ModelTestCase):
         # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
-        # TODO: following steps shouldn't be here, yet they still fail
-        # TODO: for some unknown reason. Investigate what's happening.
-        # Reload model via persistence (DB check)
-        #eship_calls_before = len(eos_ship.mock_calls)
-        #fit.persist()
-        #self.pyfadb_force_reload()
-        #fits = self.query_fits()
-        #self.assertEqual(len(fits), 1)
-        #fit = fits[0]
-        #eship_calls_after = len(eos_ship.mock_calls)
 
     @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
     @patch('service.data.pyfa_data.fit.fit.EosFit')
