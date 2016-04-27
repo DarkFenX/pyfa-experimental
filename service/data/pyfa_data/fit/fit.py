@@ -52,7 +52,7 @@ class Fit(PyfaBase):
 
     id = Column('fit_id', Integer, primary_key=True)
     name = Column('fit_name', String, nullable=False)
-    _ship_type_id = Column('ship_type_id', Integer, nullable=False)
+    _ship_type_id = Column('ship_type_id', Integer)
     _stance_type_id = Column('stance_type_id', Integer)
 
     _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'))
