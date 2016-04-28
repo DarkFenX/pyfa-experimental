@@ -30,20 +30,19 @@ class TestModelShipGeneric(ModelTestCase):
     @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_instantiation(self, eos_fit, eos_ship):
-        eos_ship.side_effect = [sentinel.eship_old, sentinel.eship_new]
-        ship_old = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship_old)
+        eos_ship.return_value = sentinel.eship
+        fit = Fit(name='test fit 1')
         eship_calls_before = len(eos_ship.mock_calls)
-        ship_new = Ship(7)
+        ship = Ship(7)
         eship_calls_after = len(eos_ship.mock_calls)
         # Pyfa model
-        self.assertEqual(ship_new.eve_id, 7)
-        self.assertIs(ship_new.eve_name, None)
+        self.assertEqual(ship.eve_id, 7)
+        self.assertIs(ship.eve_name, None)
         # Eos model
         self.assertEqual(eship_calls_after - eship_calls_before, 1)
         self.assertEqual(eos_ship.mock_calls[-1], call(7))
-        self.assertIs(fit._eos_fit.ship, sentinel.eship_old)
-        self.assertIs(ship_new._eos_item, sentinel.eship_new)
+        self.assertIsNot(fit._eos_fit.ship, sentinel.eship)
+        self.assertIs(ship._eos_item, sentinel.eship)
         # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)

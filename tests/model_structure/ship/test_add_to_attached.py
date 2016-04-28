@@ -25,22 +25,19 @@ from service.data.pyfa_data.ship.ship import EosShip
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestModelShipAddRemoveAttached(ModelTestCase):
+class TestModelShipAddToAttached(ModelTestCase):
 
     @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_do(self, eos_fit, eos_ship):
-        ship_old = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship_old)
-        ship_new = Ship(7)
+        fit = Fit(name='test fit 1')
+        ship = Ship(7)
         # Action
-        fit.ship = ship_new
+        fit.ship = ship
         # Pyfa model
-        self.assertIs(fit.ship, ship_new)
-        self.assertEqual(ship_old.eve_id, 1)
-        self.assertIs(ship_old.eve_name, None)
-        self.assertEqual(ship_new.eve_id, 7)
-        self.assertEqual(ship_new.eve_name, 'Item 7 (TQ)')
+        self.assertIs(fit.ship, ship)
+        self.assertEqual(ship.eve_id, 7)
+        self.assertEqual(ship.eve_name, 'Item 7 (TQ)')
         # Eos model
         self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
         # Command queue
@@ -58,24 +55,20 @@ class TestModelShipAddRemoveAttached(ModelTestCase):
         # Eos model
         self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
 
-
     @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_undo(self, eos_fit, eos_ship):
-        ship_old = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship_old)
-        ship_new = Ship(7)
-        fit.ship = ship_new
+        fit = Fit(name='test fit 1')
+        ship = Ship(7)
+        fit.ship = ship
         # Action
         fit.undo()
         # Pyfa model
-        self.assertIs(fit.ship, ship_old)
-        self.assertEqual(ship_old.eve_id, 1)
-        self.assertEqual(ship_old.eve_name, 'Item 1 (TQ)')
-        self.assertEqual(ship_new.eve_id, 7)
-        self.assertIs(ship_new.eve_name, None)
+        self.assertIs(fit.ship, None)
+        self.assertEqual(ship.eve_id, 7)
+        self.assertIs(ship.eve_name, None)
         # Eos model
-        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
+        self.assertIs(fit._eos_fit.ship, None)
         # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, True)
@@ -86,28 +79,23 @@ class TestModelShipAddRemoveAttached(ModelTestCase):
         self.assertEqual(len(fits), 1)
         fit = fits[0]
         # Pyfa model
-        self.assertEqual(fit.ship.eve_id, 1)
-        self.assertEqual(fit.ship.eve_name, 'Item 1 (TQ)')
+        self.assertIs(fit.ship, None)
         # Eos model
-        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
-
+        self.assertIs(fit._eos_fit.ship, None)
 
     @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_redo(self, eos_fit, eos_ship):
-        ship_old = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship_old)
-        ship_new = Ship(7)
-        fit.ship = ship_new
+        fit = Fit(name='test fit 1')
+        ship = Ship(7)
+        fit.ship = ship
         fit.undo()
         # Action
         fit.redo()
         # Pyfa model
-        self.assertIs(fit.ship, ship_new)
-        self.assertEqual(ship_old.eve_id, 1)
-        self.assertIs(ship_old.eve_name, None)
-        self.assertEqual(ship_new.eve_id, 7)
-        self.assertEqual(ship_new.eve_name, 'Item 7 (TQ)')
+        self.assertIs(fit.ship, ship)
+        self.assertEqual(ship.eve_id, 7)
+        self.assertEqual(ship.eve_name, 'Item 7 (TQ)')
         # Eos model
         self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
         # Command queue
