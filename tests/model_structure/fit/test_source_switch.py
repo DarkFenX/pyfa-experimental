@@ -18,7 +18,7 @@
 #===============================================================================
 
 
-from unittest.mock import patch, call
+from unittest.mock import patch
 
 from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase

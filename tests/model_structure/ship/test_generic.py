@@ -21,13 +21,12 @@
 from unittest.mock import patch, call, sentinel
 
 from service.data.pyfa_data import *
-from service.data.pyfa_data.ship.ship import EosShip
 from tests.model_structure.model_testcase import ModelTestCase
 
 
 class TestModelShipGeneric(ModelTestCase):
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_instantiation(self, eos_fit, eos_ship):
         eos_ship.return_value = sentinel.eship
@@ -47,7 +46,7 @@ class TestModelShipGeneric(ModelTestCase):
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_persistence(self, eos_fit, eos_ship):
         eos_ship.return_value = sentinel.eship

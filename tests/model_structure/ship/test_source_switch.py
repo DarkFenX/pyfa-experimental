@@ -21,12 +21,11 @@
 from unittest.mock import patch
 
 from service.data.pyfa_data import *
-from service.data.pyfa_data.ship.ship import EosShip
 from tests.model_structure.model_testcase import ModelTestCase
 
 
 class TestModelShipSourceSwitch(ModelTestCase):
-    @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_do(self, eos_fit, eos_ship):
         ship = Ship(3)
@@ -51,7 +50,7 @@ class TestModelShipSourceSwitch(ModelTestCase):
         # We do not save fit's source into DB
         self.assertEqual(fit.ship.eve_name, 'Item 3 (TQ)')
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_undo(self, eos_fit, eos_ship):
         ship = Ship(3)
@@ -68,7 +67,7 @@ class TestModelShipSourceSwitch(ModelTestCase):
         self.assertIs(fit.has_redo, True)
         # We do not check persistence because source is not saved into DB
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip', spec=EosShip)
+    @patch('service.data.pyfa_data.ship.ship.EosShip')
     @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_redo(self, eos_fit, eos_ship):
         ship = Ship(3)
