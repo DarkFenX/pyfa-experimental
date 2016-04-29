@@ -24,9 +24,9 @@ from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
+@patch('service.data.pyfa_data.fit.fit.EosFit')
 class TestModelFitGeneric(ModelTestCase):
 
-    @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_instantiation(self, eos_fit):
         eos_fit.return_value = sentinel.efit
         efit_calls_before = len(eos_fit.mock_calls)
@@ -44,7 +44,6 @@ class TestModelFitGeneric(ModelTestCase):
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
 
-    @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_persistence(self, eos_fit):
         eos_fit.return_value = sentinel.efit
         fit = Fit(name='test fit 1')

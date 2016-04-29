@@ -24,11 +24,11 @@ from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
+@patch('service.data.pyfa_data.ship.ship.EosShip')
+@patch('service.data.pyfa_data.fit.fit.EosFit')
 class TestModelFitSourceSwitch(ModelTestCase):
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip')
-    @patch('service.data.pyfa_data.fit.fit.EosFit')
-    def test_fit_src_switch(self, eos_fit, eos_ship):
+    def test_do(self, eos_fit, eos_ship):
         fit = Fit(name='test fit 1', ship=Ship(1))
         # Action
         fit.source = self.source_sisi
@@ -50,9 +50,7 @@ class TestModelFitSourceSwitch(ModelTestCase):
         # Eos model
         self.assertIs(fit._eos_fit.source, self.eos_source_tq)
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip')
-    @patch('service.data.pyfa_data.fit.fit.EosFit')
-    def test_fit_src_switch_undo(self, eos_fit, eos_ship):
+    def test_undo(self, eos_fit, eos_ship):
         fit = Fit(name='test fit 1', ship=Ship(1))
         fit.source = self.source_sisi
         # Pyfa model
@@ -73,9 +71,7 @@ class TestModelFitSourceSwitch(ModelTestCase):
         self.assertIs(fit.has_redo, True)
         # We do not check persistence because source is not saved into DB
 
-    @patch('service.data.pyfa_data.ship.ship.EosShip')
-    @patch('service.data.pyfa_data.fit.fit.EosFit')
-    def test_fit_src_switch_redo(self, eos_fit, eos_ship):
+    def test_redo(self, eos_fit, eos_ship):
         fit = Fit(name='test fit 1', ship=Ship(1))
         fit.source = self.source_sisi
         fit.undo()

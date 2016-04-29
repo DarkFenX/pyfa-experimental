@@ -24,11 +24,11 @@ from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
+@patch('service.data.pyfa_data.stance.EosStance')
+@patch('service.data.pyfa_data.ship.ship.EosShip')
+@patch('service.data.pyfa_data.fit.fit.EosFit')
 class TestModelStanceGeneric(ModelTestCase):
 
-    @patch('service.data.pyfa_data.stance.EosStance')
-    @patch('service.data.pyfa_data.ship.ship.EosShip')
-    @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_instantiation(self, eos_fit, eos_ship, eos_stance):
         eos_stance.return_value = sentinel.estance
         fit = Fit(name='test fit 1', ship=Ship(1))
@@ -47,9 +47,6 @@ class TestModelStanceGeneric(ModelTestCase):
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
 
-    @patch('service.data.pyfa_data.stance.EosStance')
-    @patch('service.data.pyfa_data.ship.ship.EosShip')
-    @patch('service.data.pyfa_data.fit.fit.EosFit')
     def test_persistence(self, eos_fit, eos_ship, eos_stance):
         eos_stance.return_value = sentinel.estance
         fit = Fit(name='test fit 1', ship=Ship(1))
