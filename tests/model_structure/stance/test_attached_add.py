@@ -27,45 +27,13 @@ from tests.model_structure.model_testcase import ModelTestCase
 @patch('service.data.pyfa_data.stance.EosStance')
 @patch('service.data.pyfa_data.ship.ship.EosShip')
 @patch('service.data.pyfa_data.fit.fit.EosFit')
-class TestModelShipRemoveFromAttached(ModelTestCase):
+class TestModelShipAttachedAdd(ModelTestCase):
 
     def test_do(self, eos_fit, eos_ship, eos_stance):
-        ship = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship)
+        fit = Fit(name='test fit 1', ship=Ship(1))
         stance = Stance(5)
-        fit.ship.stance = stance
-        fit.purge_commands()
         # Action
-        fit.ship.stance = None
-        # Pyfa model
-        self.assertIs(fit.ship.stance, None)
-        self.assertEqual(stance.eve_id, 5)
-        self.assertIs(stance.eve_name, None)
-        # Eos model
-        self.assertIs(fit._eos_fit.stance, None)
-        # Command queue
-        self.assertIs(fit.has_undo, True)
-        self.assertIs(fit.has_redo, False)
-        # Reload model via persistence (DB check)
-        fit.persist()
-        self.pyfadb_force_reload()
-        fits = self.query_fits()
-        self.assertEqual(len(fits), 1)
-        fit = fits[0]
-        # Pyfa model
-        self.assertIs(fit.ship.stance, None)
-        # Eos model
-        self.assertIs(fit._eos_fit.stance, None)
-
-    def test_undo(self, eos_fit, eos_ship, eos_stance):
-        ship = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship)
-        stance = Stance(5)
         fit.ship.stance = stance
-        fit.purge_commands()
-        fit.ship.stance = None
-        # Action
-        fit.undo()
         # Pyfa model
         self.assertIs(fit.ship.stance, stance)
         self.assertEqual(stance.eve_id, 5)
@@ -73,8 +41,8 @@ class TestModelShipRemoveFromAttached(ModelTestCase):
         # Eos model
         self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
         # Command queue
-        self.assertIs(fit.has_undo, False)
-        self.assertIs(fit.has_redo, True)
+        self.assertIs(fit.has_undo, True)
+        self.assertIs(fit.has_redo, False)
         # Reload model via persistence (DB check)
         fit.persist()
         self.pyfadb_force_reload()
@@ -87,16 +55,12 @@ class TestModelShipRemoveFromAttached(ModelTestCase):
         # Eos model
         self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
 
-    def test_redo(self, eos_fit, eos_ship, eos_stance):
-        ship = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship)
+    def test_undo(self, eos_fit, eos_ship, eos_stance):
+        fit = Fit(name='test fit 1', ship=Ship(1))
         stance = Stance(5)
         fit.ship.stance = stance
-        fit.purge_commands()
-        fit.ship.stance = None
-        fit.undo()
         # Action
-        fit.redo()
+        fit.undo()
         # Pyfa model
         self.assertIs(fit.ship.stance, None)
         self.assertEqual(stance.eve_id, 5)
@@ -104,8 +68,8 @@ class TestModelShipRemoveFromAttached(ModelTestCase):
         # Eos model
         self.assertIs(fit._eos_fit.stance, None)
         # Command queue
-        self.assertIs(fit.has_undo, True)
-        self.assertIs(fit.has_redo, False)
+        self.assertIs(fit.has_undo, False)
+        self.assertIs(fit.has_redo, True)
         # Reload model via persistence (DB check)
         fit.persist()
         self.pyfadb_force_reload()
@@ -116,3 +80,32 @@ class TestModelShipRemoveFromAttached(ModelTestCase):
         self.assertIs(fit.ship.stance, None)
         # Eos model
         self.assertIs(fit._eos_fit.stance, None)
+
+
+    def test_redo(self, eos_fit, eos_ship, eos_stance):
+        fit = Fit(name='test fit 1', ship=Ship(1))
+        stance = Stance(5)
+        fit.ship.stance = stance
+        fit.undo()
+        # Action
+        fit.redo()
+        # Pyfa model
+        self.assertIs(fit.ship.stance, stance)
+        self.assertEqual(stance.eve_id, 5)
+        self.assertEqual(stance.eve_name, 'Item 5 (TQ)')
+        # Eos model
+        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
+        # Command queue
+        self.assertIs(fit.has_undo, True)
+        self.assertIs(fit.has_redo, False)
+        # Reload model via persistence (DB check)
+        fit.persist()
+        self.pyfadb_force_reload()
+        fits = self.query_fits()
+        self.assertEqual(len(fits), 1)
+        fit = fits[0]
+        # Pyfa model
+        self.assertEqual(fit.ship.stance.eve_id, 5)
+        self.assertEqual(fit.ship.stance.eve_name, 'Item 5 (TQ)')
+        # Eos model
+        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)

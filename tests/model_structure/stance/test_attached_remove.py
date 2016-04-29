@@ -27,19 +27,22 @@ from tests.model_structure.model_testcase import ModelTestCase
 @patch('service.data.pyfa_data.stance.EosStance')
 @patch('service.data.pyfa_data.ship.ship.EosShip')
 @patch('service.data.pyfa_data.fit.fit.EosFit')
-class TestModelShipAddToAttached(ModelTestCase):
+class TestModelShipAttachedRemove(ModelTestCase):
 
     def test_do(self, eos_fit, eos_ship, eos_stance):
-        fit = Fit(name='test fit 1', ship=Ship(1))
+        ship = Ship(1)
+        fit = Fit(name='test fit 1', ship=ship)
         stance = Stance(5)
-        # Action
         fit.ship.stance = stance
+        fit.purge_commands()
+        # Action
+        fit.ship.stance = None
         # Pyfa model
-        self.assertIs(fit.ship.stance, stance)
+        self.assertIs(fit.ship.stance, None)
         self.assertEqual(stance.eve_id, 5)
-        self.assertEqual(stance.eve_name, 'Item 5 (TQ)')
+        self.assertIs(stance.eve_name, None)
         # Eos model
-        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
+        self.assertIs(fit._eos_fit.stance, None)
         # Command queue
         self.assertIs(fit.has_undo, True)
         self.assertIs(fit.has_redo, False)
@@ -50,23 +53,25 @@ class TestModelShipAddToAttached(ModelTestCase):
         self.assertEqual(len(fits), 1)
         fit = fits[0]
         # Pyfa model
-        self.assertEqual(fit.ship.stance.eve_id, 5)
-        self.assertEqual(fit.ship.stance.eve_name, 'Item 5 (TQ)')
+        self.assertIs(fit.ship.stance, None)
         # Eos model
-        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
+        self.assertIs(fit._eos_fit.stance, None)
 
     def test_undo(self, eos_fit, eos_ship, eos_stance):
-        fit = Fit(name='test fit 1', ship=Ship(1))
+        ship = Ship(1)
+        fit = Fit(name='test fit 1', ship=ship)
         stance = Stance(5)
         fit.ship.stance = stance
+        fit.purge_commands()
+        fit.ship.stance = None
         # Action
         fit.undo()
         # Pyfa model
-        self.assertIs(fit.ship.stance, None)
+        self.assertIs(fit.ship.stance, stance)
         self.assertEqual(stance.eve_id, 5)
-        self.assertIs(stance.eve_name, None)
+        self.assertEqual(stance.eve_name, 'Item 5 (TQ)')
         # Eos model
-        self.assertIs(fit._eos_fit.stance, None)
+        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
         # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, True)
@@ -77,24 +82,27 @@ class TestModelShipAddToAttached(ModelTestCase):
         self.assertEqual(len(fits), 1)
         fit = fits[0]
         # Pyfa model
-        self.assertIs(fit.ship.stance, None)
+        self.assertEqual(fit.ship.stance.eve_id, 5)
+        self.assertEqual(fit.ship.stance.eve_name, 'Item 5 (TQ)')
         # Eos model
-        self.assertIs(fit._eos_fit.stance, None)
-
+        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
 
     def test_redo(self, eos_fit, eos_ship, eos_stance):
-        fit = Fit(name='test fit 1', ship=Ship(1))
+        ship = Ship(1)
+        fit = Fit(name='test fit 1', ship=ship)
         stance = Stance(5)
         fit.ship.stance = stance
+        fit.purge_commands()
+        fit.ship.stance = None
         fit.undo()
         # Action
         fit.redo()
         # Pyfa model
-        self.assertIs(fit.ship.stance, stance)
+        self.assertIs(fit.ship.stance, None)
         self.assertEqual(stance.eve_id, 5)
-        self.assertEqual(stance.eve_name, 'Item 5 (TQ)')
+        self.assertIs(stance.eve_name, None)
         # Eos model
-        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
+        self.assertIs(fit._eos_fit.stance, None)
         # Command queue
         self.assertIs(fit.has_undo, True)
         self.assertIs(fit.has_redo, False)
@@ -105,7 +113,6 @@ class TestModelShipAddToAttached(ModelTestCase):
         self.assertEqual(len(fits), 1)
         fit = fits[0]
         # Pyfa model
-        self.assertEqual(fit.ship.stance.eve_id, 5)
-        self.assertEqual(fit.ship.stance.eve_name, 'Item 5 (TQ)')
+        self.assertIs(fit.ship.stance, None)
         # Eos model
-        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
+        self.assertIs(fit._eos_fit.stance, None)
