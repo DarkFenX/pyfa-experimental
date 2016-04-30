@@ -87,7 +87,7 @@ class Ship(EveItemWrapper):
         if new_stance is old_stance:
             return
         if old_stance is not None:
-            if old_stance._ship is None:
+            if old_stance._ship is not self:
                 raise ItemRemovalConsistencyError(old_stance)
             old_stance._ship = None
         # Update forward reference
