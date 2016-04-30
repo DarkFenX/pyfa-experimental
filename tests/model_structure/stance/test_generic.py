@@ -18,18 +18,16 @@
 #===============================================================================
 
 
-from unittest.mock import patch, call, sentinel
+from unittest.mock import call, sentinel
 
 from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-@patch('service.data.pyfa_data.stance.EosStance')
-@patch('service.data.pyfa_data.ship.ship.EosShip')
-@patch('service.data.pyfa_data.fit.fit.EosFit')
 class TestModelStanceGeneric(ModelTestCase):
 
-    def test_instantiation(self, eos_fit, eos_ship, eos_stance):
+    def test_instantiation(self):
+        eos_stance = self.eos_stance
         eos_stance.return_value = sentinel.estance
         fit = Fit(name='test fit 1', ship=Ship(1))
         estance_calls_before = len(eos_stance.mock_calls)
@@ -41,13 +39,14 @@ class TestModelStanceGeneric(ModelTestCase):
         # Eos model
         self.assertEqual(estance_calls_after - estance_calls_before, 1)
         self.assertEqual(eos_stance.mock_calls[-1], call(4))
-        self.assertIsNot(fit._eos_fit.stance, sentinel.estance)
+        self.assertIs(fit._eos_fit.stance, None)
         self.assertIs(stance._eos_item, sentinel.estance)
         # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
 
-    def test_persistence(self, eos_fit, eos_ship, eos_stance):
+    def test_persistence(self):
+        eos_stance = self.eos_stance
         eos_stance.return_value = sentinel.estance
         fit = Fit(name='test fit 1', ship=Ship(1))
         fit.ship.stance = Stance(4)

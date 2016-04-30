@@ -18,17 +18,13 @@
 #===============================================================================
 
 
-from unittest.mock import patch
-
 from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-@patch('service.data.pyfa_data.ship.ship.EosShip')
-@patch('service.data.pyfa_data.fit.fit.EosFit')
 class TestModelShipAttachedRemove(ModelTestCase):
 
-    def test_do(self, eos_fit, eos_ship):
+    def test_do(self):
         ship = Ship(1)
         fit = Fit(name='test fit 1', ship=ship)
         # Action
@@ -53,7 +49,7 @@ class TestModelShipAttachedRemove(ModelTestCase):
         # Eos model
         self.assertIs(fit._eos_fit.ship, None)
 
-    def test_undo(self, eos_fit, eos_ship):
+    def test_undo(self):
         ship = Ship(1)
         fit = Fit(name='test fit 1', ship=ship)
         fit.ship = None
@@ -80,7 +76,7 @@ class TestModelShipAttachedRemove(ModelTestCase):
         # Eos model
         self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
 
-    def test_redo(self, eos_fit, eos_ship):
+    def test_redo(self):
         ship = Ship(1)
         fit = Fit(name='test fit 1', ship=ship)
         fit.ship = None

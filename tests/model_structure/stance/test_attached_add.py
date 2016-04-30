@@ -18,18 +18,13 @@
 #===============================================================================
 
 
-from unittest.mock import patch
-
 from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-@patch('service.data.pyfa_data.stance.EosStance')
-@patch('service.data.pyfa_data.ship.ship.EosShip')
-@patch('service.data.pyfa_data.fit.fit.EosFit')
 class TestModelShipAttachedAdd(ModelTestCase):
 
-    def test_do(self, eos_fit, eos_ship, eos_stance):
+    def test_do(self):
         fit = Fit(name='test fit 1', ship=Ship(1))
         stance = Stance(5)
         # Action
@@ -55,7 +50,7 @@ class TestModelShipAttachedAdd(ModelTestCase):
         # Eos model
         self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
 
-    def test_undo(self, eos_fit, eos_ship, eos_stance):
+    def test_undo(self):
         fit = Fit(name='test fit 1', ship=Ship(1))
         stance = Stance(5)
         fit.ship.stance = stance
@@ -81,8 +76,7 @@ class TestModelShipAttachedAdd(ModelTestCase):
         # Eos model
         self.assertIs(fit._eos_fit.stance, None)
 
-
-    def test_redo(self, eos_fit, eos_ship, eos_stance):
+    def test_redo(self):
         fit = Fit(name='test fit 1', ship=Ship(1))
         stance = Stance(5)
         fit.ship.stance = stance

@@ -18,16 +18,16 @@
 #===============================================================================
 
 
-from unittest.mock import patch, call, sentinel
+from unittest.mock import call, sentinel
 
 from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-@patch('service.data.pyfa_data.fit.fit.EosFit')
 class TestModelFitGeneric(ModelTestCase):
 
-    def test_instantiation(self, eos_fit):
+    def test_instantiation(self):
+        eos_fit = self.eos_fit
         eos_fit.return_value = sentinel.efit
         efit_calls_before = len(eos_fit.mock_calls)
         fit = Fit(name='test fit 1')
@@ -44,7 +44,8 @@ class TestModelFitGeneric(ModelTestCase):
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
 
-    def test_persistence(self, eos_fit):
+    def test_persistence(self):
+        eos_fit = self.eos_fit
         eos_fit.return_value = sentinel.efit
         fit = Fit(name='test fit 1')
         # Reload model via persistence (DB check)

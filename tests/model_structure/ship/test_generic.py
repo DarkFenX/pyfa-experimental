@@ -18,17 +18,16 @@
 #===============================================================================
 
 
-from unittest.mock import patch, call, sentinel
+from unittest.mock import call, sentinel
 
 from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-@patch('service.data.pyfa_data.ship.ship.EosShip')
-@patch('service.data.pyfa_data.fit.fit.EosFit')
 class TestModelShipGeneric(ModelTestCase):
 
-    def test_instantiation(self, eos_fit, eos_ship):
+    def test_instantiation(self):
+        eos_ship = self.eos_ship
         eos_ship.return_value = sentinel.eship
         fit = Fit(name='test fit 1')
         eship_calls_before = len(eos_ship.mock_calls)
@@ -40,13 +39,14 @@ class TestModelShipGeneric(ModelTestCase):
         # Eos model
         self.assertEqual(eship_calls_after - eship_calls_before, 1)
         self.assertEqual(eos_ship.mock_calls[-1], call(7))
-        self.assertIsNot(fit._eos_fit.ship, sentinel.eship)
+        self.assertIs(fit._eos_fit.ship, None)
         self.assertIs(ship._eos_item, sentinel.eship)
         # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, False)
 
-    def test_persistence(self, eos_fit, eos_ship):
+    def test_persistence(self):
+        eos_ship = self.eos_ship
         eos_ship.return_value = sentinel.eship
         ship = Ship(1)
         fit = Fit(name='test fit 1', ship=ship)

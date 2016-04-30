@@ -22,19 +22,26 @@ from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestModelShipAttachedAdd(ModelTestCase):
+class TestModelShipCoupledAdd(ModelTestCase):
 
     def test_do(self):
         fit = Fit(name='test fit 1')
-        ship = Ship(7)
-        # Action
+        ship = Ship(1)
+        stance = Stance(5)
+        # Action (adding to detached parent)
+        ship.stance = stance
+        # Pyfa model
+        self.assertIs(ship.stance, stance)
+        self.assertEqual(stance.eve_id, 5)
+        self.assertIs(stance.eve_name, None)
+        # Action (adding with parent to fit)
         fit.ship = ship
         # Pyfa model
-        self.assertIs(fit.ship, ship)
-        self.assertEqual(ship.eve_id, 7)
-        self.assertEqual(ship.eve_name, 'Item 7 (TQ)')
+        self.assertIs(ship.stance, stance)
+        self.assertEqual(stance.eve_id, 5)
+        self.assertEqual(stance.eve_name, 'Item 5 (TQ)')
         # Eos model
-        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
+        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
         # Command queue
         self.assertIs(fit.has_undo, True)
         self.assertIs(fit.has_redo, False)
@@ -45,23 +52,25 @@ class TestModelShipAttachedAdd(ModelTestCase):
         self.assertEqual(len(fits), 1)
         fit = fits[0]
         # Pyfa model
-        self.assertEqual(fit.ship.eve_id, 7)
-        self.assertEqual(fit.ship.eve_name, 'Item 7 (TQ)')
+        self.assertEqual(fit.ship.stance.eve_id, 5)
+        self.assertEqual(fit.ship.stance.eve_name, 'Item 5 (TQ)')
         # Eos model
-        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
+        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
 
     def test_undo(self):
         fit = Fit(name='test fit 1')
-        ship = Ship(7)
+        ship = Ship(1)
+        stance = Stance(5)
+        ship.stance = stance
         fit.ship = ship
         # Action
         fit.undo()
         # Pyfa model
-        self.assertIs(fit.ship, None)
-        self.assertEqual(ship.eve_id, 7)
-        self.assertIs(ship.eve_name, None)
+        self.assertIs(ship.stance, stance)
+        self.assertEqual(stance.eve_id, 5)
+        self.assertIs(stance.eve_name, None)
         # Eos model
-        self.assertIs(fit._eos_fit.ship, None)
+        self.assertIs(fit._eos_fit.stance, None)
         # Command queue
         self.assertIs(fit.has_undo, False)
         self.assertIs(fit.has_redo, True)
@@ -74,21 +83,23 @@ class TestModelShipAttachedAdd(ModelTestCase):
         # Pyfa model
         self.assertIs(fit.ship, None)
         # Eos model
-        self.assertIs(fit._eos_fit.ship, None)
+        self.assertIs(fit._eos_fit.stance, None)
 
     def test_redo(self):
         fit = Fit(name='test fit 1')
-        ship = Ship(7)
+        ship = Ship(1)
+        stance = Stance(5)
+        ship.stance = stance
         fit.ship = ship
         fit.undo()
         # Action
         fit.redo()
         # Pyfa model
-        self.assertIs(fit.ship, ship)
-        self.assertEqual(ship.eve_id, 7)
-        self.assertEqual(ship.eve_name, 'Item 7 (TQ)')
+        self.assertIs(ship.stance, stance)
+        self.assertEqual(stance.eve_id, 5)
+        self.assertEqual(stance.eve_name, 'Item 5 (TQ)')
         # Eos model
-        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
+        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)
         # Command queue
         self.assertIs(fit.has_undo, True)
         self.assertIs(fit.has_redo, False)
@@ -99,7 +110,7 @@ class TestModelShipAttachedAdd(ModelTestCase):
         self.assertEqual(len(fits), 1)
         fit = fits[0]
         # Pyfa model
-        self.assertEqual(fit.ship.eve_id, 7)
-        self.assertEqual(fit.ship.eve_name, 'Item 7 (TQ)')
+        self.assertEqual(fit.ship.stance.eve_id, 5)
+        self.assertEqual(fit.ship.stance.eve_name, 'Item 5 (TQ)')
         # Eos model
-        self.assertIs(fit._eos_fit.ship, fit.ship._eos_item)
+        self.assertIs(fit._eos_fit.stance, fit.ship.stance._eos_item)

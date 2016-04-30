@@ -41,6 +41,7 @@ class ModelTestCase(PyfaTestCase):
     self.source_sisi -- secondary pyfa source
     self.eos_src_tq -- mock which is used as TQ eos source
     self.eos_src_sisi -- mock which is used as SiSi eos source
+    self.eos_fit -- mock which is used as EosFit class
 
     We need last two because mock_calls do not support __setattr__,
     and we set eos source via property setter. To check it, we need
@@ -59,6 +60,8 @@ class ModelTestCase(PyfaTestCase):
         # Prepare pyfa database
         self.__remove_pyfa_db()
         PyfaDataManager.set_pyfadb_path(self.pyfadb_path)
+        # Set up custom mocks
+        self.__init_eos_mocks()
 
     @patch('service.source.EosSourceManager')
     def tearDown(self, eos_srcman):
@@ -82,6 +85,32 @@ class ModelTestCase(PyfaTestCase):
 
     def query_fits(self):
         return query_all_fits()
+
+    def __init_eos_mocks(self):
+        """
+        Initialize mocks for all 'core' eos fit-related objects.
+
+        For EosFit, as we need to check its attributes from time
+        to time, set them to the same values as on real EosFit
+        instance by default.
+        """
+        # Fit
+        patcher_fit = patch('service.data.pyfa_data.fit.fit.EosFit')
+        self.addCleanup(patcher_fit.stop)
+        eos_fit = patcher_fit.start()
+        eos_fit().ship = None
+        eos_fit().stance = None
+        eos_fit().character = None
+        eos_fit().effect_beacon = None
+        self.eos_fit = eos_fit
+        # Ship
+        patcher_ship = patch('service.data.pyfa_data.ship.ship.EosShip')
+        self.addCleanup(patcher_ship.stop)
+        self.eos_ship = patcher_ship.start()
+        # Stance
+        patcher_stance = patch('service.data.pyfa_data.stance.EosStance')
+        self.addCleanup(patcher_stance.stop)
+        self.eos_stance = patcher_stance.start()
 
     def __remove_pyfa_db(self):
         if os.path.isfile(self.pyfadb_path):
