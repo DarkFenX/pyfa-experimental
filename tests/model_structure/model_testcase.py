@@ -111,6 +111,10 @@ class ModelTestCase(PyfaTestCase):
         patcher_stance = patch('service.data.pyfa_data.stance.EosStance')
         self.addCleanup(patcher_stance.stop)
         self.eos_stance = patcher_stance.start()
+        # Subsystem
+        patcher_subsystem = patch('service.data.pyfa_data.subsystem.EosSubsystem')
+        self.addCleanup(patcher_subsystem.stop)
+        self.eos_subsystem = patcher_subsystem.start()
 
     def __remove_pyfa_db(self):
         if os.path.isfile(self.pyfadb_path):
