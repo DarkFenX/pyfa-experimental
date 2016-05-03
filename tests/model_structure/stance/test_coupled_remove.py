@@ -22,7 +22,7 @@ from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestModelShipCoupledRemoved(ModelTestCase):
+class TestModelStanceCoupledRemoved(ModelTestCase):
 
     def test_do(self):
         fit = Fit(name='test fit 1')

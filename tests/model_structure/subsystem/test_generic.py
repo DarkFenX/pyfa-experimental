@@ -24,7 +24,7 @@ from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestModelStanceGeneric(ModelTestCase):
+class TestModelSubsystemGeneric(ModelTestCase):
 
     def test_instantiation(self):
         eos_subsystem = self.eos_subsystem
