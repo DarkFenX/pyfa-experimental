@@ -42,6 +42,12 @@ class TestModelStanceCoupledRemoved(ModelTestCase):
         # Command queue
         self.assertIs(fit.has_undo, True)
         self.assertIs(fit.has_redo, False)
+        # Action (removing from detached parent)
+        ship.stance = None
+        # Pyfa model
+        self.assertIs(ship.stance, None)
+        self.assertEqual(stance.eve_id, 5)
+        self.assertIs(stance.eve_name, None)
         # Reload model via persistence (DB check)
         fit.persist()
         self.pyfadb_force_reload()
@@ -52,12 +58,6 @@ class TestModelStanceCoupledRemoved(ModelTestCase):
         self.assertIs(fit.ship, None)
         # Eos model
         self.assertIs(fit._eos_fit.stance, None)
-        # Action (removing from detached parent)
-        ship.stance = None
-        # Pyfa model
-        self.assertIs(ship.stance, None)
-        self.assertEqual(stance.eve_id, 5)
-        self.assertIs(stance.eve_name, None)
 
     def test_undo(self):
         fit = Fit(name='test fit 1')
