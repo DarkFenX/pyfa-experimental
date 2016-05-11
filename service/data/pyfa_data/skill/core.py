@@ -85,19 +85,22 @@ class Skill(PyfaBase, EveItemWrapper):
         # Update DB
         self._level = new_level
         # Update proxies of this skill
-        for char_proxy in self._character._proxy_iter():
+        for char_proxy in self._char_core._proxy_iter():
             char_proxy.skills[self.eve_id]._set_level(new_level)
 
     # Auxiliary methods
     @property
     def _char_core(self):
-        return self._character
+        return self.__char_core
 
     @_char_core.setter
     def _char_core(self, new_char_core):
         old_char_core = self._char_core
         # Update DB and Eos
         self._unregister_on_char_core(old_char_core)
+        # Update reverse reference
+        self.__char_core = new_char_core
+        # Update DB and Eos
         self._register_on_char_core(new_char_core)
         # Update EVE item
         self._update_source()
@@ -105,14 +108,14 @@ class Skill(PyfaBase, EveItemWrapper):
     def _register_on_char_core(self, char_core):
         if char_core is not None:
             # Update DB
-            self._character = char_core
+            char_core._skills.add(self)
             # Update Eos
             char_core._eos_fit.skills.add(self.__eos_skill)
 
     def _unregister_on_char_core(self, char_core):
         if char_core is not None:
             # Update DB
-            self._character = None
+            char_core._skills.remove(self)
             # Update Eos
             char_core._eos_fit.skills.remove(self.__eos_skill)
 
