@@ -86,6 +86,7 @@ class SkillCoreSet(RestrictedSet):
 
     def add(self, skill):
         if skill._character is not None:
+            print(skill._character)
             raise ItemAlreadyUsedError(skill)
         super().add(skill)
         skill._character = self.__char_core

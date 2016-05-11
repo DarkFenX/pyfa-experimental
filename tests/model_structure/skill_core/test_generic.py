@@ -31,40 +31,44 @@ class TestModelSkillCoreGeneric(ModelTestCase):
         eos_skillcore.return_value = sentinel.eskill
         char = Character(alias='test char 1')
         eskill_calls_before = len(eos_skillcore.mock_calls)
-        skill = Skill(6)
+        econt_calls_before = len(char._eos_fit.skills.mock_calls)
+        skill = Skill(6, level=3)
         eskill_calls_after = len(eos_skillcore.mock_calls)
+        econt_calls_after = len(char._eos_fit.skills.mock_calls)
         # Pyfa model
         self.assertEqual(skill.eve_id, 6)
+        self.assertEqual(skill.level, 3)
         self.assertIs(skill.eve_name, None)
         # Eos model
         self.assertEqual(eskill_calls_after - eskill_calls_before, 1)
-        self.assertEqual(eos_skillcore.mock_calls[-1], call(6))
-        self.assertIs(char._eos_fit.ship, None)
-        self.assertIs(ship._eos_item, sentinel.eship)
-        # Command queue
-        self.assertIs(fit.has_undo, False)
-        self.assertIs(fit.has_redo, False)
+        self.assertEqual(eos_skillcore.mock_calls[-1], call(6, level=3))
+        self.assertEqual(econt_calls_after - econt_calls_before, 0)
+        self.assertIs(skill._eos_item, sentinel.eskill)
 
     def test_persistence(self):
-        eos_ship = self.eos_ship
-        eos_ship.return_value = sentinel.eship
-        ship = Ship(1)
-        fit = Fit(name='test fit 1', ship=ship)
+        eos_skillcore = self.eos_skillcore
+        eos_skillcore.return_value = sentinel.eskill
+        char = Character(alias='test char 1')
+        skill = Skill(6, level=3)
+        char.skills.add(skill)
         # Reload model via persistence (DB check)
-        fit.persist()
-        eship_calls_before = len(eos_ship.mock_calls)
+        char.persist()
+        eskill_calls_before = len(eos_skillcore.mock_calls)
+        econt_calls_before = len(char._eos_fit.skills.mock_calls)
         self.pyfadb_force_reload()
-        fits = self.query_fits()
-        self.assertEqual(len(fits), 1)
-        fit = fits[0]
-        eship_calls_after = len(eos_ship.mock_calls)
+        chars = self.query_chars()
+        self.assertEqual(len(chars), 1)
+        char = chars[0]
+        eskill_calls_after = len(eos_skillcore.mock_calls)
+        econt_calls_after = len(char._eos_fit.skills.mock_calls)
         # Pyfa model
-        self.assertEqual(fit.ship.eve_id, 1)
-        self.assertEqual(fit.ship.eve_name, 'Item 1 (TQ)')
+        self.assertEqual(len(char.skills), 1)
+        skill = next(iter(char.skills))
+        self.assertEqual(skill.eve_id, 6)
+        self.assertEqual(skill.level, 3)
+        self.assertEqual(skill.eve_name, 'Item 6 (TQ)')
         # Eos model
-        self.assertEqual(eship_calls_after - eship_calls_before, 1)
-        self.assertEqual(eos_ship.mock_calls[-1], call(1))
-        self.assertIs(fit._eos_fit.ship, sentinel.eship)
-        # Command queue
-        self.assertIs(fit.has_undo, False)
-        self.assertIs(fit.has_redo, False)
+        self.assertEqual(eskill_calls_after - eskill_calls_before, 1)
+        self.assertEqual(eos_skillcore.mock_calls[-1], call(6, level=3))
+        self.assertEqual(econt_calls_after - econt_calls_before, 1)
+        self.assertEqual(char._eos_fit.skills.mock_calls[-1], call.add(sentinel.eskill))

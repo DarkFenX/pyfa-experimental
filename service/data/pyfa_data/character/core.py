@@ -65,7 +65,7 @@ class Character(PyfaBase, EveItemWrapper):
         self.source = SourceManager.default
         # Restore entities which are stored on character
         for skill in self._skills:
-            self.skill.add(skill)
+            self.skills.add(skill)
 
     def __generic_init(self):
         char_type_id = Type.character_static
