@@ -122,6 +122,10 @@ class ModelTestCase(PyfaTestCase):
         patcher_corechar_fit = patch('service.data.pyfa_data.character.core.EosFit')
         self.addCleanup(patcher_corechar_fit.stop)
         self.eos_corechar_fit = patcher_corechar_fit.start()
+        # Skill
+        patcher_skillcore = patch('service.data.pyfa_data.skill.core.EosSkill')
+        self.addCleanup(patcher_skillcore.stop)
+        self.eos_skillcore = patcher_skillcore.start()
 
     def __remove_pyfa_db(self):
         if os.path.isfile(self.pyfadb_path):
