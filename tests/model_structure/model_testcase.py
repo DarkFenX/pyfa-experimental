@@ -86,6 +86,9 @@ class ModelTestCase(PyfaTestCase):
     def query_fits(self):
         return query_all_fits()
 
+    def query_chars(self):
+        return query_all_characters()
+
     def __init_eos_mocks(self):
         """
         Initialize mocks for all 'core' eos fit-related objects.
@@ -115,6 +118,10 @@ class ModelTestCase(PyfaTestCase):
         patcher_subsystem = patch('service.data.pyfa_data.subsystem.EosSubsystem')
         self.addCleanup(patcher_subsystem.stop)
         self.eos_subsystem = patcher_subsystem.start()
+        # Character
+        patcher_corechar_fit = patch('service.data.pyfa_data.character.core.EosFit')
+        self.addCleanup(patcher_corechar_fit.stop)
+        self.eos_corechar_fit = patcher_corechar_fit.start()
 
     def __remove_pyfa_db(self):
         if os.path.isfile(self.pyfadb_path):

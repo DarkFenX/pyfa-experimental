@@ -22,7 +22,7 @@ from itertools import chain
 from weakref import WeakSet
 
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship, reconstructor
+from sqlalchemy.orm import reconstructor
 
 from eos import Fit as EosFit
 from service.data.pyfa_data.base import PyfaBase, EveItemWrapper

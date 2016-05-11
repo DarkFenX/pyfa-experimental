@@ -16,26 +16,3 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Pyfa 3. If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
-
-
-from .character import Character
-from .fit import Fit
-from .pyfadata_mgr import PyfaDataManager
-
-
-def query_all_fits():
-    pyfadata_session = PyfaDataManager.session
-    fits = pyfadata_session.query(Fit).all()
-    return fits
-
-
-def query_all_characters():
-    pyfadata_session = PyfaDataManager.session
-    chars = pyfadata_session.query(Character).all()
-    return chars
-
-
-__all__ = [
-    'query_all_fits',
-    'query_all_characters'
-]
