@@ -30,7 +30,7 @@ class Subsystem(PyfaBase, EveItemWrapper):
     """
     Pyfa model: ship.{subsystems}
     Eos model: efit.{subsystems}
-    DB model: fit.{_subsystems}
+    DB model: fit.{_db_subsystems}
     """
 
     __tablename__ = 'subsystems'
@@ -38,8 +38,8 @@ class Subsystem(PyfaBase, EveItemWrapper):
     _id = Column('subsystem_id', Integer, primary_key=True)
 
     _fit_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'), nullable=False)
-    _fit = relationship('Fit', backref=backref(
-        '_subsystems', collection_class=set, cascade='all, delete-orphan'))
+    _db_fit = relationship('Fit', backref=backref(
+        '_db_subsystems', collection_class=set, cascade='all, delete-orphan'))
 
     _type_id = Column('type_id', Integer, nullable=False)
 
@@ -90,14 +90,14 @@ class Subsystem(PyfaBase, EveItemWrapper):
     def _register_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            fit._subsystems.add(self)
+            fit._db_subsystems.add(self)
             # Update Eos
             fit._eos_fit.subsystems.add(self.__eos_subsystem)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            fit._subsystems.remove(self)
+            fit._db_subsystems.remove(self)
             # Update Eos
             fit._eos_fit.subsystems.remove(self.__eos_subsystem)
 

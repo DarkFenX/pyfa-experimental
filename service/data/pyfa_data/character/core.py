@@ -64,7 +64,7 @@ class Character(PyfaBase, EveItemWrapper):
         # Use default source for all reconstructed characters
         self.source = SourceManager.default
         # Restore entities which are stored on character
-        for skill in self._skills:
+        for skill in self._db_skills:
             self.skills.add(skill)
 
     def __generic_init(self):

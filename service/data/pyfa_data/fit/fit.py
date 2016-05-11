@@ -56,7 +56,7 @@ class Fit(PyfaBase):
     _stance_type_id = Column('stance_type_id', Integer)
 
     _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'))
-    _character = relationship('Character')
+    _db_character = relationship('Character')
 
     def __init__(self, name='', source=None, ship=None):
         self.__generic_init()
@@ -77,7 +77,7 @@ class Fit(PyfaBase):
             self._set_ship(Ship(self._ship_type_id))
             if self._stance_type_id is not None:
                 self.ship._set_stance(Stance(self._stance_type_id))
-            for subsystem in self._subsystems:
+            for subsystem in self._db_subsystems:
                 self.ship.subsystems._add_to_set(subsystem)
 
     def __generic_init(self):
@@ -96,7 +96,7 @@ class Fit(PyfaBase):
         self.__set_character_proxy(CharacterProxy())
         # Assign character core, which should handle adding
         # all of its child objects (like skills)
-        self.character_core = self._character
+        self.character_core = self._db_character
 
     # Define list of source-dependent child objects, it's necessary
     # to update fit source
@@ -127,7 +127,7 @@ class Fit(PyfaBase):
         # Update forward reference
         self.__character_core = new_char_core
         # Update DB
-        self._character = new_char_core
+        self._db_character = new_char_core
         # Handle all interactions between new character core and
         # character proxy (which is attached to this fit) on proxy
         # side

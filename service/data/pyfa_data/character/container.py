@@ -80,10 +80,6 @@ class SkillCoreSet(RestrictedSet):
         super().__init__()
         self.__char_core = char_core
 
-    @property
-    def _set(self):
-        return self.__char_core._skills
-
     def add(self, skill):
         if skill._char_core is not None:
             raise ItemAlreadyUsedError(skill)

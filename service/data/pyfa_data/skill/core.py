@@ -40,8 +40,8 @@ class Skill(PyfaBase, EveItemWrapper):
     __tablename__ = 'skills'
 
     _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'), primary_key=True)
-    _character = relationship('Character', backref=backref(
-        '_skills', collection_class=set, cascade='all, delete-orphan'))
+    _db_character = relationship('Character', backref=backref(
+        '_db_skills', collection_class=set, cascade='all, delete-orphan'))
 
     _type_id = Column('type_id', Integer, nullable=False)
     _level = Column(Integer, nullable=False)
@@ -108,14 +108,14 @@ class Skill(PyfaBase, EveItemWrapper):
     def _register_on_char_core(self, char_core):
         if char_core is not None:
             # Update DB
-            char_core._skills.add(self)
+            char_core._db_skills.add(self)
             # Update Eos
             char_core._eos_fit.skills.add(self.__eos_skill)
 
     def _unregister_on_char_core(self, char_core):
         if char_core is not None:
             # Update DB
-            char_core._skills.remove(self)
+            char_core._db_skills.remove(self)
             # Update Eos
             char_core._eos_fit.skills.remove(self.__eos_skill)
 
