@@ -146,14 +146,14 @@ class Fit(PyfaBase):
         if new_char_proxy is old_char_proxy:
             return
         if old_char_proxy is not None:
-            if old_char_proxy._fit is not self:
+            if old_char_proxy._parent_fit is not self:
                 raise ItemRemovalConsistencyError(old_char_proxy)
-            old_char_proxy._fit = None
+            old_char_proxy._parent_fit = None
         self.__character_proxy = new_char_proxy
         if new_char_proxy is not None:
-            if new_char_proxy._fit is not None:
+            if new_char_proxy._parent_fit is not None:
                 raise ItemAlreadyUsedError(new_char_proxy)
-            new_char_proxy._fit = self
+            new_char_proxy._parent_fit = self
 
     @property
     def ship(self):

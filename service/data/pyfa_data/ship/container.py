@@ -33,7 +33,7 @@ class SubsystemSet:
     """
 
     def __init__(self, ship):
-        self.__ship = ship
+        self.__parent_ship = ship
         self.__set = set()
 
     def add(self, subsystem):
@@ -45,16 +45,16 @@ class SubsystemSet:
         """
         command = ShipSubsystemAddCommand(self, subsystem)
         try:
-            cmd_mgr = self.__ship._fit._cmd_mgr
+            cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
         except AttributeError:
             command.run()
         else:
             cmd_mgr.do(command)
 
     def _add_to_set(self, subsystem):
-        if subsystem._ship is not None:
+        if subsystem._parent_ship is not None:
             raise ItemAlreadyUsedError(subsystem)
-        subsystem._ship = self.__ship
+        subsystem._parent_ship = self.__parent_ship
         self.__set.add(subsystem)
 
     def remove(self, subsystem):
@@ -67,16 +67,16 @@ class SubsystemSet:
         """
         command = ShipSubsystemRemoveCommand(self, subsystem)
         try:
-            cmd_mgr = self.__ship._fit._cmd_mgr
+            cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
         except AttributeError:
             command.run()
         else:
             cmd_mgr.do(command)
 
     def _remove_from_set(self, subsystem):
-        if subsystem._ship is not self.__ship:
+        if subsystem._parent_ship is not self.__parent_ship:
             raise ItemRemovalConsistencyError(subsystem)
-        subsystem._ship = None
+        subsystem._parent_ship = None
         self.__set.remove(subsystem)
 
     def clear(self):
@@ -85,7 +85,7 @@ class SubsystemSet:
         """
         command = ShipSubsystemClearCommand(self)
         try:
-            cmd_mgr = self.__ship._fit._cmd_mgr
+            cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
         except AttributeError:
             command.run()
         else:
@@ -93,9 +93,9 @@ class SubsystemSet:
 
     def _clear_set(self):
         for subsystem in self.__set:
-            if subsystem._ship is not self.__ship:
+            if subsystem._parent_ship is not self.__parent_ship:
                 raise ItemRemovalConsistencyError(subsystem)
-            subsystem._ship = None
+            subsystem._parent_ship = None
         self.__set.clear()
 
     def __iter__(self):

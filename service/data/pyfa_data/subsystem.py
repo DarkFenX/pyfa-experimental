@@ -60,7 +60,7 @@ class Subsystem(PyfaBase, EveItemWrapper):
     @property
     def _source(self):
         try:
-            return self._parent_ship._source
+            return self._parent_ship._parent_fit.source
         except AttributeError:
             return None
 

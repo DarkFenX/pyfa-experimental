@@ -84,7 +84,7 @@ class CharacterProxy(EveItemWrapper):
         return self.__parent_fit
 
     @_parent_fit.setter
-    def _fit(self, new_fit):
+    def _parent_fit(self, new_fit):
         old_fit = self._parent_fit
         # Update DB and Eos for self and children
         self._unregister_on_fit(old_fit)
