@@ -67,7 +67,7 @@ class SkillProxy(EveItemWrapper):
         new_fit = getattr(new_char_proxy, '_parent_fit', None)
         # Update DB and Eos
         self._unregister_on_fit(old_fit)
-        # Update reverse reference
+        # Update parent reference
         self.__parent_char_proxy = new_char_proxy
         # Update DB and Eos
         self._register_on_fit(new_fit)
@@ -76,13 +76,13 @@ class SkillProxy(EveItemWrapper):
 
     def _register_on_fit(self, fit):
         if fit is not None:
-            # DB update is not needed
+            # DB update is not needed for proxies
             # Update Eos
             fit._eos_fit.skills.add(self.__eos_skill)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
-            # DB update is not needed
+            # DB update is not needed for proxies
             # Update Eos
             fit._eos_fit.skills.remove(self.__eos_skill)
 

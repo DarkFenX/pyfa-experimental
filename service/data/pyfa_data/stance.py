@@ -59,7 +59,7 @@ class Stance(EveItemWrapper):
         new_fit = getattr(new_ship, '_parent_fit', None)
         # Update DB and Eos
         self._unregister_on_fit(old_fit)
-        # Update reverse reference
+        # Update parent reference
         self.__parent_ship = new_ship
         # Update DB and Eos
         self._register_on_fit(new_fit)

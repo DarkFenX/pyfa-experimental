@@ -98,7 +98,7 @@ class Skill(PyfaBase, EveItemWrapper):
         old_char_core = self._parent_char_core
         # Update DB and Eos
         self._unregister_on_char_core(old_char_core)
-        # Update reverse reference
+        # Update parent reference
         self.__parent_char_core = new_char_core
         # Update DB and Eos
         self._register_on_char_core(new_char_core)

@@ -90,7 +90,7 @@ class Ship(EveItemWrapper):
             if old_stance._parent_ship is not self:
                 raise ItemRemovalConsistencyError(old_stance)
             old_stance._parent_ship = None
-        # Update forward reference
+        # Update child reference
         self.__stance = new_stance
         if new_stance is not None:
             if new_stance._parent_ship is not None:
@@ -107,7 +107,7 @@ class Ship(EveItemWrapper):
         old_fit = self._parent_fit
         # Update DB and Eos for self and children
         self._unregister_on_fit(old_fit)
-        # Update reverse reference
+        # Update parent reference
         self.__parent_fit = new_fit
         # Update DB and Eos for self and children
         self._register_on_fit(new_fit)

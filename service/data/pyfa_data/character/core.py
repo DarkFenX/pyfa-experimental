@@ -72,7 +72,8 @@ class Character(PyfaBase, EveItemWrapper):
         EveItemWrapper.__init__(self, char_type_id)
         # Attributes which store objects hidden behind properties
         self.__source = None
-        # Set with fits which are loaded and use this character
+        # Set with fit character proxies which are loaded and use
+        # this character core
         self.__loaded_proxies = WeakSet()
         self.skills = SkillCoreSet(self)
         self._eos_fit = EosFit()

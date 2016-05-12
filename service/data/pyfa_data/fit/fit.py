@@ -72,13 +72,14 @@ class Fit(PyfaBase):
         self.__generic_init()
         # Use default source for all reconstructed fits
         self._set_source(SourceManager.default)
-        # Restore entities which are stored on fit
+        # Restore entities which are stored on fit in DB
         if self._db_ship_type_id is not None:
             self._set_ship(Ship(self._db_ship_type_id))
             if self._db_stance_type_id is not None:
                 self.ship._set_stance(Stance(self._db_stance_type_id))
             for subsystem in self._db_subsystems:
                 self.ship.subsystems._add_to_set(subsystem)
+        self.character_core = self._db_character
 
     def __generic_init(self):
         # Attributes which store objects hidden behind properties
@@ -94,9 +95,6 @@ class Fit(PyfaBase):
         # There's little sense in changing proxy character, thus we assign
         # it here and it stays with fit forever
         self.__set_character_proxy(CharacterProxy())
-        # Assign character core, which should handle adding
-        # all of its child objects (like skills)
-        self.character_core = self._db_character
 
     # Define list of source-dependent child objects, it's necessary
     # to update fit source
@@ -124,14 +122,14 @@ class Fit(PyfaBase):
         old_char_core = self.__character_core
         if new_char_core is old_char_core:
             return
-        # Update forward reference
+        # Update child reference
         self.__character_core = new_char_core
         # Update DB
         self._db_character = new_char_core
         # Handle all interactions between new character core and
         # character proxy (which is attached to this fit) on proxy
         # side
-        self.character_proxy._core = new_char_core
+        self.character_proxy._parent_char_core = new_char_core
 
     @property
     def character_proxy(self):
@@ -148,11 +146,14 @@ class Fit(PyfaBase):
         if old_char_proxy is not None:
             if old_char_proxy._parent_fit is not self:
                 raise ItemRemovalConsistencyError(old_char_proxy)
+            # Handle all character proxy children removal on proxy itself
             old_char_proxy._parent_fit = None
+        # Update child reference
         self.__character_proxy = new_char_proxy
         if new_char_proxy is not None:
             if new_char_proxy._parent_fit is not None:
                 raise ItemAlreadyUsedError(new_char_proxy)
+            # Handle all character proxy children addition on proxy itself
             new_char_proxy._parent_fit = self
 
     @property

@@ -49,8 +49,8 @@ class CharacterProxy(EveItemWrapper):
         EveItemWrapper.__init__(self, char_type_id)
         self.__parent_fit = None
         self.__parent_char_core = None
-        self.__eos_char = EosCharacter(char_type_id)
         self.skills = SkillProxySet(self)
+        self.__eos_char = EosCharacter(char_type_id)
 
     # EVE item wrapper methods
     @property
@@ -88,7 +88,7 @@ class CharacterProxy(EveItemWrapper):
         old_fit = self._parent_fit
         # Update DB and Eos for self and children
         self._unregister_on_fit(old_fit)
-        # Update reverse reference
+        # Update parent reference
         self.__parent_fit = new_fit
         # Update DB and Eos for self and children
         self._register_on_fit(new_fit)
@@ -99,7 +99,7 @@ class CharacterProxy(EveItemWrapper):
 
     def _register_on_fit(self, fit):
         if fit is not None:
-            # DB update for self & children is not needed
+            # DB update for self & children is not needed for proxies
             # Update Eos
             fit._eos_fit.character = self.__eos_char
             # Update Eos for children
@@ -108,7 +108,7 @@ class CharacterProxy(EveItemWrapper):
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
-            # DB update for self & children is not needed
+            # DB update for self & children is not needed for proxies
             # Update Eos
             fit._eos_fit.character = None
             # Update Eos for children
@@ -125,7 +125,7 @@ class CharacterProxy(EveItemWrapper):
         # Handle proxy reference on old character core
         if old_char_core is not None:
             old_char_core._unlink_proxy(self)
-        # Update internal reference to core
+        # Update parent reference
         self.__parent_char_core = new_char_core
         # Run updates on various child objects using data from
         # new character core
