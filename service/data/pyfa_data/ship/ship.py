@@ -42,7 +42,7 @@ class Ship(EveItemWrapper):
 
     def __init__(self, type_id, stance=None):
         EveItemWrapper.__init__(self, type_id)
-        self.__fit = None
+        self.__parent_fit = None
         self.__stance = None
         self.subsystems = SubsystemSet(self)
         self.__eos_ship = EosShip(type_id)
@@ -52,7 +52,7 @@ class Ship(EveItemWrapper):
     @property
     def _source(self):
         try:
-            return self._fit.source
+            return self._parent_fit.source
         except AttributeError:
             return None
 
@@ -76,7 +76,7 @@ class Ship(EveItemWrapper):
     def stance(self, new_stance):
         command = ShipStanceChangeCommand(self, new_stance)
         try:
-            cmd_mgr = self._fit._cmd_mgr
+            cmd_mgr = self._parent_fit._cmd_mgr
         except AttributeError:
             command.run()
         else:
@@ -99,16 +99,16 @@ class Ship(EveItemWrapper):
 
     # Auxiliary methods
     @property
-    def _fit(self):
-        return self.__fit
+    def _parent_fit(self):
+        return self.__parent_fit
 
-    @_fit.setter
-    def _fit(self, new_fit):
-        old_fit = self._fit
+    @_parent_fit.setter
+    def _parent_fit(self, new_fit):
+        old_fit = self._parent_fit
         # Update DB and Eos for self and children
         self._unregister_on_fit(old_fit)
         # Update reverse reference
-        self.__fit = new_fit
+        self.__parent_fit = new_fit
         # Update DB and Eos for self and children
         self._register_on_fit(new_fit)
         # Update EVE item for self and children

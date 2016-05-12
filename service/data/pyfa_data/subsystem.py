@@ -53,14 +53,14 @@ class Subsystem(PyfaBase, EveItemWrapper):
 
     def __generic_init(self):
         EveItemWrapper.__init__(self, self._db_type_id)
-        self.__ship = None
+        self.__parent_ship = None
         self.__eos_subsystem = EosSubsystem(self._db_type_id)
 
     # EVE item wrapper methods
     @property
     def _source(self):
         try:
-            return self._ship._fit.source
+            return self._parent_ship._source
         except AttributeError:
             return None
 
@@ -70,18 +70,18 @@ class Subsystem(PyfaBase, EveItemWrapper):
 
     # Auxiliary methods
     @property
-    def _ship(self):
-        return self.__ship
+    def _parent_ship(self):
+        return self.__parent_ship
 
-    @_ship.setter
-    def _ship(self, new_ship):
-        old_ship = self._ship
-        old_fit = getattr(old_ship, '_fit', None)
-        new_fit = getattr(new_ship, '_fit', None)
+    @_parent_ship.setter
+    def _parent_ship(self, new_ship):
+        old_ship = self._parent_ship
+        old_fit = getattr(old_ship, '_parent_fit', None)
+        new_fit = getattr(new_ship, '_parent_fit', None)
         # Update DB and Eos
         self._unregister_on_fit(old_fit)
         # Update reverse reference
-        self.__ship = new_ship
+        self.__parent_ship = new_ship
         # Update DB and Eos
         self._register_on_fit(new_fit)
         # Update EVE item

@@ -47,8 +47,8 @@ class CharacterProxy(EveItemWrapper):
     def __init__(self):
         char_type_id = Type.character_static
         EveItemWrapper.__init__(self, char_type_id)
-        self.__fit = None
-        self.__char_core = None
+        self.__parent_fit = None
+        self.__parent_char_core = None
         self.__eos_char = EosCharacter(char_type_id)
         self.skills = SkillProxySet(self)
 
@@ -56,7 +56,7 @@ class CharacterProxy(EveItemWrapper):
     @property
     def _source(self):
         try:
-            return self._fit.source
+            return self._parent_fit.source
         except AttributeError:
             return None
 
@@ -74,22 +74,22 @@ class CharacterProxy(EveItemWrapper):
     @property
     def alias(self):
         try:
-            return self._core.alias
+            return self._parent_char_core.alias
         except AttributeError:
             return None
 
     # Auxiliary methods
     @property
-    def _fit(self):
-        return self.__fit
+    def _parent_fit(self):
+        return self.__parent_fit
 
-    @_fit.setter
+    @_parent_fit.setter
     def _fit(self, new_fit):
-        old_fit = self._fit
+        old_fit = self._parent_fit
         # Update DB and Eos for self and children
         self._unregister_on_fit(old_fit)
         # Update reverse reference
-        self.__fit = new_fit
+        self.__parent_fit = new_fit
         # Update DB and Eos for self and children
         self._register_on_fit(new_fit)
         # Update EVE item for self and children
@@ -116,17 +116,17 @@ class CharacterProxy(EveItemWrapper):
                 skill._unregister_on_fit(fit)
 
     @property
-    def _core(self):
-        return self.__char_core
+    def _parent_char_core(self):
+        return self.__parent_char_core
 
-    @_core.setter
-    def _core(self, new_char_core):
-        old_char_core = self.__char_core
+    @_parent_char_core.setter
+    def _parent_char_core(self, new_char_core):
+        old_char_core = self._parent_char_core
         # Handle proxy reference on old character core
         if old_char_core is not None:
             old_char_core._unlink_proxy(self)
         # Update internal reference to core
-        self.__char_core = new_char_core
+        self.__parent_char_core = new_char_core
         # Run updates on various child objects using data from
         # new character core
         self.__update_skills(new_char_core)

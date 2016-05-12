@@ -169,14 +169,14 @@ class Fit(PyfaBase):
         if new_ship is old_ship:
             return
         if old_ship is not None:
-            if old_ship._fit is not self:
+            if old_ship._parent_fit is not self:
                 raise ItemRemovalConsistencyError(old_ship)
-            old_ship._fit = None
+            old_ship._parent_fit = None
         self.__ship = new_ship
         if new_ship is not None:
-            if new_ship._fit is not None:
+            if new_ship._parent_fit is not None:
                 raise ItemAlreadyUsedError(new_ship)
-            new_ship._fit = self
+            new_ship._parent_fit = self
 
     # Undo/redo proxies
     @property

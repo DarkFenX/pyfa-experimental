@@ -32,14 +32,14 @@ class SkillProxy(EveItemWrapper):
 
     def __init__(self, type_id, level):
         EveItemWrapper.__init__(self, type_id)
-        self.__char_proxy = None
+        self.__parent_char_proxy = None
         self.__eos_skill = EosSkill(type_id, level=level)
 
     # EVE item wrapper methods
     @property
     def _source(self):
         try:
-            return self._char_proxy._fit.source
+            return self._parent_char_proxy._fit.source
         except AttributeError:
             return None
 
@@ -57,18 +57,18 @@ class SkillProxy(EveItemWrapper):
 
     # Auxiliary methods
     @property
-    def _char_proxy(self):
-        return self.__char_proxy
+    def _parent_char_proxy(self):
+        return self.__parent_char_proxy
 
-    @_char_proxy.setter
-    def _char_proxy(self, new_char_proxy):
-        old_char_proxy = self._char_proxy
-        old_fit = getattr(old_char_proxy, '_fit', None)
-        new_fit = getattr(new_char_proxy, '_fit', None)
+    @_parent_char_proxy.setter
+    def _parent_char_proxy(self, new_char_proxy):
+        old_char_proxy = self._parent_char_proxy
+        old_fit = getattr(old_char_proxy, '_parent_fit', None)
+        new_fit = getattr(new_char_proxy, '_parent_fit', None)
         # Update DB and Eos
         self._unregister_on_fit(old_fit)
         # Update reverse reference
-        self.__char_proxy = new_char_proxy
+        self.__parent_char_proxy = new_char_proxy
         # Update DB and Eos
         self._register_on_fit(new_fit)
         # Update EVE item

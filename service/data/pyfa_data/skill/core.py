@@ -57,14 +57,14 @@ class Skill(PyfaBase, EveItemWrapper):
 
     def __generic_init(self):
         EveItemWrapper.__init__(self, self._db_type_id)
-        self.__char_core = None
+        self.__parent_char_core = None
         self.__eos_skill = EosSkill(self._db_type_id, level=self._db_level)
 
     # EVE item wrapper methods
     @property
     def _source(self):
         try:
-            return self._char_core.source
+            return self._parent_char_core.source
         except AttributeError:
             return None
 
@@ -85,21 +85,21 @@ class Skill(PyfaBase, EveItemWrapper):
         # Update DB
         self._db_level = new_level
         # Update proxies of this skill
-        for char_proxy in self._char_core._proxy_iter():
+        for char_proxy in self._parent_char_core._proxy_iter():
             char_proxy.skills[self.eve_id]._set_level(new_level)
 
     # Auxiliary methods
     @property
-    def _char_core(self):
-        return self.__char_core
+    def _parent_char_core(self):
+        return self.__parent_char_core
 
-    @_char_core.setter
-    def _char_core(self, new_char_core):
-        old_char_core = self._char_core
+    @_parent_char_core.setter
+    def _parent_char_core(self, new_char_core):
+        old_char_core = self._parent_char_core
         # Update DB and Eos
         self._unregister_on_char_core(old_char_core)
         # Update reverse reference
-        self.__char_core = new_char_core
+        self.__parent_char_core = new_char_core
         # Update DB and Eos
         self._register_on_char_core(new_char_core)
         # Update EVE item
