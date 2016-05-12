@@ -27,7 +27,7 @@ class Stance(EveItemWrapper):
     """
     Pyfa model: ship.stance
     Eos model: efit.stance
-    DB model: fit._stance_type_id
+    DB model: fit._db_stance_type_id
     """
 
     def __init__(self, type_id):
@@ -69,14 +69,14 @@ class Stance(EveItemWrapper):
     def _register_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            fit._stance_type_id = self.eve_id
+            fit._db_stance_type_id = self.eve_id
             # Update Eos
             fit._eos_fit.stance = self.__eos_stance
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            fit._stance_type_id = None
+            fit._db_stance_type_id = None
             # Update Eos
             fit._eos_fit.stance = None
 

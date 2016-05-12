@@ -39,16 +39,16 @@ class Skill(PyfaBase, EveItemWrapper):
 
     __tablename__ = 'skills'
 
-    _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'), primary_key=True)
+    _db_character_id = Column('character_id', Integer, ForeignKey('characters.character_id'), primary_key=True)
     _db_character = relationship('Character', backref=backref(
         '_db_skills', collection_class=set, cascade='all, delete-orphan'))
 
-    _type_id = Column('type_id', Integer, nullable=False)
-    _level = Column(Integer, nullable=False)
+    _db_type_id = Column('type_id', Integer, nullable=False)
+    _db_level = Column(Integer, nullable=False)
 
     def __init__(self, type_id, level=0):
-        self._type_id = type_id
-        self._level = level
+        self._db_type_id = type_id
+        self._db_level = level
         self.__generic_init()
 
     @reconstructor
@@ -56,9 +56,9 @@ class Skill(PyfaBase, EveItemWrapper):
         self.__generic_init()
 
     def __generic_init(self):
-        EveItemWrapper.__init__(self, self._type_id)
+        EveItemWrapper.__init__(self, self._db_type_id)
         self.__char_core = None
-        self.__eos_skill = EosSkill(self._type_id, level=self._level)
+        self.__eos_skill = EosSkill(self._db_type_id, level=self._db_level)
 
     # EVE item wrapper methods
     @property
@@ -75,7 +75,7 @@ class Skill(PyfaBase, EveItemWrapper):
     # Skill-specific methods
     @property
     def level(self):
-        return self._level
+        return self._db_level
 
     @level.setter
     def level(self, new_level):
@@ -83,7 +83,7 @@ class Skill(PyfaBase, EveItemWrapper):
         if new_level == old_level:
             return
         # Update DB
-        self._level = new_level
+        self._db_level = new_level
         # Update proxies of this skill
         for char_proxy in self._char_core._proxy_iter():
             char_proxy.skills[self.eve_id]._set_level(new_level)

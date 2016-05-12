@@ -52,10 +52,10 @@ class Fit(PyfaBase):
 
     id = Column('fit_id', Integer, primary_key=True)
     name = Column('fit_name', String, nullable=False)
-    _ship_type_id = Column('ship_type_id', Integer)
-    _stance_type_id = Column('stance_type_id', Integer)
+    _db_ship_type_id = Column('ship_type_id', Integer)
+    _db_stance_type_id = Column('stance_type_id', Integer)
 
-    _character_id = Column('character_id', Integer, ForeignKey('characters.character_id'))
+    _db_character_id = Column('character_id', Integer, ForeignKey('characters.character_id'))
     _db_character = relationship('Character')
 
     def __init__(self, name='', source=None, ship=None):
@@ -73,10 +73,10 @@ class Fit(PyfaBase):
         # Use default source for all reconstructed fits
         self._set_source(SourceManager.default)
         # Restore entities which are stored on fit
-        if self._ship_type_id is not None:
-            self._set_ship(Ship(self._ship_type_id))
-            if self._stance_type_id is not None:
-                self.ship._set_stance(Stance(self._stance_type_id))
+        if self._db_ship_type_id is not None:
+            self._set_ship(Ship(self._db_ship_type_id))
+            if self._db_stance_type_id is not None:
+                self.ship._set_stance(Stance(self._db_stance_type_id))
             for subsystem in self._db_subsystems:
                 self.ship.subsystems._add_to_set(subsystem)
 

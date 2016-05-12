@@ -46,7 +46,7 @@ They are all different, thus logic might be complex at times. For example,
 stance aka t3 tactical mode is stored on:
 
   Pyfa: fit.ship.stance
-  DB: fit._stance_type_id
+  DB: fit._db_stance_type_id
   Eos: efit.stance (efit is eos fit, which is stored on pyfa fit)
 
 There's additional thing which needs to be processed, most pyfa items carry
@@ -62,7 +62,7 @@ anything:
 
   ship.stance is set when ship belongs to fit (scenario described above)
     Pyfa: update ship's stance reference
-    DB: update fit._stance_type_id reference
+    DB: update fit._db_stance_type_id reference
     Eos: update efit.stance object
     EVE item: update
 
@@ -74,7 +74,7 @@ anything:
 
   ship with stance [assigned to/removed from] fit (ship stuff is omitted here)
     Pyfa: no actions needed
-    DB: update fit._stance_type_id reference
+    DB: update fit._db_stance_type_id reference
     Eos: update efit.stance object
     EVE item: update
 

@@ -35,16 +35,16 @@ class Subsystem(PyfaBase, EveItemWrapper):
 
     __tablename__ = 'subsystems'
 
-    _id = Column('subsystem_id', Integer, primary_key=True)
+    _db_id = Column('subsystem_id', Integer, primary_key=True)
 
-    _fit_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'), nullable=False)
+    _db_fit_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'), nullable=False)
     _db_fit = relationship('Fit', backref=backref(
         '_db_subsystems', collection_class=set, cascade='all, delete-orphan'))
 
-    _type_id = Column('type_id', Integer, nullable=False)
+    _db_type_id = Column('type_id', Integer, nullable=False)
 
     def __init__(self, type_id):
-        self._type_id = type_id
+        self._db_type_id = type_id
         self.__generic_init()
 
     @reconstructor
@@ -52,9 +52,9 @@ class Subsystem(PyfaBase, EveItemWrapper):
         self.__generic_init()
 
     def __generic_init(self):
-        EveItemWrapper.__init__(self, self._type_id)
+        EveItemWrapper.__init__(self, self._db_type_id)
         self.__ship = None
-        self.__eos_subsystem = EosSubsystem(self._type_id)
+        self.__eos_subsystem = EosSubsystem(self._db_type_id)
 
     # EVE item wrapper methods
     @property

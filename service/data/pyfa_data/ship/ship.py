@@ -33,7 +33,7 @@ class Ship(EveItemWrapper):
     """
     Pyfa model: fit.ship
     Eos model: efit.ship
-    DB model: fit._ship_type_id
+    DB model: fit._db_ship_type_id
 
     Pyfa model children:
       .stance
@@ -119,7 +119,7 @@ class Ship(EveItemWrapper):
     def _register_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            fit._ship_type_id = self.eve_id
+            fit._db_ship_type_id = self.eve_id
             # Update Eos
             fit._eos_fit.ship = self.__eos_ship
             # Update DB and Eos for children
@@ -131,7 +131,7 @@ class Ship(EveItemWrapper):
     def _unregister_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            fit._ship_type_id = None
+            fit._db_ship_type_id = None
             # Update Eos
             fit._eos_fit.ship = None
             # Update DB and Eos for children
