@@ -118,10 +118,14 @@ class ModelTestCase(PyfaTestCase):
         patcher_subsystem = patch('service.data.pyfa_data.subsystem.EosSubsystem')
         self.addCleanup(patcher_subsystem.stop)
         self.eos_subsystem = patcher_subsystem.start()
-        # Character
-        patcher_corechar_fit = patch('service.data.pyfa_data.character.core.EosFit')
-        self.addCleanup(patcher_corechar_fit.stop)
-        self.eos_corechar_fit = patcher_corechar_fit.start()
+        # Character core
+        patcher_charcore_fit = patch('service.data.pyfa_data.character.core.EosFit')
+        self.addCleanup(patcher_charcore_fit.stop)
+        self.eos_charcore_fit = patcher_charcore_fit.start()
+        # Character proxy
+        patcher_charproxy = patch('service.data.pyfa_data.character.proxy.EosCharacter')
+        self.addCleanup(patcher_charproxy.stop)
+        self.eos_charproxy = patcher_charproxy.start()
         # Skill
         patcher_skillcore = patch('service.data.pyfa_data.skill.core.EosSkill')
         self.addCleanup(patcher_skillcore.stop)

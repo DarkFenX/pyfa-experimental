@@ -27,7 +27,7 @@ from tests.model_structure.model_testcase import ModelTestCase
 class TestModelCharCoreGeneric(ModelTestCase):
 
     def test_instantiation(self):
-        eos_fit = self.eos_corechar_fit
+        eos_fit = self.eos_charcore_fit
         eos_fit.return_value = sentinel.efit
         sentinel.efit.character = sentinel.echar
         efit_calls_before = len(eos_fit.mock_calls)
@@ -44,7 +44,7 @@ class TestModelCharCoreGeneric(ModelTestCase):
         self.assertIs(char._eos_item, sentinel.echar)
 
     def test_persistence(self):
-        eos_fit = self.eos_corechar_fit
+        eos_fit = self.eos_charcore_fit
         eos_fit.return_value = sentinel.efit
         sentinel.efit.character = sentinel.echar
         char = Character(alias='test char 1')
