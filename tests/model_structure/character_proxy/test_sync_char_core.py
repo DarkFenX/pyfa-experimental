@@ -71,7 +71,6 @@ class TestModelCharProxySyncCharCore(ModelTestCase):
         self.assertEqual(fit.character_proxy.eve_id, 1381)
         self.assertEqual(fit.character_proxy.eve_name, 'Item 1381 (TQ)')
 
-
     def test_change(self):
         fit = Fit(name='test fit 1')
         char_core1 = Character(alias='test char 1')

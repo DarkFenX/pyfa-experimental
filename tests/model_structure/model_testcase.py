@@ -126,10 +126,14 @@ class ModelTestCase(PyfaTestCase):
         patcher_charproxy = patch('service.data.pyfa_data.character.proxy.EosCharacter')
         self.addCleanup(patcher_charproxy.stop)
         self.eos_charproxy = patcher_charproxy.start()
-        # Skill
+        # Skill core
         patcher_skillcore = patch('service.data.pyfa_data.skill.core.EosSkill')
         self.addCleanup(patcher_skillcore.stop)
         self.eos_skillcore = patcher_skillcore.start()
+        # Skill proxy
+        patcher_skillproxy = patch('service.data.pyfa_data.skill.proxy.EosSkill')
+        self.addCleanup(patcher_skillproxy.stop)
+        self.eos_skillproxy = patcher_skillproxy.start()
 
     def __remove_pyfa_db(self):
         if os.path.isfile(self.pyfadb_path):

@@ -39,7 +39,7 @@ class SkillProxy(EveItemWrapper):
     @property
     def _source(self):
         try:
-            return self._parent_char_proxy._fit.source
+            return self._parent_char_proxy._parent_fit.source
         except AttributeError:
             return None
 
