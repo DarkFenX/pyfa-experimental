@@ -18,63 +18,76 @@
 #===============================================================================
 
 
-from unittest.mock import call, sentinel
-
 from service.data.pyfa_data import *
 from tests.model_structure.model_testcase import ModelTestCase
 
 
-class TestModelSkillProxyGeneric(ModelTestCase):
+class TestModelSkillProxySourceSwitch(ModelTestCase):
 
-    def test_instantiation(self):
-        eos_skillproxy = self.eos_skillproxy
-        eos_skillproxy.return_value = sentinel.eskill
-        sentinel.eskill.level = 3
+    def test_do(self):
         char = Character(alias='test char 1')
         fit = Fit(name='test fit 1')
         fit.character_core = char
         skill_core = Skill(6, level=3)
-        eskill_calls_before = len(eos_skillproxy.mock_calls)
         char.skills.add(skill_core)
-        eskill_calls_after = len(eos_skillproxy.mock_calls)
+        # Action
+        fit.source = self.source_sisi
         # Pyfa model
         self.assertEqual(len(fit.character_proxy.skills), 1)
         skill_proxy = next(iter(fit.character_proxy.skills))
         self.assertEqual(skill_proxy.eve_id, 6)
-        self.assertEqual(skill_proxy.level, 3)
-        self.assertEqual(skill_proxy.eve_name, 'Item 6 (TQ)')
-        # Eos model
-        self.assertIs(skill_proxy._eos_item, sentinel.eskill)
-        self.assertEqual(eskill_calls_after - eskill_calls_before, 1)
-        self.assertEqual(eos_skillproxy.mock_calls[-1], call(6, level=3))
+        self.assertEqual(skill_proxy.eve_name, 'Item 6 (SiSi)')
         # Command queue
-        self.assertIs(fit.has_undo, False)
+        self.assertIs(fit.has_undo, True)
         self.assertIs(fit.has_redo, False)
-
-    def test_persistence(self):
-        eos_skillproxy = self.eos_skillproxy
-        eos_skillproxy.return_value = sentinel.eskill
-        sentinel.eskill.level = 3
-        char = Character(alias='test char 1')
-        fit = Fit(name='test fit 1')
-        fit.character_core = char
-        skill_core = Skill(6, level=3)
-        char.skills.add(skill_core)
         # Reload model via persistence (DB check)
         fit.persist()
-        eskill_calls_before = len(eos_skillproxy.mock_calls)
         self.pyfadb_force_reload()
         fits = self.query_fits()
         self.assertEqual(len(fits), 1)
         fit = fits[0]
-        eskill_calls_after = len(eos_skillproxy.mock_calls)
         # Pyfa model
         self.assertEqual(len(fit.character_proxy.skills), 1)
         skill_proxy = next(iter(fit.character_proxy.skills))
         self.assertEqual(skill_proxy.eve_id, 6)
-        self.assertEqual(skill_proxy.level, 3)
+        # We do not save fit's source into DB
         self.assertEqual(skill_proxy.eve_name, 'Item 6 (TQ)')
-        # Eos model
-        self.assertIs(skill_proxy._eos_item, sentinel.eskill)
-        self.assertEqual(eskill_calls_after - eskill_calls_before, 1)
-        self.assertEqual(eos_skillproxy.mock_calls[-1], call(6, level=3))
+
+    def test_undo(self):
+        char = Character(alias='test char 1')
+        fit = Fit(name='test fit 1')
+        fit.character_core = char
+        skill_core = Skill(6, level=3)
+        char.skills.add(skill_core)
+        fit.source = self.source_sisi
+        # Action
+        fit.undo()
+        # Pyfa model
+        self.assertEqual(len(fit.character_proxy.skills), 1)
+        skill_proxy = next(iter(fit.character_proxy.skills))
+        self.assertEqual(skill_proxy.eve_id, 6)
+        self.assertEqual(skill_proxy.eve_name, 'Item 6 (TQ)')
+        # Command queue
+        self.assertIs(fit.has_undo, False)
+        self.assertIs(fit.has_redo, True)
+        # We do not check persistence because source is not saved into DB
+
+    def test_redo(self):
+        char = Character(alias='test char 1')
+        fit = Fit(name='test fit 1')
+        fit.character_core = char
+        skill_core = Skill(6, level=3)
+        char.skills.add(skill_core)
+        fit.source = self.source_sisi
+        fit.undo()
+        # Action
+        fit.redo()
+        # Pyfa model
+        self.assertEqual(len(fit.character_proxy.skills), 1)
+        skill_proxy = next(iter(fit.character_proxy.skills))
+        self.assertEqual(skill_proxy.eve_id, 6)
+        self.assertEqual(skill_proxy.eve_name, 'Item 6 (SiSi)')
+        # Command queue
+        self.assertIs(fit.has_undo, True)
+        self.assertIs(fit.has_redo, False)
+        # We do not check persistence because source is not saved into DB
