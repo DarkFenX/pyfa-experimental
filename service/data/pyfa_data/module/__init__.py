@@ -18,12 +18,4 @@
 #===============================================================================
 
 
-from enum import IntEnum, unique
-
-from eos.const.eve import Type, Attribute
-
-
-class RackType(IntEnum):
-    high = 1
-    med = 2
-    low = 3
+from .module import Module

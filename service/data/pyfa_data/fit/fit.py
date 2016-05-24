@@ -46,6 +46,7 @@ class Fit(PyfaBase):
       .ship
         .stance
         .{subsystems}
+        .modules.[high]/[med]/[low]
     """
 
     __tablename__ = 'fits'
