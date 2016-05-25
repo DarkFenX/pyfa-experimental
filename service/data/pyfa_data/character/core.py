@@ -27,10 +27,10 @@ from sqlalchemy.orm import reconstructor
 from eos import Fit as EosFit
 from service.data.pyfa_data.base import PyfaBase, EveItemWrapper
 from service.data.pyfa_data.func import get_src_children, pyfa_persist, pyfa_abandon
+from service.data.pyfa_data.skill import SkillCoreSet
 from service.source import SourceManager, Source
 from util.const import Type
 from util.repr import make_repr_str
-from .container import SkillCoreSet
 
 
 class Character(PyfaBase, EveItemWrapper):

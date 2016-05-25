@@ -25,22 +25,6 @@ from service.data.pyfa_data.base import PyfaBase, EveItemWrapper
 from util.repr import make_repr_str
 
 
-class ModuleRacks:
-    """
-    Higher-level container for all module racks
-    (which are containers for holders).
-    """
-
-    def __init__(self):
-        self.high = []
-        self.med = []
-        self.low = []
-
-    def __repr__(self):
-        spec = ['high', 'med', 'low']
-        return make_repr_str(self, spec)
-
-
 class Module(PyfaBase, EveItemWrapper):
     """
     Pyfa model: fit.modules.[high]/[med]/[low]
@@ -72,3 +56,52 @@ class Module(PyfaBase, EveItemWrapper):
         EveItemWrapper.__init__(self, self._db_type_id)
         self.__parent_ship = None
         self.__eos_module = None
+
+    # EVE item wrapper methods
+    @property
+    def _source(self):
+        try:
+            return self._parent_ship._parent_fit.source
+        except AttributeError:
+            return None
+
+    @property
+    def _eos_item(self):
+        return self.__eos_module
+
+    # Auxiliary methods
+    @property
+    def _parent_ship(self):
+        return self.__parent_ship
+
+    @_parent_ship.setter
+    def _parent_ship(self, new_ship):
+        old_ship = self._parent_ship
+        old_fit = getattr(old_ship, '_parent_fit', None)
+        new_fit = getattr(new_ship, '_parent_fit', None)
+        # Update DB and Eos
+        self._unregister_on_fit(old_fit)
+        # Update parent reference
+        self.__parent_ship = new_ship
+        # Update DB and Eos
+        self._register_on_fit(new_fit)
+        # Update EVE item
+        self._update_source()
+
+    def _register_on_fit(self, fit):
+        if fit is not None:
+            # Update DB
+            fit._db_subsystems.add(self)
+            # Update Eos
+            fit._eos_fit.subsystems.add(self.__eos_subsystem)
+
+    def _unregister_on_fit(self, fit):
+        if fit is not None:
+            # Update DB
+            fit._db_subsystems.remove(self)
+            # Update Eos
+            fit._eos_fit.subsystems.remove(self.__eos_subsystem)
+
+    def __repr__(self):
+        spec = ['eve_id']
+        return make_repr_str(self, spec)

@@ -22,8 +22,8 @@ from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship, backref, reconstructor
 
 from eos import Subsystem as EosSubsystem
+from service.data.pyfa_data.base import PyfaBase, EveItemWrapper
 from util.repr import make_repr_str
-from .base import PyfaBase, EveItemWrapper
 
 
 class Subsystem(PyfaBase, EveItemWrapper):

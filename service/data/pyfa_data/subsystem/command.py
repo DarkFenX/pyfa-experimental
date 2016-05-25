@@ -23,25 +23,25 @@ from util.repr import make_repr_str
 
 
 __all__ = [
-    'ShipChangeCommand',
-    'SourceChangeCommand'
+    'SubsystemAddCommand',
+    'SubsystemRemoveCommand',
+    'SubsystemClearCommand'
 ]
 
 
-class ShipChangeCommand(BaseCommand):
+class SubsystemAddCommand(BaseCommand):
 
-    def __init__(self, fit, new_ship):
+    def __init__(self, container, subsystem):
         self.__executed = False
-        self.fit = fit
-        self.old_ship = fit.ship
-        self.new_ship = new_ship
+        self.container = container
+        self.subsystem = subsystem
 
     def run(self):
-        self.fit._set_ship(self.new_ship)
+        self.container._add_to_set(self.subsystem)
         self.__executed = True
 
     def reverse(self):
-        self.fit._set_ship(self.old_ship)
+        self.container._remove_from_set(self.subsystem)
         self.__executed = False
 
     @property
@@ -52,20 +52,43 @@ class ShipChangeCommand(BaseCommand):
         return make_repr_str(self, ())
 
 
-class SourceChangeCommand(BaseCommand):
+class SubsystemRemoveCommand(BaseCommand):
 
-    def __init__(self, fit, new_source):
+    def __init__(self, container, subsystem):
         self.__executed = False
-        self.fit = fit
-        self.old_source = fit.source
-        self.new_source = new_source
+        self.container = container
+        self.subsystem = subsystem
 
     def run(self):
-        self.fit._set_source(self.new_source)
+        self.container._remove_from_set(self.subsystem)
         self.__executed = True
 
     def reverse(self):
-        self.fit._set_source(self.old_source)
+        self.container._add_to_set(self.subsystem)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())
+
+
+class SubsystemClearCommand(BaseCommand):
+
+    def __init__(self, container):
+        self.__executed = False
+        self.container = container
+        self.subsystems = set(container)
+
+    def run(self):
+        self.container._clear_set()
+        self.__executed = True
+
+    def reverse(self):
+        for subsystem in self.subsystems:
+            self.container._add_to_set(subsystem)
         self.__executed = False
 
     @property

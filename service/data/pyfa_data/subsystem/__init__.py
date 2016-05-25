@@ -18,6 +18,5 @@
 #===============================================================================
 
 
-from .container import SkillCoreSet, SkillProxySet
-from .core import Skill
-from .proxy import SkillProxy
+from .container import SubsystemSet
+from .subsystem import Subsystem

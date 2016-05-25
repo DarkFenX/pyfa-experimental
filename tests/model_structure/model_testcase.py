@@ -115,7 +115,7 @@ class ModelTestCase(PyfaTestCase):
         self.addCleanup(patcher_stance.stop)
         self.eos_stance = patcher_stance.start()
         # Subsystem
-        patcher_subsystem = patch('service.data.pyfa_data.subsystem.EosSubsystem')
+        patcher_subsystem = patch('service.data.pyfa_data.subsystem.subsystem.EosSubsystem')
         self.addCleanup(patcher_subsystem.stop)
         self.eos_subsystem = patcher_subsystem.start()
         # Character core

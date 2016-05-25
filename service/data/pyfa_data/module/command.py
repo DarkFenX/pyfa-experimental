@@ -18,6 +18,33 @@
 #===============================================================================
 
 
-from .container import SkillCoreSet, SkillProxySet
-from .core import Skill
-from .proxy import SkillProxy
+from service.data.pyfa_data.command import BaseCommand
+from util.repr import make_repr_str
+
+
+__all__ = [
+    'TODO',
+]
+
+
+class ModuleAppendCommand(BaseCommand):
+
+    def __init__(self, container, subsystem):
+        self.__executed = False
+        self.container = container
+        self.subsystem = subsystem
+
+    def run(self):
+        self.container._add_to_set(self.subsystem)
+        self.__executed = True
+
+    def reverse(self):
+        self.container._remove_from_set(self.subsystem)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())

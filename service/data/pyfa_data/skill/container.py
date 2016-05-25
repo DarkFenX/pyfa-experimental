@@ -19,7 +19,8 @@
 
 
 from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
-from service.data.pyfa_data.skill import SkillProxy
+from .proxy import SkillProxy
+
 
 class RestrictedSet:
     """

@@ -22,11 +22,6 @@ from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalCo
 from .command import *
 
 
-__all__ = [
-    'SubsystemSet'
-]
-
-
 class SubsystemSet:
     """
     Container for subsystems.
@@ -43,7 +38,7 @@ class SubsystemSet:
         Required arguments:
         subsystem -- subsystem to add, cannot be None
         """
-        command = ShipSubsystemAddCommand(self, subsystem)
+        command = SubsystemAddCommand(self, subsystem)
         try:
             cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
         except AttributeError:
@@ -65,7 +60,7 @@ class SubsystemSet:
         subsystem -- subsystem to remove, must be one of
         subsystems from the set
         """
-        command = ShipSubsystemRemoveCommand(self, subsystem)
+        command = SubsystemRemoveCommand(self, subsystem)
         try:
             cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
         except AttributeError:
@@ -83,7 +78,7 @@ class SubsystemSet:
         """
         Remove all subsystems from set.
         """
-        command = ShipSubsystemClearCommand(self)
+        command = SubsystemClearCommand(self)
         try:
             cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
         except AttributeError:

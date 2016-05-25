@@ -163,7 +163,7 @@ class Fit(PyfaBase):
 
     @ship.setter
     def ship(self, new_ship):
-        command = FitShipChangeCommand(self, new_ship)
+        command = ShipChangeCommand(self, new_ship)
         self._cmd_mgr.do(command)
 
     def _set_ship(self, new_ship):
@@ -210,7 +210,7 @@ class Fit(PyfaBase):
 
     @source.setter
     def source(self, new_source):
-        command = FitSourceChangeCommand(self, new_source)
+        command = SourceChangeCommand(self, new_source)
         self._cmd_mgr.do(command)
 
     def _set_source(self, new_source):
