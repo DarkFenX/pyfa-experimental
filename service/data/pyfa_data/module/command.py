@@ -23,23 +23,46 @@ from util.repr import make_repr_str
 
 
 __all__ = [
-    'TODO',
+    'ModuleAppendCommand',
 ]
 
 
 class ModuleAppendCommand(BaseCommand):
 
-    def __init__(self, container, subsystem):
+    def __init__(self, container, module):
         self.__executed = False
         self.container = container
-        self.subsystem = subsystem
+        self.module = module
 
     def run(self):
-        self.container._add_to_set(self.subsystem)
+        self.container._append_to_list(self.module)
         self.__executed = True
 
     def reverse(self):
-        self.container._remove_from_set(self.subsystem)
+        self.container._remove_from_list(self.module)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())
+
+
+class ModuleRemoveCommand(BaseCommand):
+
+    def __init__(self, container, module):
+        self.__executed = False
+        self.container = container
+        self.module = module
+
+    def run(self):
+        self.container._append_to_list(self.module)
+        self.__executed = True
+
+    def reverse(self):
+        self.container._remove_from_list(self.module)
         self.__executed = False
 
     @property
