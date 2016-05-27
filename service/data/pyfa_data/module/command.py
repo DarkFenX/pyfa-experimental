@@ -23,11 +23,11 @@ from util.repr import make_repr_str
 
 
 __all__ = [
-    'ModuleAppendCommand',
+    'ModuleEquipCommand',
 ]
 
 
-class ModuleAppendCommand(BaseCommand):
+class ModuleEquipCommand(BaseCommand):
 
     def __init__(self, container, module):
         self.__executed = False
@@ -35,34 +35,11 @@ class ModuleAppendCommand(BaseCommand):
         self.module = module
 
     def run(self):
-        self.container._append_to_list(self.module)
+        self.container._equip_to_list(self.module)
         self.__executed = True
 
     def reverse(self):
-        self.container._remove_from_list(self.module)
-        self.__executed = False
-
-    @property
-    def executed(self):
-        return self.__executed
-
-    def __repr__(self):
-        return make_repr_str(self, ())
-
-
-class ModuleRemoveCommand(BaseCommand):
-
-    def __init__(self, container, module):
-        self.__executed = False
-        self.container = container
-        self.module = module
-
-    def run(self):
-        self.container._append_to_list(self.module)
-        self.__executed = True
-
-    def reverse(self):
-        self.container._remove_from_list(self.module)
+        self.container._free_from_list(self.module)
         self.__executed = False
 
     @property

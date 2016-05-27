@@ -24,7 +24,8 @@ from .command import *
 
 
 __all__ = [
-    'SubsystemSet'
+    'ModuleRacks',
+    'ModuleList'
 ]
 
 
@@ -49,12 +50,39 @@ class ModuleList:
     Container for modules.
     """
 
-    def __init__(self, ship):
+    def __init__(self, ship, rack_type):
         self.__parent_ship = ship
+        self.__rack_type = rack_type
         self.__list = []
 
+    # Adding modules
     def equip(self, module):
-        return
+        """
+        Put module to first free slot in container; if
+        container doesn't have free slots, append holder
+        to the end of container.
+        """
+        command = ModuleEquipCommand(self, module)
+        try:
+            cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
+        except AttributeError:
+            command.run()
+        else:
+            cmd_mgr.do(command)
+
+    def _equip_to_list(self, module):
+        if module._parent_ship is not None:
+            raise ItemAlreadyUsedError(module)
+        try:
+            index = self.__list.index(None)
+        except ValueError:
+            index = len(self.__list)
+            self.__list.append(module)
+        else:
+            self.__list[index] = module
+        module._db_rack_id = self.__rack_type
+        module._db_index = index
+        module._parent_ship = self.__parent_ship
 
     def place(self, index, module):
         return
@@ -62,18 +90,30 @@ class ModuleList:
     def insert(self, index, module):
         return
 
+    # Moving modules
     def swap(self, module1, module2):
         return
 
     def move(self, module, index):
         return
 
-    def free(self, module):
-        return
+    # Removing modules
+    def free(self, value):
+        if isinstance(value, int):
+            index = value
+            module = self.__list[index]
+        else:
+            module = value
+            index = self.__list.index(module)
+        if module is None:
+            return
+        module._db_rack_id = None
+        module._db_index = None
 
     def remove(self, module):
         return
 
+    # Special
     def __iter__(self):
         return self.__list.__iter__()
 

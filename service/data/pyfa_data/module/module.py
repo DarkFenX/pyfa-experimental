@@ -38,7 +38,7 @@ class Module(PyfaBase, EveItemWrapper):
 
     _db_fit_id = Column('fit_id', Integer, ForeignKey('fits.fit_id'), nullable=False)
     _db_fit = relationship('Fit', backref=backref(
-        '_db_modules', collection_class=list, cascade='all, delete-orphan'))
+        '_db_modules', collection_class=set, cascade='all, delete-orphan'))
 
     _db_type_id = Column('type_id', Integer, nullable=False)
     _db_rack_id = Column('rack_id', Integer, nullable=False)
@@ -91,14 +91,14 @@ class Module(PyfaBase, EveItemWrapper):
     def _register_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            fit._db_subsystems.add(self)
+            fit._db_modules.add(self)
             # Update Eos
             fit._eos_fit.subsystems.add(self.__eos_subsystem)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
             # Update DB
-            fit._db_subsystems.remove(self)
+            fit._db_modules.remove(self)
             # Update Eos
             fit._eos_fit.subsystems.remove(self.__eos_subsystem)
 
