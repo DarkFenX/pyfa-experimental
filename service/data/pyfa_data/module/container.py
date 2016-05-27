@@ -53,48 +53,26 @@ class ModuleList:
         self.__parent_ship = ship
         self.__list = []
 
-    def add(self, module):
-        """
-        Append module to the end of rack.
+    def equip(self, module):
+        return
 
-        Required arguments:
-        module -- module to append, cannot be None
-        """
-        command = ModuleAppendCommand(self, module)
-        try:
-            cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
-        except AttributeError:
-            command.run()
-        else:
-            cmd_mgr.do(command)
+    def place(self, index, module):
+        return
 
-    def _append_to_list(self, module):
-        if module._parent_ship is not None:
-            raise ItemAlreadyUsedError(module)
-        module._parent_ship = self.__parent_ship
-        self.__list.append(module)
+    def insert(self, index, module):
+        return
+
+    def swap(self, module1, module2):
+        return
+
+    def move(self, module, index):
+        return
+
+    def free(self, module):
+        return
 
     def remove(self, module):
-        """
-        Remove module from the rack.
-
-        Required arguments:
-        module -- module to remove, must be one of
-        modules from the rack
-        """
-        command = SubsystemRemoveCommand(self, subsystem)
-        try:
-            cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
-        except AttributeError:
-            command.run()
-        else:
-            cmd_mgr.do(command)
-
-    def _remove_from_list(self, module):
-        if module._parent_ship is not self.__parent_ship:
-            raise ItemRemovalConsistencyError(module)
-        module._parent_ship = None
-        self.__list.remove(module)
+        return
 
     def __iter__(self):
         return self.__list.__iter__()
