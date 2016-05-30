@@ -24,6 +24,7 @@ from util.repr import make_repr_str
 
 __all__ = [
     'ModuleEquipCommand',
+    'ModuleFreeCommand'
 ]
 
 
@@ -40,6 +41,34 @@ class ModuleEquipCommand(BaseCommand):
 
     def reverse(self):
         self.container._free_from_list(self.module)
+        self.__executed = False
+
+    @property
+    def executed(self):
+        return self.__executed
+
+    def __repr__(self):
+        return make_repr_str(self, ())
+
+
+class ModuleFreeCommand(BaseCommand):
+
+    def __init__(self, container, value):
+        self.__executed = False
+        self.container = container
+        self.value = value
+        self.module = None
+        self.index = None
+
+    def run(self):
+        index, module = self.container._free_from_list(self.value)
+        self.module = module
+        self.index = index
+        self.__executed = True
+
+    def reverse(self):
+        # TODO: this is not actually mirror to free, should be place
+        self.container._equip_to_list(self.module)
         self.__executed = False
 
     @property

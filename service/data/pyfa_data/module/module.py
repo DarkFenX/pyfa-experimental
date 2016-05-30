@@ -21,8 +21,23 @@
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship, backref, reconstructor
 
+from eos import ModuleHigh as EosModuleHigh, ModuleMed as EosModuleMed, ModuleLow as EosModuleLow
 from service.data.pyfa_data.base import PyfaBase, EveItemWrapper
+from util.const import RackType
 from util.repr import make_repr_str
+
+
+eos_rack_map = {
+    RackType.high: 'high',
+    RackType.med: 'med',
+    RackType.low: 'low'
+}
+
+eos_item_map = {
+    RackType.high: EosModuleHigh,
+    RackType.med: EosModuleMed,
+    RackType.low: EosModuleLow
+}
 
 
 class Module(PyfaBase, EveItemWrapper):
@@ -70,6 +85,22 @@ class Module(PyfaBase, EveItemWrapper):
         return self.__eos_module
 
     # Auxiliary methods
+    def _set_position(self, rack, index):
+        # As we have single module type which fits into all racks in pyfa
+        # and specific classes in eos, we have to take care of situation
+        # where module changes its racks - thus we need to re-initiate all
+        # eos module objects on pyfa module addition to/removal from rack
+        if self._db_rack_id != rack:
+            try:
+                eos_class = eos_item_map[rack]
+            except KeyError:
+                self.__eos_module = None
+            # TODO: initialize more stuff here, like states, charges, etc
+            else:
+                self.__eos_module = eos_class(self._db_type_id)
+            self._db_rack_id = rack
+        self._db_index = index
+
     @property
     def _parent_ship(self):
         return self.__parent_ship
@@ -93,14 +124,19 @@ class Module(PyfaBase, EveItemWrapper):
             # Update DB
             fit._db_modules.add(self)
             # Update Eos
-            fit._eos_fit.subsystems.add(self.__eos_subsystem)
+            eos_rack = self.__get_eos_rack(fit)
+            eos_rack.place(self._db_index, self._eos_item)
 
     def _unregister_on_fit(self, fit):
         if fit is not None:
             # Update DB
             fit._db_modules.remove(self)
             # Update Eos
-            fit._eos_fit.subsystems.remove(self.__eos_subsystem)
+            eos_rack = self.__get_eos_rack(fit)
+            eos_rack.free(self._eos_item)
+
+    def __get_eos_rack(self, fit):
+        return getattr(fit._eos_fit.modules, eos_rack_map[self._db_rack_id])
 
     def __repr__(self):
         spec = ['eve_id']

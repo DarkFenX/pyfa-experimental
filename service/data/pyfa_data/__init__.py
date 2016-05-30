@@ -93,6 +93,7 @@ from .base import PyfaBase
 # (because top-level objects sometimes import their children for reconstruction)
 from .skill import Skill
 from .subsystem import Subsystem
+from .module import Module
 from .stance import Stance
 from .character import Character
 from .ship import Ship
@@ -102,6 +103,7 @@ from .fit import Fit
 __all__ = [
     'Character',
     'Fit',
+    'Module',
     'Ship',
     'Skill',
     'Stance',

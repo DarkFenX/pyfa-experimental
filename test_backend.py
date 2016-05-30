@@ -47,6 +47,7 @@ TENGU_OFF_MISSILES = 30122
 TENGU_ENG_CAPREGEN = 30143
 TENGU_PROP_WARP = 30088
 TENGU_ELE_ECCM = 30050
+DLP_LASER = 3001
 
 
 def make_tengu():
@@ -60,6 +61,11 @@ def make_tengu():
 def make_confessor():
     fit = Fit(name='test fit 2')
     fit.ship = Ship(CONFESSOR, stance=Stance(CONFESSOR_DEFENSIVE_MODE))
+    lasor = Module(DLP_LASER)
+    fit.ship.modules.high.equip(lasor)
+    print(fit.ship.modules)
+    fit.persist()
+    PyfaDataManager.commit()
     return fit
 
 def make_character():
@@ -75,17 +81,6 @@ def test_random_shit():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 def test_char_source_switch():
     warp_accu_tq = query_attribute(SourceManager.get('tq').edb, 1021)
     warp_accu_sisi = query_attribute(SourceManager.get('sisi').edb, 1021)
@@ -96,4 +91,4 @@ def test_char_source_switch():
     assert char.attributes[warp_accu_sisi] == 101
     assert char.attributes_original[warp_accu_sisi] == 202
 
-test_char_source_switch()
+make_confessor()

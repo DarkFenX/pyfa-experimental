@@ -19,14 +19,16 @@
 
 
 from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
+from util.const import RackType
 from util.repr import make_repr_str
 from .command import *
 
 
-__all__ = [
-    'ModuleRacks',
-    'ModuleList'
-]
+pyfa_rack_map = {
+    RackType.high: 'high',
+    RackType.med: 'med',
+    RackType.low: 'low'
+}
 
 
 class ModuleRacks:
@@ -35,10 +37,10 @@ class ModuleRacks:
     (which are containers for holders).
     """
 
-    def __init__(self):
-        self.high = []
-        self.med = []
-        self.low = []
+    def __init__(self, ship):
+        self.high = ModuleList(ship, RackType.high)
+        self.med = ModuleList(ship, RackType.med)
+        self.low = ModuleList(ship, RackType.low)
 
     def __repr__(self):
         spec = ['high', 'med', 'low']
@@ -80,8 +82,7 @@ class ModuleList:
             self.__list.append(module)
         else:
             self.__list[index] = module
-        module._db_rack_id = self.__rack_type
-        module._db_index = index
+        module._set_position(self.__rack_type, index)
         module._parent_ship = self.__parent_ship
 
     def place(self, index, module):
@@ -99,6 +100,21 @@ class ModuleList:
 
     # Removing modules
     def free(self, value):
+        """
+        Clear slot at specified location.
+
+        Required arguments:
+        value -- either index or module
+        """
+        command = ModuleFreeCommand(self, value)
+        try:
+            cmd_mgr = self.__parent_ship._parent_fit._cmd_mgr
+        except AttributeError:
+            command.run()
+        else:
+            cmd_mgr.do(command)
+
+    def _free_from_list(self, value):
         if isinstance(value, int):
             index = value
             module = self.__list[index]
@@ -106,9 +122,12 @@ class ModuleList:
             module = value
             index = self.__list.index(module)
         if module is None:
-            return
-        module._db_rack_id = None
-        module._db_index = None
+            return index, module
+        if module._parent_ship is not self.__parent_ship:
+            raise ItemRemovalConsistencyError(module)
+        module._parent_ship = None
+        module._set_position(None, None)
+        return index, module
 
     def remove(self, module):
         return

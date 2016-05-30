@@ -78,6 +78,9 @@ class Fit(PyfaBase):
             self._set_ship(Ship(self._db_ship_type_id))
             if self._db_stance_type_id is not None:
                 self.ship._set_stance(Stance(self._db_stance_type_id))
+            # TODO: find appropriate way to reconstruct modules
+            for module in self._db_modules:
+                pass
             for subsystem in self._db_subsystems:
                 self.ship.subsystems._add_to_set(subsystem)
         self.character_core = self._db_character

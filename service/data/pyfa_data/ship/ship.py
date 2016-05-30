@@ -24,6 +24,7 @@ from eos import Ship as EosShip
 from service.data.pyfa_data.base import EveItemWrapper
 from service.data.pyfa_data.exception import ItemAlreadyUsedError, ItemRemovalConsistencyError
 from service.data.pyfa_data.func import get_src_children
+from service.data.pyfa_data.module import ModuleRacks
 from service.data.pyfa_data.subsystem import SubsystemSet
 from util.repr import make_repr_str
 from .command import StanceChangeCommand
@@ -44,6 +45,7 @@ class Ship(EveItemWrapper):
         EveItemWrapper.__init__(self, type_id)
         self.__parent_fit = None
         self.__stance = None
+        self.modules = ModuleRacks(self)
         self.subsystems = SubsystemSet(self)
         self.__eos_ship = EosShip(type_id)
         self._set_stance(stance)
